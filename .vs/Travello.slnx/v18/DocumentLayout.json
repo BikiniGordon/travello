@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Jagree\\source\\repos\\travello\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{37F3DB4A-55F2-4D4B-83A1-0B492052CFAD}|Travello\\Travello.csproj|c:\\users\\jagree\\source\\repos\\travello\\travello\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{37F3DB4A-55F2-4D4B-83A1-0B492052CFAD}|Travello\\Travello.csproj|solutionrelative:travello\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Travello\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Travello\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-17T04:21:12.675Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
