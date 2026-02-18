@@ -1,3 +1,9 @@
+:root {
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+}
 html {
   font-size: 14px;
 }
@@ -19,6 +25,7 @@ html {
 
 body {
   margin-bottom: 60px;
+  overflow-y: auto;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -28,4 +35,48 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* รูปโปรไฟล์ */
+.profile-card {
+    background-color: #e2e0d6;
+    border-radius: 50px; 
+    width: 355px;
+    height: 316px;
+    border: solid 1px #D9D9D9;
+}
+
+#frame_photo_text {
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    display: flex;             /* เปิดใช้ระบบกล่องยืดหยุ่น */
+    flex-direction: column;    /* สั่งให้ของข้างในเรียงกันเป็น "แนวตั้ง" */
+    align-items: center;       /* จัดของทุกชิ้นให้อยู่ "กึ่งกลาง" แนวนอนของการ์ด */
+    justify-content: center;   /* จัดของให้อยู่กึ่งกลางแนวตั้ง (ถ้าการ์ดมีความสูง) */
+    gap: var(--space-md);
+}
+
+.profile-img {
+    width: 135px;
+    height: 135px;
+    object-fit: cover;
+}
+
+#frame_photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;     /* จัดรูปให้อยู่ตรงกลางแนวตั้ง */
+}
+ฺิ
+.letter-spacing {
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+}
+
+.frame_1349 {
+    padding: var(--space-xl);
+    width: 100%; 
+    max-width: 100%;
+    display: flex;
+    justify-content: left;
 }

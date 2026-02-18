@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Travello")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d196fcfa7a37d52adae66e4cdb2446a8eaf4e642")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e72364daaa12bf88ccd8092920ac7217b6d466b5")]
 [assembly: System.Reflection.AssemblyProductAttribute("Travello")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Travello")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

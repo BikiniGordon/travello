@@ -15,6 +15,11 @@ namespace Travello.Controllers
         {
             return View();
         }
+        // หน้าโปรไฟล์ของตาต้า
+        public IActionResult Profile() 
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
