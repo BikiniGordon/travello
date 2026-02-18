@@ -1,0 +1,8 @@
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.AssemblyInfoInputs.cache
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.AssemblyInfo.cs
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.csproj.CoreCompileInputs.cache
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.RazorAssemblyInfo.cache
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.RazorAssemblyInfo.cs
+C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.sourcelink.json
