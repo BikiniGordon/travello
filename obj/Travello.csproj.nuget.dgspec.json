@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jagree\\source\\repos\\Travello\\Travello\\Travello.csproj": {}
+    "C:\\Users\\Jagree\\OneDrive\\Documents\\GitHub\\trav\\travello\\Travello.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jagree\\source\\repos\\Travello\\Travello\\Travello.csproj": {
+    "C:\\Users\\Jagree\\OneDrive\\Documents\\GitHub\\trav\\travello\\Travello.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jagree\\source\\repos\\Travello\\Travello\\Travello.csproj",
+        "projectUniqueName": "C:\\Users\\Jagree\\OneDrive\\Documents\\GitHub\\trav\\travello\\Travello.csproj",
         "projectName": "Travello",
-        "projectPath": "C:\\Users\\Jagree\\source\\repos\\Travello\\Travello\\Travello.csproj",
+        "projectPath": "C:\\Users\\Jagree\\OneDrive\\Documents\\GitHub\\trav\\travello\\Travello.csproj",
         "packagesPath": "C:\\Users\\Jagree\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jagree\\source\\repos\\Travello\\Travello\\obj\\",
+        "outputPath": "C:\\Users\\Jagree\\OneDrive\\Documents\\GitHub\\trav\\travello\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
