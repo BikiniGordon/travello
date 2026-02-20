@@ -4,13 +4,13 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"8a6l6v7pgo"},{"Name":"integrity","Value":"sha256-8Jof1lRcrZPrOBZ0r\u002BS\u002BB9Qle2iK3mSoLSl5UX4ceyo="},{"Name":"label","Value":"_content/Travello/css/Chat.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3586"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00228Jof1lRcrZPrOBZ0r\u002BS\u002BB9Qle2iK3mSoLSl5UX4ceyo=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 11:47:45 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3586"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00228Jof1lRcrZPrOBZ0r\u002BS\u002BB9Qle2iK3mSoLSl5UX4ceyo=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/css/Chat.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-8Jof1lRcrZPrOBZ0r\u002BS\u002BB9Qle2iK3mSoLSl5UX4ceyo="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3586"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00228Jof1lRcrZPrOBZ0r\u002BS\u002BB9Qle2iK3mSoLSl5UX4ceyo=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 11:47:45 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3586"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00228Jof1lRcrZPrOBZ0r\u002BS\u002BB9Qle2iK3mSoLSl5UX4ceyo=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/css/site.b9sayid5wm.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</AssetFile>
@@ -36,65 +36,65 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Jtxf9L\u002B5ITKRc1gIRl4VbUpGkRNfOBXjYTdhJD4facM="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"5430"},{"Name":"Content-Type","Value":"image/x-icon"},{"Name":"ETag","Value":"\u0022Jtxf9L\u002B5ITKRc1gIRl4VbUpGkRNfOBXjYTdhJD4facM=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 17:30:08 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Travello/images/chat_img_background.a1e0jmh37z.svg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\chat_img_background.svg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"a1e0jmh37z"},{"Name":"integrity","Value":"sha256-8t2AIu5cjuP\u002BWM8VhLJLUcMJuIQM\u002B8i/TAnOD50IPyc="},{"Name":"label","Value":"_content/Travello/images/chat_img_background.svg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"2761581"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u00228t2AIu5cjuP\u002BWM8VhLJLUcMJuIQM\u002B8i/TAnOD50IPyc=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/images/chat_img_background.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\chat_img_background.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-x/xg2CoKDaYb\u002Bm10wPwE6pG\u002B9dWvnLmT8ktFrRVUmqA="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"2761572"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022x/xg2CoKDaYb\u002Bm10wPwE6pG\u002B9dWvnLmT8ktFrRVUmqA=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 18:52:52 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-8t2AIu5cjuP\u002BWM8VhLJLUcMJuIQM\u002B8i/TAnOD50IPyc="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"2761581"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u00228t2AIu5cjuP\u002BWM8VhLJLUcMJuIQM\u002B8i/TAnOD50IPyc=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/Travello/images/chat_img_background.vy6uyzj685.svg">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\chat_img_background.svg'))</AssetFile>
-      <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"vy6uyzj685"},{"Name":"integrity","Value":"sha256-x/xg2CoKDaYb\u002Bm10wPwE6pG\u002B9dWvnLmT8ktFrRVUmqA="},{"Name":"label","Value":"_content/Travello/images/chat_img_background.svg"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"2761572"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022x/xg2CoKDaYb\u002Bm10wPwE6pG\u002B9dWvnLmT8ktFrRVUmqA=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 18:52:52 GMT"}]]]></ResponseHeaders>
-    </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/Travello/images/date_icon.7kqvzscyep.svg">
+    <StaticWebAssetEndpoint Include="_content/Travello/images/date_icon.218avzbz0x.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\date_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"7kqvzscyep"},{"Name":"integrity","Value":"sha256-N8tsIReL0ZgzigLhvNlAcvLWuGAjn3p0rSrUP7Kv/Dg="},{"Name":"label","Value":"_content/Travello/images/date_icon.svg"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"462"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022N8tsIReL0ZgzigLhvNlAcvLWuGAjn3p0rSrUP7Kv/Dg=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 10:10:04 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"218avzbz0x"},{"Name":"integrity","Value":"sha256-JqJitx8ct5EfqTMObSKtcrFgBeV4NI9xgD2f2CoaJo8="},{"Name":"label","Value":"_content/Travello/images/date_icon.svg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"465"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022JqJitx8ct5EfqTMObSKtcrFgBeV4NI9xgD2f2CoaJo8=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/images/date_icon.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\date_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-N8tsIReL0ZgzigLhvNlAcvLWuGAjn3p0rSrUP7Kv/Dg="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"462"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022N8tsIReL0ZgzigLhvNlAcvLWuGAjn3p0rSrUP7Kv/Dg=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 10:10:04 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-JqJitx8ct5EfqTMObSKtcrFgBeV4NI9xgD2f2CoaJo8="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"465"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022JqJitx8ct5EfqTMObSKtcrFgBeV4NI9xgD2f2CoaJo8=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/Travello/images/locate_icon.5x17jzblbd.svg">
+    <StaticWebAssetEndpoint Include="_content/Travello/images/locate_icon.o5up5ub9bl.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\locate_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"5x17jzblbd"},{"Name":"integrity","Value":"sha256-eVSgyQVG3C1oaZed4oqAxbLFwdlbAdGTFZeW9o/jmnw="},{"Name":"label","Value":"_content/Travello/images/locate_icon.svg"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1078"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022eVSgyQVG3C1oaZed4oqAxbLFwdlbAdGTFZeW9o/jmnw=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 10:09:57 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"o5up5ub9bl"},{"Name":"integrity","Value":"sha256-7LGGUINWQVED2y\u002BkayqfNI8uYPISOpteINqH871GLOk="},{"Name":"label","Value":"_content/Travello/images/locate_icon.svg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1081"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u00227LGGUINWQVED2y\u002BkayqfNI8uYPISOpteINqH871GLOk=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/images/locate_icon.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\locate_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-eVSgyQVG3C1oaZed4oqAxbLFwdlbAdGTFZeW9o/jmnw="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"1078"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022eVSgyQVG3C1oaZed4oqAxbLFwdlbAdGTFZeW9o/jmnw=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 10:09:57 GMT"}]]]></ResponseHeaders>
-    </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/Travello/images/path_icon.f13uzj45wi.svg">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\path_icon.svg'))</AssetFile>
-      <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"f13uzj45wi"},{"Name":"integrity","Value":"sha256-4xkcWHGP5ulZjSBI2gT/KOhj/IFP8p/hnuNPhQoVrwo="},{"Name":"label","Value":"_content/Travello/images/path_icon.svg"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"474"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u00224xkcWHGP5ulZjSBI2gT/KOhj/IFP8p/hnuNPhQoVrwo=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 10:12:59 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-7LGGUINWQVED2y\u002BkayqfNI8uYPISOpteINqH871GLOk="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"1081"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u00227LGGUINWQVED2y\u002BkayqfNI8uYPISOpteINqH871GLOk=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/images/path_icon.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\path_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-4xkcWHGP5ulZjSBI2gT/KOhj/IFP8p/hnuNPhQoVrwo="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"474"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u00224xkcWHGP5ulZjSBI2gT/KOhj/IFP8p/hnuNPhQoVrwo=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 10:12:59 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-X2//\u002Be1O2hQ7GrEqH8UyAGEAZqaLjdRnzQ4po04YbLE="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"477"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022X2//\u002Be1O2hQ7GrEqH8UyAGEAZqaLjdRnzQ4po04YbLE=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/Travello/images/search_icon.ovdaqr4jgs.svg">
+    <StaticWebAssetEndpoint Include="_content/Travello/images/path_icon.z7ob0w22wy.svg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\path_icon.svg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"z7ob0w22wy"},{"Name":"integrity","Value":"sha256-X2//\u002Be1O2hQ7GrEqH8UyAGEAZqaLjdRnzQ4po04YbLE="},{"Name":"label","Value":"_content/Travello/images/path_icon.svg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"477"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022X2//\u002Be1O2hQ7GrEqH8UyAGEAZqaLjdRnzQ4po04YbLE=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Travello/images/search_icon.q2rje72ha9.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\search_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"ovdaqr4jgs"},{"Name":"integrity","Value":"sha256-xAr8Ssp08glmO4aV5/mN8uQmK0PzHU/iRe/kOBUEBD8="},{"Name":"label","Value":"_content/Travello/images/search_icon.svg"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"388"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022xAr8Ssp08glmO4aV5/mN8uQmK0PzHU/iRe/kOBUEBD8=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 20:12:25 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"q2rje72ha9"},{"Name":"integrity","Value":"sha256-LkbSloZBM\u002BqzG7xGl06YI6MdatHwTx1f2RdtZ68zABI="},{"Name":"label","Value":"_content/Travello/images/search_icon.svg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"391"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022LkbSloZBM\u002BqzG7xGl06YI6MdatHwTx1f2RdtZ68zABI=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/images/search_icon.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\search_icon.svg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-xAr8Ssp08glmO4aV5/mN8uQmK0PzHU/iRe/kOBUEBD8="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"388"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022xAr8Ssp08glmO4aV5/mN8uQmK0PzHU/iRe/kOBUEBD8=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 20:12:25 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-LkbSloZBM\u002BqzG7xGl06YI6MdatHwTx1f2RdtZ68zABI="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"391"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022LkbSloZBM\u002BqzG7xGl06YI6MdatHwTx1f2RdtZ68zABI=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/js/site.js">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\site.js'))</AssetFile>
@@ -832,13 +832,13 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Travello.brjiwzg4bb.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"brjiwzg4bb"},{"Name":"integrity","Value":"sha256-eT\u002BpUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY="},{"Name":"label","Value":"_content/Travello/Travello.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1424"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022eT\u002BpUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 19:37:58 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1424"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022eT\u002BpUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/Travello.bundle.scp.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Travello.brjiwzg4bb.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-eT\u002BpUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1424"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022eT\u002BpUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY=\u0022"},{"Name":"Last-Modified","Value":"Wed, 18 Feb 2026 19:37:58 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1424"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022eT\u002BpUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY=\u0022"},{"Name":"Last-Modified","Value":"Thu, 19 Feb 2026 13:52:49 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
   </ItemGroup>
 </Project>
