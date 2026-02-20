@@ -80,3 +80,12 @@ body {
     display: flex;
     justify-content: left;
 }
+.text_name {
+    font-size: 32px;
+}
+#frame_text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
+}
