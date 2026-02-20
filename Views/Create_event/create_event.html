@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travello - Create Event</title>
+    <link rel="stylesheet" href="/css/create_event.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">@travello</div>
+            <button class="btn-create-event">
+                <span>+ CREATE EVENT</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="layout">
+            <!-- Left Column -->
+            <div class="form-column">
+                <!-- Upload Photo Section -->
+                <div class="upload-photo">
+                    <div class="photo-placeholder">
+                        <div class="upload-button">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_616_1324)">
+                            <path d="M13.125 9.375V11.875C13.125 12.2065 12.9933 12.5245 12.7589 12.7589C12.5245 12.9933 12.2065 13.125 11.875 13.125H3.125C2.79348 13.125 2.47554 12.9933 2.24112 12.7589C2.0067 12.5245 1.875 12.2065 1.875 11.875V9.375M10.625 5L7.5 1.875M7.5 1.875L4.375 5M7.5 1.875V9.375" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                            <defs>
+                            <clipPath id="clip0_616_1324">
+                            <rect width="15" height="15" fill="white"/>
+                            </clipPath>
+                            </defs>
+                            </svg>
+                            <span class="upload-text">UPLOAD PHOTO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Title -->
+                <section class="form-section">
+                    <label class="section-label">EVENT TITLE</label>
+                    <input 
+                        type="text" 
+                        class="input-field"
+                    >
+                    <p class="field-hint">*BE CLEAR AND DESCRIPTIVE WHAT YOUR EVENT IS ABOUT</p>
+                <!-- </section> -->
+
+                <!-- Detail -->
+                <!-- <section class="form-section"> -->
+                    <label class="section-label">DETAIL</label>
+                    <textarea 
+                        class="textarea-field auto-resize" 
+                        rows="1"
+                        oninput="autoResize(this)"
+                    ></textarea>
+                </section>
+
+                <!-- Category & Tags -->
+                <section class="catagory-section">
+                    <label class="section-label">CATEGORY</label>
+                    <span class="required">*required</span>
+                    <div class="tags-container">
+                        <button class="tag-btn">CAMPING</button>
+                        <button class="tag-btn">PHOTOGRAPHY</button>
+                        <button class="tag-btn">RELAX</button>
+                        <button class="tag-btn">SHOPPING</button>
+                        <button class="tag-btn">ADVENTURE</button>
+                        <button class="tag-btn add-btn">+</button>
+                    </div>
+
+                    <label class="section-label tag">TAG</label>
+                    <div class="tags-container">
+                        <button class="tag-btn small">
+                            TEST_TAG_1
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                                <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
+                            </svg>
+                        </button>
+                        <button class="tag-btn small">
+                            TEST_TAG_2222
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                                <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
+                            </svg>
+                        </button>
+                        <button class="tag-btn add-btn">+</button>
+                    </div>
+                </section>
+
+                <!-- Remaining -->
+                <section class="form-section">
+                    <label class="section-label">REMAINING</label>
+                    <p class="remaining-number">??</p>
+                    <p class="note">*When attendees hit the limit the registration will be close automatically.</p>
+                </section>
+
+                <!-- Questions for Attendees -->
+                <section class="form-section">
+                    <label class="section-label">QUESTIONS FOR ATTENDEES</label>
+                    <textarea 
+                        class="textarea-field" 
+                        rows="3"
+                    ></textarea>
+                </section>
+
+                <!-- Date and Time -->
+                <section class="form-section">
+                    <label class="section-label">DATE AND TIME</label>
+                    <div class="input-row">
+                        <input type="date" class="input-field smaller">
+                        <select class="dropdown-field">
+                            <option>Select time</option>
+                        </select>
+                        <select class="dropdown-field">
+                            <option>AM/PM</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Reservation Opens -->
+                <section class="form-section">
+                    <label class="section-label">RESERVATION OPENS</label>
+                    <input type="date" class="input-field">
+                </section>
+
+                <!-- Location -->
+                <section class="form-section">
+                    <label class="section-label">LOCATION</label>
+                    <input type="text" class="input-field" placeholder="Search location...">
+                </section>
+
+                <!-- Trip Rules -->
+                <section class="form-section">
+                    <label class="section-label">TRIP RULES</label>
+                    <textarea 
+                        class="textarea-field" 
+                        rows="3"
+                    ></textarea>
+                </section>
+
+                <!-- Important Thing to Pack -->
+                <section class="form-section">
+                    <label class="section-label">IMPORTANT THING TO PACK</label>
+                    <div class="checkbox-item">
+                        <input type="radio" id="add-items" name="pack">
+                        <label for="add-items">Add some items</label>
+                    </div>
+                </section>
+
+                <!-- Itinerary -->
+                <section class="form-section">
+                    <label class="section-label">ITINERARY</label>
+                    
+                    <div class="itinerary-day">
+                        <h3>DAY 1</h3>
+                        <div class="place-item">
+                            <svg class="place-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 16 8 16s8-10.75 8-16c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                            </svg>
+                            <input type="text" class="place-input" placeholder="Add place">
+                            <div class="place-actions">
+                                <button class="action-btn">✎</button>
+                                <button class="action-btn">📍</button>
+                                <button class="action-btn">🗑</button>
+                            </div>
+                        </div>
+                        <div class="place-item">
+                            <svg class="place-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 16 8 16s8-10.75 8-16c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                            </svg>
+                            <input type="text" class="place-input" placeholder="Add place">
+                            <div class="place-actions">
+                                <button class="action-btn">✎</button>
+                                <button class="action-btn">📍</button>
+                                <button class="action-btn">🗑</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="itinerary-day">
+                        <h3>DAY 2</h3>
+                        <div class="place-item">
+                            <svg class="place-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 16 8 16s8-10.75 8-16c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                            </svg>
+                            <input type="text" class="place-input" placeholder="Add place">
+                            <div class="place-actions">
+                                <button class="action-btn">✎</button>
+                                <button class="action-btn">📍</button>
+                                <button class="action-btn">🗑</button>
+                            </div>
+                        </div>
+                        <div class="place-item">
+                            <svg class="place-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 16 8 16s8-10.75 8-16c0-4.42-3.58-8-8-8zm0 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                            </svg>
+                            <input type="text" class="place-input" placeholder="Add place">
+                            <div class="place-actions">
+                                <button class="action-btn">🗑</button>
+                            </div>
+                        </div>
+                        <div class="place-item">
+                            <input type="text" class="place-input" placeholder="Add place" style="padding-left: 30px;">
+                            <div class="price-input">
+                                <span>$</span>
+                                <input type="number" placeholder="500">
+                            </div>
+                            <button class="delete-btn">🗑</button>
+                        </div>
+                        <div class="place-item">
+                            <input type="text" class="place-input" placeholder="Add place" style="padding-left: 30px;">
+                            <button class="delete-btn">🗑</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Expenses Summary -->
+                <div class="expenses-summary">
+                    <h3>Expenses Summary</h3>
+                    <div class="expense-row">
+                        <span>Total balance</span>
+                        <span class="amount">$ 4,280</span>
+                    </div>
+                </div>
+
+                <button class="btn-create-event-bottom">CREATE EVENT</button>
+            </div>
+
+            <!-- Right Column - Map -->
+            <div class="map-column">
+                <div class="map-container">
+                    <img src="https://api.mapbox.com/styles/v1/mapbox/light-v11/static/2.3522,48.8566,12,400x600@2x?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJjbGV4YW1wbGUifQ" alt="Map" class="map-image">
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Auto-resize textarea based on content
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+    </script>
+</body>
+</html>

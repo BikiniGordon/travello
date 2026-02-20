@@ -599,19 +599,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jiray\\.nuget\\packages\\": {}
+    "/Users/gat/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj",
+      "projectUniqueName": "/Users/gat/Documents/Project/travello/Travello.csproj",
       "projectName": "Travello",
-      "projectPath": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj",
-      "packagesPath": "C:\\Users\\jiray\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\",
+      "projectPath": "/Users/gat/Documents/Project/travello/Travello.csproj",
+      "packagesPath": "/Users/gat/.nuget/packages/",
+      "outputPath": "/Users/gat/Documents/Project/travello/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\jiray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/gat/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -635,7 +635,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0": {
@@ -665,7 +665,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.311/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

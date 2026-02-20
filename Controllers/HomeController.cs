@@ -16,6 +16,11 @@ namespace Travello.Controllers
             return View();
         }
 
+        public IActionResult CreateEvent()
+        {
+            return View("~/Views/Create_event/create_event.cshtml");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
