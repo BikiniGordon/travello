@@ -104,7 +104,7 @@ div.search-block p{
     z-index: 3;          
 }
 
-.chat-room{
+.chat-card{
     display: flex;
     width: 521px;
     height: 150px;
@@ -170,4 +170,48 @@ div.search-block p{
     filter: blur(2px);
     pointer-events: none;
     transition: all 0.3s ease;
+}
+
+.chat-room{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 706px;
+    height: 778px;
+    top: 48px;
+    right: 64px;
+
+    z-index: 3;
+}
+
+.chat-room-header{
+    display: flex;
+    flex-direction: row;
+    width: 706px;   
+    height: 62px;
+    padding: 16px 24px 24px 16px;
+    background-color: #CBCBCB;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+}
+
+#chat-room-title{
+    text-align: left;
+    left: 24px;
+    font-size: 18px;
+    font-weight: 600;
+    width: 628px;
+}
+
+#chat-room-setting-icon{
+    right: 24px;
+    width: 30px;
+    height: 30px;
+}
+
+.talker{
+    width: 49px;
+    height: 49px;
+    border-radius: 50px;
+    object-fit: cover;
 }

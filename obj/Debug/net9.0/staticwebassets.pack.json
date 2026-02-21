@@ -37,6 +37,14 @@
       "PackagePath": "staticwebassets\\images\\search_icon.svg"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\setting_icon.svg",
+      "PackagePath": "staticwebassets\\images\\setting_icon.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js",
+      "PackagePath": "staticwebassets\\js\\Chat.js"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

@@ -1,12 +1,12 @@
-@model IEnumerable<Travello.Models.ChatModel>
+@model IEnumerable<Travello.Models.ChatRoomModel>
 
 @{
     ViewData["Title"] = "Chat";
 }
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="~/css/Chat.css" />
+<script src="~/js/Chat.js" asp-append-version="true"></script>
 <body>
-
     @* ดึง navbar มาด้วย *@
     <div class="chat-header">
         <h id="header-let">Let</h>
@@ -20,27 +20,38 @@
             <p>Search Chat</p>
         </div>
         <div class="chat-list">
-            @foreach (var chat in Model.Take(4))
+            @foreach (var chatroom in Model.Take(4))
             {
-                <div class="chat-room">
+                <div class="chat-card">
                     <img class="event-image" src="~/images/chat_img_background.svg" />
                     <div class="chat-info">
-                        <h4 class="chat-info">@chat.chat_name</h4>
-                    <div class="info-row">
-                        <img class="locate-icon" src="~/images/locate_icon.svg" />
-                        <p class="chat-info">@chat.event_id</p>
-                    </div>
-                    <div class="info-row">
-                        <img class="date-icon" src="~/images/date_icon.svg" />
-                        <p class="chat-info">@chat.event_id</p>
-                    </div>
-                    <div class="info-row">
-                        <img class="path-icon" src="~/images/path_icon.svg" />
-                        <p class="chat-info">@chat.last_message_id@*เวลา message ล่าสุดดึงจาก mesasgemodel*@</p>
-                    </div>
+                        <h4 class="chat-info">@chatroom.chat_name</h4>
+                        <div class="info-row">
+                            <img class="locate-icon" src="~/images/locate_icon.svg" />
+                            <p class="chat-info">@chatroom.event_id</p>
+                        </div>
+                        <div class="info-row">
+                            <img class="date-icon" src="~/images/date_icon.svg" />
+                            <p class="chat-info">@chatroom.event_id</p>
+                        </div>
+                        <div class="info-row">
+                            <img class="path-icon" src="~/images/path_icon.svg" />
+                            <p class="chat-info">@chatroom.last_message_id@*เวลา message ล่าสุดดึงจาก mesasgemodel*@</p>
+                        </div>
                     </div>
                 </div>
             }
+        </div>
+        <div class="chat-room">
+            <div class="chat-room-header">
+                <h4 id="chat-room-title">chat_nameรอดึง</h4>
+                <img id="chat-room-setting-icon" src="~/images/setting_icon.svg"/>
+            </div>
+            <div class="chat-body">
+                <img class="talker" src="~/images/chat_img_background.svg"/>
+            </div>
+            <div class="message-box">
+            </div>  
         </div>
     </div>
 </body>

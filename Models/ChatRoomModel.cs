@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Travello.Models
 {
-    public class ChatModel
+    public class ChatRoomModel
     {
         // [BsonID]
         // [BsonRepresentation(BsonType.ObjectId)]
