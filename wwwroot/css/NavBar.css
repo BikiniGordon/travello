@@ -1,5 +1,5 @@
 :root {
-    --padding-out: 72px;
+    --space-paddingout: 72px;
     --logo-size: 32px;
 
     --space-xs: 8px;
@@ -8,58 +8,47 @@
     --space-lg: 32px;
     --space-xl: 48px;
     --space-2xl: 64px;
+
+    --text-xs: 12px;
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+
+    --font-weight-semilight: 300;
+    --font-weight-bold: 700;
+
+    --font-family: "Segoe UI", sans-serif;
 }
 
-.H1 {
-    font-size: 48px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-}
+.text-sm  { font-size: var(--text-sm); }
+.text-md  { font-size: var(--text-md); }
+.text-xl  { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
 
-.H2 {
-    font-size: 40px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-}
-
-.H3 {
-    font-size: 33px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-}
-
-.H4 {
-    font-size: 28px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-}
-
-.H5 {
-    font-size: 23px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-}
-
-.H6 {
-    font-size: 18px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-}
+.font-semilight  { font-weight: 300; }
+.font-regular    { font-weight: 400; }
+.font-medium     { font-weight: 500; }
+.font-semibold   { font-weight: 600; }
+.font-bold       { font-weight: 700; }
 
 header {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 0;
-    width: 100%;
-    min-height: 100vh;
 }
 
 .NavBar {
     display: flex;
     width: 100%;
-    max-width: 1440px; 
-    padding: var(--space-sm, 16px) var(--space-md, 24px);
+    /* max-width: 1440px;  */
+    padding: var(--space-sm) var(--space-md);
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -67,16 +56,19 @@ header {
 
     box-shadow: -2px -2px 4px 0 rgba(192, 192, 192, 0.25) inset, 2px 2px 4px 0 rgba(0, 0, 0, 0.25) inset;
     backdrop-filter: blur(20px);
+
+    z-index: 10;
+
 }
 
 .Logo, .TLogo {
-    color: black;
-    font-size: var(--logo-size); 
+    color: white;
+    font-size: var(--text-xl); 
     line-height: normal;
 }
 
 .Logo {
-    font-family: "Segoe UI", sans-serif;
+    font-family: var(--font-family);
     font-weight: 600;
 }
 
@@ -161,7 +153,7 @@ header {
 
 .DropDownLogo {
     color: #000;
-    font-family: "Segoe UI", sans-serif;
+    font-family: var(--font-family);
     font-size: 24px;
     font-weight: 600;
 }
@@ -174,7 +166,7 @@ header {
 
 @media (max-width: 1024px) {
     :root {
-        --padding-out: 16px;
+        --space-paddingout: 16px;
 
         --space-xs: 6px;
         --space-sm: 12px;
@@ -182,6 +174,14 @@ header {
         --space-lg: 28px;
         --space-xl: 40px;
         --space-2xl: 56px;
+
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 48px;
     }
 }
 
@@ -195,12 +195,14 @@ header {
         --space-lg: 24px;
         --space-xl: 32px;
         --space-2xl: 48px;
-    }
 
-    .h6 {
-        font-size: 16px;
-        font-family: "Segoe UI", sans-serif;
-        font-weight: 600;
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 32px;
     }
 
     .InsiderNavLink {
@@ -221,7 +223,7 @@ header {
         background: white;
         border: 2px solid #333;
         border-radius: 25px;
-        padding: var(--padding-out);
+        padding: var(--space-paddingout);
         z-index: 1000;
         
         display: none; 
