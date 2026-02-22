@@ -6,9 +6,167 @@ function autoResize(textarea) {
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
 
-// Google Maps initialization
+// Leaflet Map initialization
 let map;
-const defaultLocation = { lat: 35.6762, lng: 139.6503 }; // Tokyo coordinates
+let placeMarkersLayer;
+let defaultMapMarker;
+const defaultLocation = { lat: 13.7298889, lng: 100.7756574 }; // KMITL
+
+// Recalculate place numbers throughout the entire event
+// Only number rows that have actual place data (not empty templates)
+function recalculatePlaceNumbers() {
+    const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+    let placeNumber = 0;
+    
+    allRows.forEach((row) => {
+        // Only number rows that have actual place data
+        if (hasPlaceValue(row)) {
+            placeNumber++;
+            row.dataset.placeNumber = String(placeNumber);
+            
+            // Update the place icon SVG with new number
+            const placeIcon = row.querySelector('.place-icon');
+            if (placeIcon) {
+                placeIcon.outerHTML = createPlaceIcon(placeNumber);
+            }
+        } else {
+            // Empty template rows don't get numbered
+            row.dataset.placeNumber = '0';
+            
+            // Update the place icon SVG to show placeholder (0)
+            const placeIcon = row.querySelector('.place-icon');
+            if (placeIcon) {
+                placeIcon.outerHTML = createPlaceIcon(0);
+            }
+        }
+    });
+
+    syncMapMarkers();
+    return placeNumber;
+}
+
+function syncMapMarkers() {
+    if (!map || !placeMarkersLayer) {
+        return;
+    }
+
+    placeMarkersLayer.clearLayers();
+    let placeMarkerCount = 0;
+
+    const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+    allRows.forEach((row) => {
+        if (!hasPlaceValue(row)) {
+            return;
+        }
+
+        const lat = Number.parseFloat(row.dataset.markerLat);
+        const lng = Number.parseFloat(row.dataset.markerLng);
+        const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(placeNumber) || placeNumber <= 0) {
+            return;
+        }
+
+        const markerLabel = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
+        const customIcon = L.icon({
+            iconUrl: getSVGDataURL(createMapMarkerSVG(placeNumber)),
+            iconSize: [35, 41],
+            iconAnchor: [17.5, 41],
+            popupAnchor: [0, -41]
+        });
+
+        L.marker([lat, lng], { icon: customIcon })
+            .bindPopup(markerLabel)
+            .addTo(placeMarkersLayer);
+        placeMarkerCount++;
+    });
+
+    if (defaultMapMarker) {
+        if (placeMarkerCount > 0) {
+            if (map.hasLayer(defaultMapMarker)) {
+                map.removeLayer(defaultMapMarker);
+            }
+        } else if (!map.hasLayer(defaultMapMarker)) {
+            defaultMapMarker.addTo(map);
+        }
+    }
+}
+
+function createMapMarkerSVG(placeNumber = null) {
+    // SVG marker with optional number for map markers
+    if (placeNumber !== null && placeNumber > 0) {
+        return `
+            <svg width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
+                <circle cx="17.5" cy="16.5" r="9.5" fill="#E6E6E8"/>
+                <text x="17.5" y="21" text-anchor="middle" font-size="13" font-weight="bold" font-family="Segoe UI, sans-serif" fill="#232C22">${placeNumber}</text>
+            </svg>
+        `;
+    }
+    // Default marker without number for default location
+    return `
+        <svg width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
+            <circle cx="17.5" cy="16.5" r="9.5" fill="#E6E6E8"/>
+        </svg>
+    `;
+}
+
+function getSVGDataURL(svgString) {
+    const encoded = encodeURIComponent(svgString);
+    return `data:image/svg+xml,${encoded}`;
+}
+
+function parseGoogleMapsURL(url) {
+    try {
+        // Extract place name from URL path
+        // Format: /maps/place/PLACE_NAME/@coordinates
+        const placeMatch = url.match(/\/maps\/place\/([^/@]+)/);
+        let placeName = 'Unknown Location';
+        
+        if (placeMatch) {
+            placeName = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
+        }
+
+        // Extract actual place coordinates from 3d (latitude) and 4d (longitude) parameters
+        // Format: 3d35.6425151!4d139.6991605
+        const coordMatch = url.match(/!3d(-?\d+\.?\d+)!4d(-?\d+\.?\d+)/);
+        if (!coordMatch) return null;
+
+        const lat = parseFloat(coordMatch[1]);
+        const lng = parseFloat(coordMatch[2]);
+
+        // Validate that coordinates are reasonable
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            console.warn('Invalid coordinates parsed from URL:', coordMatch[1], coordMatch[2]);
+            return null;
+        }
+
+        console.log('Parsed location:', { lat, lng, name: placeName }); // Debug log
+        return { lat, lng, name: placeName };
+    } catch (error) {
+        console.error('Error parsing Google Maps URL:', error);
+        return null;
+    }
+}
+
+function addMapMarker(lat, lng, name, placeNumber = null) {
+    if (!map) return;
+
+    const customIcon = L.icon({
+        iconUrl: getSVGDataURL(createMapMarkerSVG(placeNumber)),
+        iconSize: [35, 41],
+        iconAnchor: [17.5, 41],
+        popupAnchor: [0, -41]
+    });
+
+    L.marker([lat, lng], { icon: customIcon })
+        .bindPopup(name)
+        .addTo(map);
+
+    // Pan to the new marker
+    map.setView([lat, lng], 16);
+}
 
 function initializeMap() {
     const mapContainer = document.getElementById('eventMap');
@@ -17,35 +175,42 @@ function initializeMap() {
         return;
     }
 
-    map = new google.maps.Map(mapContainer, {
-        zoom: 12,
-        center: defaultLocation,
-        mapTypeControl: true,
-        fullscreenControl: true,
-        streetViewControl: false,
-        styles: [
-            {
-                featureType: 'all',
-                elementType: 'labels.text.fill',
-                stylers: [{ color: '#232C22' }]
-            },
-            {
-                featureType: 'water',
-                elementType: 'geometry.fill',
-                stylers: [{ color: '#d3d3d3' }]
-            }
-        ]
+    // Initialize Leaflet map
+    map = L.map('eventMap').setView([defaultLocation.lat, defaultLocation.lng], 18);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Create custom marker icon
+    const customIcon = L.icon({
+        iconUrl: getSVGDataURL(createMapMarkerSVG()),
+        iconSize: [35, 41],
+        iconAnchor: [17.5, 41],
+        popupAnchor: [0, -41]
     });
 
-    // Optional: Add a default marker
-    new google.maps.Marker({
-        position: defaultLocation,
-        map: map,
-        title: 'Tokyo'
-    });
+    // Add marker with custom icon
+    defaultMapMarker = L.marker([defaultLocation.lat, defaultLocation.lng], { icon: customIcon })
+        .bindPopup('KMITL, Bangkok, Thailand')
+        .addTo(map);
+
+    placeMarkersLayer = L.layerGroup().addTo(map);
 }
 
 function createPlaceIcon(placeNumber = 1) {
+    // For empty template rows (placeNumber === 0), show empty shield without number
+    if (placeNumber === 0) {
+        return `
+            <svg class="place-icon" width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
+                <circle cx="17.5" cy="16.5" r="9.5" fill="#E6E6E8"/>
+            </svg>
+        `;
+    }
+    // For numbered places, show shield with number
     return `
         <svg class="place-icon" width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
@@ -55,12 +220,12 @@ function createPlaceIcon(placeNumber = 1) {
     `;
 }
 
-function createPlanRow(placeNumber = 1) {
+function createPlanRow() {
     const planRow = document.createElement('div');
     planRow.className = 'place-item planner-item';
-    planRow.dataset.placeNumber = String(placeNumber);
+    planRow.dataset.placeNumber = '0'; // Placeholder, will be recalculated
     planRow.innerHTML = `
-        ${createPlaceIcon(placeNumber)}
+        ${createPlaceIcon(0)}
         <input 
             type="text" 
             class="input-field section-placeholder planner-place-input"
@@ -129,8 +294,9 @@ function createDay(dayNumber) {
     `;
 
     const rowsContainer = dayElement.querySelector('.planner-day-rows');
-    rowsContainer.appendChild(createPlanRow(1));
+    rowsContainer.appendChild(createPlanRow());
     plannerDaysContainer.appendChild(dayElement);
+    recalculatePlaceNumbers(); // Recalculate all numbers after adding new day
     return dayElement;
 }
 
@@ -148,8 +314,8 @@ function ensureTrailingEmptyRow(dayElement) {
     const lastRow = rows[rows.length - 1];
 
     if (!lastRow || hasPlaceValue(lastRow)) {
-        const nextPlaceNumber = rows.length + 1;
-        dayElement.querySelector('.planner-day-rows').appendChild(createPlanRow(nextPlaceNumber));
+        dayElement.querySelector('.planner-day-rows').appendChild(createPlanRow());
+        recalculatePlaceNumbers(); // Recalculate all numbers after adding new row
     }
 }
 
@@ -194,14 +360,40 @@ plannerDaysContainer.addEventListener('input', (event) => {
             return;
         }
 
+        const inputValue = target.value.trim();
+
+        if (inputValue.includes('google.com/maps')) {
+            const location = parseGoogleMapsURL(inputValue);
+            if (location) {
+                currentRow.dataset.markerLat = String(location.lat);
+                currentRow.dataset.markerLng = String(location.lng);
+                currentRow.dataset.markerName = location.name;
+                target.value = location.name;
+                if (map) {
+                    map.setView([location.lat, location.lng], 16);
+                }
+            }
+        } else {
+            const hasStoredMarker = currentRow.dataset.markerLat && currentRow.dataset.markerLng;
+            const markerName = currentRow.dataset.markerName || '';
+            if (hasStoredMarker && inputValue !== markerName) {
+                delete currentRow.dataset.markerLat;
+                delete currentRow.dataset.markerLng;
+                delete currentRow.dataset.markerName;
+            }
+        }
+
+        const normalizedInputValue = target.value.trim();
+
         const rows = getRows(currentDay);
         const isLastRow = rows[rows.length - 1] === currentRow;
 
-        if (target.value.trim() !== '' && isLastRow) {
+        if (normalizedInputValue !== '' && isLastRow) {
             ensureTrailingEmptyRow(currentDay);
         }
 
         ensureNextDay(currentDay);
+        recalculatePlaceNumbers();
     }
 
     if (target.classList.contains('planner-expense-input')) {
@@ -245,6 +437,9 @@ plannerDaysContainer.addEventListener('click', (event) => {
 
         if (rows.length === 1) {
             rowElement.querySelector('.planner-place-input').value = '';
+            delete rowElement.dataset.markerLat;
+            delete rowElement.dataset.markerLng;
+            delete rowElement.dataset.markerName;
             rowElement.querySelector('.planner-note-input').value = '';
             rowElement.querySelector('.planner-note-input').classList.add('hidden');
             rowElement.querySelector('.planner-expense-input').value = '';
@@ -254,6 +449,7 @@ plannerDaysContainer.addEventListener('click', (event) => {
         }
 
         ensureTrailingEmptyRow(dayElement);
+        recalculatePlaceNumbers(); // Recalculate all numbers after deletion
         updateTotalExpenses();
     }
 });
