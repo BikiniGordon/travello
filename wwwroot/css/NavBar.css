@@ -1,0 +1,240 @@
+:root {
+    --padding-out: 72px;
+    --logo-size: 32px;
+
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+}
+
+.H1 {
+    font-size: 48px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+.H2 {
+    font-size: 40px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+.H3 {
+    font-size: 33px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+.H4 {
+    font-size: 28px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+.H5 {
+    font-size: 23px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+.H6 {
+    font-size: 18px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.NavBar {
+    display: flex;
+    width: 100%;
+    max-width: 1440px; 
+    padding: var(--space-sm, 16px) var(--space-md, 24px);
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+
+    box-shadow: -2px -2px 4px 0 rgba(192, 192, 192, 0.25) inset, 2px 2px 4px 0 rgba(0, 0, 0, 0.25) inset;
+    backdrop-filter: blur(20px);
+}
+
+.Logo, .TLogo {
+    color: black;
+    font-size: var(--logo-size); 
+    line-height: normal;
+}
+
+.Logo {
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+.TLogo {
+    font-family: "Alex Brush";
+    font-weight: 400;
+}
+
+.RightNav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.CreateEvent {
+    display: flex;
+    padding: var(--space-xs) var(--space-sm);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.20);
+}
+
+.InsiderCreateEvent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.PlusIcon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.NavLink {
+    display: flex;
+    padding: var(--space-xs) var(--space-md);
+    align-items: center;
+    border: 2px solid #333;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.20);
+
+    position: relative;
+}
+
+.ChatButton, .NotiButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ProfilePic {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.ProfilePic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.MenuToggle, .DropdownMenu {
+    display: none;
+}
+
+.DropDownLogo {
+    color: #000;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.InsiderNavLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --padding-out: 16px;
+
+        --space-xs: 6px;
+        --space-sm: 12px;
+        --space-md: 20px;
+        --space-lg: 28px;
+        --space-xl: 40px;
+        --space-2xl: 56px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --logo-size: 24px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+    }
+
+    .h6 {
+        font-size: 16px;
+        font-family: "Segoe UI", sans-serif;
+        font-weight: 600;
+    }
+
+    .InsiderNavLink {
+        display: none;
+    }
+
+    .MenuToggle {
+        display: flex;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .DropdownMenu {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: white;
+        border: 2px solid #333;
+        border-radius: 25px;
+        padding: var(--padding-out);
+        z-index: 1000;
+        
+        display: none; 
+    }
+
+    .DropdownMenu.show {
+        display: block;
+    }
+
+    .MobileIconStack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        align-items: center;
+    }
+}
