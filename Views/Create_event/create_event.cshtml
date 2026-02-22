@@ -7,17 +7,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travello - Create Event</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/create_event.css" asp-append-version="true">
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">@@travello</div>
-            <button class="btn-create-event">
-                <span>+ CREATE EVENT</span>
-            </button>
-        </div>
-    </header>
+    @Html.Partial("_NavBar")
 
     <main class="container">
         <div class="layout">
@@ -73,23 +70,23 @@
                         <label class="text-lg font-semibold text-dark">CATEGORY</label>
                         <span class="text-sm font-regular text-error">*required</span>
                         <div class="tags-container">
-                            <button class="tag-btn">CAMPING</button>
-                            <button class="tag-btn">PHOTOGRAPHY</button>
-                            <button class="tag-btn">RELAX</button>
-                            <button class="tag-btn">SHOPPING</button>
-                            <button class="tag-btn">ADVENTURE</button>
+                            <button class="tag-btn text-sm font-regular default-font">CAMPING</button>
+                            <button class="tag-btn text-sm font-regular default-font">PHOTOGRAPHY</button>
+                            <button class="tag-btn text-sm font-regular default-font">RELAX</button>
+                            <button class="tag-btn text-sm font-regular default-font">SHOPPING</button>
+                            <button class="tag-btn text-sm font-regular default-font">ADVENTURE</button>
                             <button class="tag-btn text-md font-regular add-btn">+</button>
                         </div>
 
                         <label class="text-sm font-regular text-gray">TAG</label>
                         <div class="tags-container">
-                            <button class="tag-btn small">
+                            <button class="tag-btn small text-sm font-regular default-font">
                                 TEST_TAG_1
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
                                     <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
                                 </svg>
                             </button>
-                            <button class="tag-btn small">
+                            <button class="tag-btn small text-sm font-regular default-font">
                                 TEST_TAG_2222
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
                                     <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
@@ -193,7 +190,7 @@
             <div class="map-column">
                 <div id="eventMap" class="map-container"></div>
             </div>
-            <button class="btn-create-event-bottom text-lg font-regular">CREATE EVENT</button>
+            <button class="btn-create-event-bottom text-lg font-regular default-font">Create Event</button>
         </div>
     </main>
     <script src="~/js/create_event.js" asp-append-version="true"></script>
