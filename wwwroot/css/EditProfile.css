@@ -1,0 +1,83 @@
+:root {
+    --logo-size: 32px;
+
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-paddingout: 72px;
+
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+}
+
+.text-sm  { font-size: var(--text-sm); }
+.text-md  { font-size: var(--text-md); }
+.text-xl  { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+.text-4xl { font-size: var(--text-4xl); }
+
+.font-semilight  { font-weight: 300; }
+.font-regular    { font-weight: 400; }
+.font-medium     { font-weight: 500; }
+.font-semibold   { font-weight: 600; }
+.font-bold       { font-weight: 700; }
+
+.CenterContainer {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    margin-top: -80px;
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+    background: url('/images/EditProfileBackground.jpg') no-repeat;
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 32px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 32px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+}
