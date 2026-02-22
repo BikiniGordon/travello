@@ -128,17 +128,33 @@ function parseGoogleMapsURL(url) {
             placeName = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
         }
 
-        // Extract actual place coordinates from 3d (latitude) and 4d (longitude) parameters
-        // Format: 3d35.6425151!4d139.6991605
-        const coordMatch = url.match(/!3d(-?\d+\.?\d+)!4d(-?\d+\.?\d+)/);
-        if (!coordMatch) return null;
+        // Prefer the last !3d..!4d.. pair because URLs can contain multiple pairs.
+        // The first pair is often the map viewport and can cause different places to share one coordinate.
+        const coordPairs = Array.from(url.matchAll(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/g));
 
-        const lat = parseFloat(coordMatch[1]);
-        const lng = parseFloat(coordMatch[2]);
+        let lat;
+        let lng;
+
+        if (coordPairs.length > 0) {
+            const lastPair = coordPairs[coordPairs.length - 1];
+            lat = Number.parseFloat(lastPair[1]);
+            lng = Number.parseFloat(lastPair[2]);
+        } else {
+            // Fallback: links like .../@13.736,100.523,17z
+            const atMatch = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+            if (atMatch) {
+                lat = Number.parseFloat(atMatch[1]);
+                lng = Number.parseFloat(atMatch[2]);
+            }
+        }
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            return null;
+        }
 
         // Validate that coordinates are reasonable
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-            console.warn('Invalid coordinates parsed from URL:', coordMatch[1], coordMatch[2]);
+            console.warn('Invalid coordinates parsed from URL');
             return null;
         }
 
