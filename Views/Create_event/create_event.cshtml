@@ -1,0 +1,203 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travello - Create Event</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/create_event.css" asp-append-version="true">
+</head>
+<body>
+    @Html.Partial("_NavBar")
+
+    <main class="container">
+        <div class="layout">
+            <!-- Left Column -->
+            <div class="form-column">
+                <!-- Upload Photo Section -->
+                <div class="upload-photo">
+                    <div class="photo-placeholder">
+                        <div class="upload-button">
+                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_616_1324)">
+                            <path d="M13.125 9.375V11.875C13.125 12.2065 12.9933 12.5245 12.7589 12.7589C12.5245 12.9933 12.2065 13.125 11.875 13.125H3.125C2.79348 13.125 2.47554 12.9933 2.24112 12.7589C2.0067 12.5245 1.875 12.2065 1.875 11.875V9.375M10.625 5L7.5 1.875M7.5 1.875L4.375 5M7.5 1.875V9.375" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                            <defs>
+                            <clipPath id="clip0_616_1324">
+                            <rect width="15" height="15" fill="white"/>
+                            </clipPath>
+                            </defs>
+                            </svg>
+                            <span class="text-sm font-semilight text-muted">UPLOAD PHOTO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Title -->
+                <div class="event-info-header">
+                    <section class="form-section form-with-note">
+                        <input 
+                            type="text" 
+                            class="input-field section-placeholder"
+                            placeholder="EVENT TITLE"
+                            data-text-size="lg"
+                            data-font-weight="semibold"
+                        >
+                        <p class="text-sm font-regular text-dark">*The event title should be clear and descriptive.</p>
+                    </section>
+
+                    <!-- Detail -->
+                    <section class="form-section">
+                        <textarea 
+                            class="textarea-field auto-resize section-placeholder" 
+                            rows="1"
+                            placeholder="DETAIL"
+                            data-text-size="lg"
+                            data-font-weight="semibold"
+                            oninput="autoResize(this)"
+                        ></textarea>
+                    </section>
+
+
+                    <!-- Category & Tags -->
+                    <section class="catagory-section">
+                        <label class="text-lg font-semibold text-dark">CATEGORY</label>
+                        <span class="text-sm font-regular text-error">*required</span>
+                        <div class="tags-container">
+                            <button class="tag-btn text-sm font-regular default-font">CAMPING</button>
+                            <button class="tag-btn text-sm font-regular default-font">PHOTOGRAPHY</button>
+                            <button class="tag-btn text-sm font-regular default-font">RELAX</button>
+                            <button class="tag-btn text-sm font-regular default-font">SHOPPING</button>
+                            <button class="tag-btn text-sm font-regular default-font">ADVENTURE</button>
+                            <button class="tag-btn text-md font-regular add-btn">+</button>
+                        </div>
+
+                        <label class="text-sm font-regular text-gray">TAG</label>
+                        <div class="tags-container">
+                            <button class="tag-btn small text-sm font-regular default-font">
+                                TEST_TAG_1
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                                    <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
+                                </svg>
+                            </button>
+                            <button class="tag-btn small text-sm font-regular default-font">
+                                TEST_TAG_2222
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                                    <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
+                                </svg>
+                            </button>
+                            <button class="tag-btn text-md font-regular add-btn">+</button>
+                        </div>
+                    </section>
+
+                    <!-- Remaining -->
+                    <section class="form-section form-with-note">
+                        <input 
+                            type="number" 
+                            class="input-field section-placeholder"
+                            placeholder="MAXIMUM NUMBER OF ATTENDEES"
+                            data-text-size="lg"
+                            data-font-weight="semibold"
+                        >
+                        <p class="text-sm font-regular text-dark">*When the number of attendees reaches the limit, registration will be closed automatically.</p>
+                    </section>
+
+                    <!-- Questions for Attendees -->
+                    <section class="form-section">
+                        <textarea 
+                            class="textarea-field auto-resize section-placeholder" 
+                            rows="1"
+                            placeholder="QUESTIONS FOR ATTENDEES"
+                            data-text-size="lg"
+                            data-font-weight="semibold"
+                            oninput="autoResize(this)"
+                        ></textarea>
+                    </section>
+                </div>
+
+                <!-- Date and Time -->
+                <section class="form-section section-group date-time-section">
+                    <div class="input-row">
+                        <label class="text-lg font-semibold text-dark">DATE AND TIME</label>
+                        <div class="date-input-row">
+                            <input type="date" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                            <input type="time" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <label class="text-lg font-semibold text-dark">REGISTRATION OPENS</label>
+                        <input type="date" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                    </div>
+                </section>
+
+                <!-- Location -->
+                <section class="form-section section-group">
+                    <div class="input-row">
+                        <label class="text-lg font-semibold text-dark">LOCATION</label>
+                        <div class="input-with-icon">
+                            <svg class="input-icon" width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12.5001 12.5C13.073 12.5 13.5634 12.296 13.9714 11.8881C14.3794 11.4801 14.5834 10.9896 14.5834 10.4167C14.5834 9.84379 14.3794 9.35334 13.9714 8.94535C13.5634 8.53737 13.073 8.33337 12.5001 8.33337C11.9272 8.33337 11.4367 8.53737 11.0287 8.94535C10.6207 9.35334 10.4167 9.84379 10.4167 10.4167C10.4167 10.9896 10.6207 11.4801 11.0287 11.8881C11.4367 12.296 11.9272 12.5 12.5001 12.5ZM12.5001 20.1563C14.6181 18.2118 16.1893 16.4454 17.2136 14.8568C18.2379 13.2683 18.7501 11.8577 18.7501 10.625C18.7501 8.73268 18.1468 7.1832 16.9402 5.9766C15.7336 4.77001 14.2536 4.16671 12.5001 4.16671C10.7466 4.16671 9.26657 4.77001 8.05998 5.9766C6.85338 7.1832 6.25008 8.73268 6.25008 10.625C6.25008 11.8577 6.76223 13.2683 7.78654 14.8568C8.81085 16.4454 10.382 18.2118 12.5001 20.1563ZM12.5001 22.9167C9.70494 20.5382 7.61727 18.329 6.23706 16.2891C4.85685 14.2492 4.16675 12.3612 4.16675 10.625C4.16675 8.02087 5.00442 5.94622 6.67977 4.40108C8.35512 2.85594 10.2952 2.08337 12.5001 2.08337C14.7049 2.08337 16.645 2.85594 18.3204 4.40108C19.9957 5.94622 20.8334 8.02087 20.8334 10.625C20.8334 12.3612 20.1433 14.2492 18.7631 16.2891C17.3829 18.329 15.2952 20.5382 12.5001 22.9167Z" fill="#1D1B20"/>
+                            </svg>
+                            <input type="text" class="input-field location-field" placeholder="Enter location" data-text-size="md" data-font-weight="regular">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Trip Rules and Register Day-->
+                <section class="form-section section-group section-xl-gap">
+                    <textarea 
+                        class="textarea-field auto-resize section-placeholder" 
+                        rows="1"
+                        placeholder="TRIP RULES"
+                        data-text-size="lg"
+                        data-font-weight="semibold"
+                        oninput="autoResize(this)"
+                    ></textarea>
+                    <div class="input-row">
+                        <label class="text-lg font-semibold text-dark">IMPORTANT THING TO PACK</label>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="add-items" name="pack">
+                            <input type="text" class="input-field" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Event Plan -->
+                <section class="form-section event-plan-section">
+                    <label class="text-lg font-semibold text-dark">EVENT PLAN</label>
+                    <div class="event-plan-detail">
+                        <div id="eventPlannerDays"></div>
+
+                        <!-- Expenses Summary -->
+                        <div class="expenses-summary">
+                            <label class="text-lg font-regular text-dark">Expenses Summary</label>
+                            <div class="expense-row">
+                                <span class="text-lg font-regular">Total balance</span>
+                                <span id="plannerTotalAmount" class="text-lg font-regular text-dark">$ 0</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column - Map -->
+            <div class="map-column">
+                <div id="eventMap" class="map-container"></div>
+            </div>
+            <button class="btn-create-event-bottom text-lg font-regular default-font">Create Event</button>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="~/js/create_event.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', initializeMap);
+    </script>
+</body>
+</html>

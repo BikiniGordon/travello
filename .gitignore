@@ -1,0 +1,26 @@
+# Build outputs
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Development settings (may contain secrets)
+appsettings.Development.json
+appsettings.Local.json
+
+# OS files
+.DS_Store
+Thumbs.db
