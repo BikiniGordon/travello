@@ -215,3 +215,240 @@ div.search-block p{
     border-radius: 50px;
     object-fit: cover;
 }
+
+/* =========================================
+   ฝั่งขวา (Chat Room & Messages)
+========================================= */
+
+/* ปรับ Header ฝั่งขวา */
+.chat-room-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; /* ดันซ้าย-ขวา */
+    width: 100%; 
+    height: 62px;
+    padding: 0 24px;
+    box-sizing: border-box; /* ให้ padding อยู่ในกรอบ */
+    background-color: #D6D6D6; /* สีเทาตามแบบ */
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+}
+
+#chat-room-title {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+}
+
+#chat-room-setting-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+/* พื้นที่ข้อความตรงกลาง */
+.chat-body {
+    flex: 1; 
+    background-color: #FFFFFF;
+    padding: 24px;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* ระยะห่างระหว่างข้อความ */
+}
+
+/* แถวข้อความปกติ */
+.message-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start; 
+}
+
+/* ดันข้อความของเราไปทางขวา */
+.message-row.my-message {
+    justify-content: flex-end;
+}
+
+.talker {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.message-bubble {
+    background-color: #CEE5E2; /* สีเขียวมิ้นต์ */
+    padding: 12px 20px;
+    border-radius: 20px;
+    border-top-left-radius: 4px; /* มุมแหลมชี้ไปหารูปโปรไฟล์ */
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    color: #000;
+    line-height: 1.5;
+    max-width: 60%; 
+}
+
+.poll-container {
+    background-color: #F6F6F6;
+    border-radius: 20px;
+    padding: 24px;
+    width: 380px;
+    position: relative; 
+}
+
+.poll-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.poll-timer {
+    font-family: 'Segoe UI', sans-serif;
+    color: #FF4B4B; 
+    font-size: 14px;
+    margin: 0 0 24px 0;
+}
+
+.poll-option {
+    margin-bottom: 20px;
+}
+
+.poll-option-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.poll-radio-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.poll-radio {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid #000;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.poll-label {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.poll-voter-avatars {
+    display: flex;
+    flex-direction: row-reverse; 
+}
+
+.voter-img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: -8px; 
+    border: 2px solid #F6F6F6; 
+}
+
+.poll-progress-bg {
+    width: 100%;
+    height: 10px;
+    background-color: #E2E2E2;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.poll-progress-fill {
+    height: 100%;
+    background-color: #CEE5E2; 
+    border-radius: 10px;
+}
+
+.poll-creator-badge {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00A3FF, #0056FF); /* วงกลมสีฟ้า */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.poll-creator-badge img {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* =========================================
+   แถบพิมพ์ข้อความ (Message Input Box)
+========================================= */
+.message-box {
+    display: flex;
+    align-items: center;
+    background-color: #D6D6D6;
+    padding: 16px 24px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    gap: 16px;
+    height: 70px;
+    box-sizing: border-box;
+}
+
+.input-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.action-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+#message-input {
+    flex: 1; 
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    color: #333;
+}
+
+#message-input::placeholder {
+    color: #888;
+}
+
+.send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #CEE5E2;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.send-btn img {
+    width: 20px;
+    height: 20px;
+}

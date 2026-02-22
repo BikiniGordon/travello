@@ -43,14 +43,96 @@
             }
         </div>
         <div class="chat-room">
+            
             <div class="chat-room-header">
-                <h4 id="chat-room-title">chat_nameรอดึง</h4>
+                <h4 id="chat-room-title">ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว</h4>
                 <img id="chat-room-setting-icon" src="~/images/setting_icon.svg"/>
             </div>
-            <div class="chat-body">
-                <img class="talker" src="~/images/chat_img_background.svg"/>
+
+            <div class="chat-body" id="chat-messages-container">
+                
+                <div class="message-row other-message">
+                    <img class="talker" src="~/images/chat_img_background.svg"/>
+                    <div class="message-bubble">
+                        Everest mountain<br>
+                        Everest mountain<br>
+                        Everest mountain
+                    </div>
+                </div>
+
+                <div class="message-row my-message poll-message-row">
+                    <div class="poll-container">
+                        <h4 class="poll-title">What will we eat the morning of the trip?</h4>
+                        <p class="poll-timer">Poll end up in 5 hours</p>
+
+                        <div class="poll-option">
+                            <div class="poll-option-top">
+                                <div class="poll-radio-group">
+                                    <div class="poll-radio"></div>
+                                    <span class="poll-label">Ramen</span>
+                                </div>
+                                <div class="poll-voter-avatars">
+                                    <img src="~/images/chat_img_background.svg" class="voter-img" />
+                                    <img src="~/images/chat_img_background.svg" class="voter-img" />
+                                    <img src="~/images/chat_img_background.svg" class="voter-img" />
+                                </div>
+                            </div>
+                            <div class="poll-progress-bg">
+                                <div class="poll-progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="poll-option">
+                            <div class="poll-option-top">
+                                <div class="poll-radio-group">
+                                    <div class="poll-radio"></div>
+                                    <span class="poll-label">Ramen</span>
+                                </div>
+                                <div class="poll-voter-avatars">
+                                    <img src="~/images/chat_img_background.svg" class="voter-img" />
+                                    <img src="~/images/chat_img_background.svg" class="voter-img" />
+                                </div>
+                            </div>
+                            <div class="poll-progress-bg">
+                                <div class="poll-progress-fill" style="width: 50%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="poll-option">
+                            <div class="poll-option-top">
+                                <div class="poll-radio-group">
+                                    <div class="poll-radio"></div>
+                                    <span class="poll-label">Ramen</span>
+                                </div>
+                                <div class="poll-voter-avatars">
+                                    <img src="~/images/chat_img_background.svg" class="voter-img" />
+                                </div>
+                            </div>
+                            <div class="poll-progress-bg">
+                                <div class="poll-progress-fill" style="width: 20%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="poll-creator-badge">
+                            <img src="~/images/chat_img_background.svg" alt="Creator" />
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
             <div class="message-box">
+                <div class="input-actions">
+                    <svg class="action-icon" alt="add file" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-plus-icon lucide-file-plus"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M9 15h6"/><path d="M12 18v-6"/></svg>
+                    <svg class="action-icon" alt="add photo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-plus-icon lucide-image-plus"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/></svg>
+                    <svg class="action-icon" alt="add photo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera-icon lucide-camera"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg>
+                </div>
+                
+                <input type="text" id="message-input" placeholder="Type your message..." />
+                
+                <button class="send-btn" onclick="sendMessage()">
+                    <img src="~/images/send_icon.svg" alt="Send" />
+                </button>
             </div>  
         </div>
     </div>

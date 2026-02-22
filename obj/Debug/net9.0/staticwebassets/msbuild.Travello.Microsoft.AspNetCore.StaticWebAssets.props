@@ -12,8 +12,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>0f88m8j1i2</Fingerprint>
-      <Integrity>ZL3ac2rya0vlrxdVJvgWRCerKgeIYXo0WON/3lf3Keg=</Integrity>
+      <Fingerprint>2g2wonqzfp</Fingerprint>
+      <Integrity>YgjAQyQo2GlH23l02xKupDSBRpNnamTY8ssxyUZtp3Y=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</OriginalItemSpec>
@@ -144,6 +144,24 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\search_icon.svg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\send_icon.svg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>Travello</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/Travello</BasePath>
+      <RelativePath>images/send_icon.svg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>9snd6sujgg</Fingerprint>
+      <Integrity>qQ+wfFPap2gPJtxe3mcBB7ruARZFtKSDuZIV6W9gl+w=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\send_icon.svg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\setting_icon.svg'))">
       <SourceType>Package</SourceType>
       <SourceId>Travello</SourceId>
@@ -156,8 +174,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>peeiixx4xz</Fingerprint>
-      <Integrity>cZ+wyETwfnZMR6oHNFfS8HttQ19b7P+MlXrVHju+IZI=</Integrity>
+      <Fingerprint>rpxva6ysop</Fingerprint>
+      <Integrity>b/5RXxfqOsV1Q4Iy8NLkZWJoTbE39jZMtJxu2l66Tj0=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\setting_icon.svg'))</OriginalItemSpec>
