@@ -1,3 +1,10 @@
+@* toggle tag
+add/remove tag
+add btn
+tag btn bg color
+upload photo
+ *@
+
 @{
     Layout = null;
 }
@@ -12,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/create_event.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true">
 </head>
 <body>
     @Html.Partial("_NavBar")
@@ -105,6 +112,7 @@
                                 type="number" 
                                 class="input-field section-placeholder"
                                 placeholder="Enter number"
+                                min="0"
                                 data-text-size="md"
                                 data-font-weight="regular"
                             >
@@ -212,7 +220,7 @@
         </div>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <script src="~/js/create_event.js" asp-append-version="true"></script>
+    <script src="~/js/CreateEvent.js" asp-append-version="true"></script>
     <script>
         document.addEventListener('DOMContentLoaded', initializeMap);
     </script>
