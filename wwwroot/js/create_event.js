@@ -242,6 +242,35 @@ function createPlaceIcon(placeNumber = 1) {
     `;
 }
 
+function createExpenseRow() {
+    const expenseRow = document.createElement('div');
+    expenseRow.className = 'planner-expense-row';
+    expenseRow.innerHTML = `
+        <input 
+            type="text" 
+            class="input-field section-placeholder planner-expense-name-input" 
+            placeholder="Expense name" 
+            data-text-size="sm" 
+            data-font-weight="regular"
+        >
+        <div class="price-input">
+            <input 
+                type="number" 
+                class="input-field section-placeholder planner-expense-input" 
+                placeholder="0" 
+                min="0" 
+                step="0.01" 
+                data-text-size="sm" 
+                data-font-weight="regular"
+            >
+            <span>$</span>
+        </div>
+        <button type="button" class="action-btn planner-expense-delete-btn" title="Delete expense" aria-label="Delete expense">✕</button>
+    `;
+
+    return expenseRow;
+}
+
 function createPlanRow() {
     const planRow = document.createElement('div');
     planRow.className = 'place-item planner-item';
@@ -296,18 +325,7 @@ function createPlanRow() {
                 data-font-weight="regular"
                 oninput="autoResize(this)"
             ></textarea>
-            <div class="price-input planner-expense-wrap hidden">
-                <input 
-                    type="number" 
-                    class="input-field section-placeholder planner-expense-input" 
-                    placeholder="0" 
-                    min="0" 
-                    step="0.01" 
-                    data-text-size="sm" 
-                    data-font-weight="regular"
-                >
-                <span>$</span>
-            </div>
+            <div class="planner-expense-wrap hidden"></div>
         </div>
     `;
 
@@ -493,8 +511,8 @@ plannerDaysContainer.addEventListener('click', (event) => {
     const noteBtn = target.closest('.planner-note-btn');
     if (noteBtn) {
         const noteInput = rowElement.querySelector('.planner-note-input');
-        noteInput.classList.toggle('hidden');
-        if (!noteInput.classList.contains('hidden')) {
+        if (noteInput.classList.contains('hidden')) {
+            noteInput.classList.remove('hidden');
             noteInput.focus();
             autoResize(noteInput);
         }
@@ -504,10 +522,28 @@ plannerDaysContainer.addEventListener('click', (event) => {
     const expenseBtn = target.closest('.planner-expense-btn');
     if (expenseBtn) {
         const expenseWrap = rowElement.querySelector('.planner-expense-wrap');
-        expenseWrap.classList.toggle('hidden');
-        if (!expenseWrap.classList.contains('hidden')) {
-            expenseWrap.querySelector('.planner-expense-input').focus();
+        expenseWrap.classList.remove('hidden');
+        const newExpenseRow = createExpenseRow();
+        expenseWrap.appendChild(newExpenseRow);
+        newExpenseRow.querySelector('.planner-expense-name-input').focus();
+        updateTotalExpenses();
+        return;
+    }
+
+    const expenseDeleteBtn = target.closest('.planner-expense-delete-btn');
+    if (expenseDeleteBtn) {
+        const expenseRow = expenseDeleteBtn.closest('.planner-expense-row');
+        const expenseWrap = expenseDeleteBtn.closest('.planner-expense-wrap');
+
+        if (expenseRow) {
+            expenseRow.remove();
         }
+
+        if (expenseWrap && expenseWrap.querySelectorAll('.planner-expense-row').length === 0) {
+            expenseWrap.classList.add('hidden');
+        }
+
+        updateTotalExpenses();
         return;
     }
 
@@ -523,8 +559,9 @@ plannerDaysContainer.addEventListener('click', (event) => {
             delete rowElement.dataset.markerName;
             rowElement.querySelector('.planner-note-input').value = '';
             rowElement.querySelector('.planner-note-input').classList.add('hidden');
-            rowElement.querySelector('.planner-expense-input').value = '';
-            rowElement.querySelector('.planner-expense-wrap').classList.add('hidden');
+            const expenseWrap = rowElement.querySelector('.planner-expense-wrap');
+            expenseWrap.innerHTML = '';
+            expenseWrap.classList.add('hidden');
         } else {
             rowElement.remove();
         }

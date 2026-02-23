@@ -818,6 +818,26 @@ flex-grow: 0; */
     gap: var(--space-xs);
 }
 
+.planner-expense-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.planner-expense-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.planner-expense-delete-btn {
+    min-width: 28px;
+    min-height: 28px;
+    font-size: 14px;
+    line-height: 1;
+}
+
 .planner-note-input {
     width: 100%;
     resize: none;
