@@ -99,26 +99,31 @@
 
                     <!-- Remaining -->
                     <section class="form-section form-with-note">
-                        <input 
-                            type="number" 
-                            class="input-field section-placeholder"
-                            placeholder="MAXIMUM NUMBER OF ATTENDEES"
-                            data-text-size="lg"
-                            data-font-weight="semibold"
-                        >
+                        <div class="input-row">
+                            <label class="text-lg font-semibold text-dark">MAXIMUM NUMBER OF ATTENDEES</label>
+                            <input 
+                                type="number" 
+                                class="input-field section-placeholder"
+                                placeholder="Enter number"
+                                data-text-size="md"
+                                data-font-weight="regular"
+                            >
+                        </div>
                         <p class="text-sm font-regular text-dark">*When the number of attendees reaches the limit, registration will be closed automatically.</p>
                     </section>
 
                     <!-- Questions for Attendees -->
                     <section class="form-section">
-                        <textarea 
-                            class="textarea-field auto-resize section-placeholder" 
-                            rows="1"
-                            placeholder="QUESTIONS FOR ATTENDEES"
-                            data-text-size="lg"
-                            data-font-weight="semibold"
-                            oninput="autoResize(this)"
-                        ></textarea>
+                        <div class="input-row">
+                            <label class="text-lg font-semibold text-dark">REGISTRATION QUESTIONS</label>                            <textarea 
+                                class="textarea-field auto-resize section-placeholder" 
+                                rows="1"
+                                placeholder="Enter questions for attendees"
+                                data-text-size="md"
+                                data-font-weight="regular"
+                                oninput="autoResize(this)"
+                            ></textarea>
+                        </div>
                     </section>
                 </div>
 
