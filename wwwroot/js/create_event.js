@@ -5,6 +5,7 @@ function autoResize(textarea) {
 
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
+const importantPackRows = document.getElementById('importantPackRows');
 
 // Leaflet Map initialization
 let map;
@@ -366,6 +367,43 @@ function updateTotalExpenses() {
     plannerTotalAmount.textContent = `$ ${total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }
 
+function getPackRows() {
+    if (!importantPackRows) {
+        return [];
+    }
+
+    return Array.from(importantPackRows.querySelectorAll('.pack-item'));
+}
+
+function hasPackValue(rowElement) {
+    const packInput = rowElement.querySelector('.pack-input');
+    return Boolean(packInput && packInput.value.trim() !== '');
+}
+
+function createPackRow() {
+    const packRow = document.createElement('div');
+    packRow.className = 'checkbox-item pack-item';
+    packRow.innerHTML = `
+        <input type="checkbox" class="pack-checkbox" name="pack">
+        <input type="text" class="input-field pack-input" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
+    `;
+
+    return packRow;
+}
+
+function ensureTrailingEmptyPackRow() {
+    if (!importantPackRows) {
+        return;
+    }
+
+    const rows = getPackRows();
+    const lastRow = rows[rows.length - 1];
+
+    if (!lastRow || hasPackValue(lastRow)) {
+        importantPackRows.appendChild(createPackRow());
+    }
+}
+
 plannerDaysContainer.addEventListener('input', (event) => {
     const target = event.target;
 
@@ -469,6 +507,29 @@ plannerDaysContainer.addEventListener('click', (event) => {
         updateTotalExpenses();
     }
 });
+
+if (importantPackRows) {
+    importantPackRows.addEventListener('input', (event) => {
+        const target = event.target;
+        if (!target.classList.contains('pack-input')) {
+            return;
+        }
+
+        const currentRow = target.closest('.pack-item');
+        if (!currentRow) {
+            return;
+        }
+
+        const rows = getPackRows();
+        const isLastRow = rows[rows.length - 1] === currentRow;
+
+        if (target.value.trim() !== '' && isLastRow) {
+            ensureTrailingEmptyPackRow();
+        }
+    });
+
+    ensureTrailingEmptyPackRow();
+}
 
 // Initialize planner with Day 1
 document.addEventListener('DOMContentLoaded', () => {

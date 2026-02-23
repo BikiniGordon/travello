@@ -667,6 +667,16 @@ flex-grow: 0; */
     gap: var(--space-sm);
 }
 
+.important-pack-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.checkbox-item.pack-item .pack-input {
+    flex: 1;
+}
+
 .checkbox-item input[type="checkbox"] {
     appearance: none;
     width: 18px;
