@@ -3,6 +3,17 @@ function autoResize(textarea) {
     textarea.style.height = textarea.scrollHeight + 'px';
 }
 
+function initializeTagButtons() {
+    const tagButtons = document.querySelectorAll('.tag-btn:not(.add-btn)');
+
+    tagButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            button.classList.toggle('is-selected');
+        });
+    });
+}
+
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
 const importantPackRows = document.getElementById('importantPackRows');
@@ -750,6 +761,8 @@ if (importantPackRows) {
 
 // Initialize planner with Day 1
 document.addEventListener('DOMContentLoaded', () => {
+    initializeTagButtons();
+
     if (plannerDaysContainer) {
         createDay(1);
     }
