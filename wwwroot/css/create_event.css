@@ -679,11 +679,64 @@ flex-grow: 0; */
 .important-pack-rows {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-md);
 }
 
 .checkbox-item.pack-item .pack-input {
     flex: 1;
+}
+
+/* Drag and Drop Styles */
+.drag-handle {
+    width: calc(var(--space-md) - 4px);
+    height: var(--space-md);
+    border: none;
+    background: transparent;
+    cursor: grab;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+/* Hide drag handle for empty template rows */
+.planner-item[data-place-number="0"] .drag-handle,
+.pack-item:last-child .drag-handle {
+    visibility: hidden;
+    cursor: default;
+}
+
+.drag-handle:hover {
+    opacity: 0.8;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.planner-item.dragging,
+.pack-item.dragging {
+    opacity: 0.5;
+    background-color: rgba(132, 156, 132, 0.1);
+    border-radius: 4px;
+}
+
+.planner-item.drag-over,
+.pack-item.drag-over {
+    border-top: 2px solid var(--accent);
+    padding-top: 4px;
+}
+
+.place-item {
+    display: grid;
+    grid-template-columns: 20px var(--space-xl) 1fr auto;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    margin-bottom: var(--space-xl);
+    transition: all 0.2s;
 }
 
 .checkbox-item input[type="checkbox"] {
@@ -737,14 +790,6 @@ flex-grow: 0; */
     max-width: 160px;
 }
 
-.place-item {
-    display: grid;
-    grid-template-columns: var(--space-xl) 1fr auto;
-    gap: var(--space-sm);
-    align-items: flex-start;
-    margin-bottom: var(--space-xl);
-}
-
 .planner-day-rows .planner-item {
     position: relative;
 }
@@ -752,7 +797,7 @@ flex-grow: 0; */
 .planner-day-rows .planner-item::after {
     content: '';
     position: absolute;
-    left: 17px;
+    left: calc(20px + var(--space-sm) + (var(--space-xl) / 2) - 1px);
     top: 41px;
     height: calc(100% + var(--space-xl) - 49px);
     border-left: 2px dashed rgba(30, 30, 30, 0.35);
@@ -766,7 +811,7 @@ flex-grow: 0; */
 
 
 .planner-details {
-    grid-column: 2 / 3;
+    grid-column: 3 / 4;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -794,6 +839,7 @@ flex-grow: 0; */
 .place-icon {
     /* color: #999; */
     flex-shrink: 0;
+    justify-self: center;
 }
 
 .place-input {
@@ -1007,12 +1053,12 @@ flex-grow: 0; */
 
 @media (max-width: 768px) {
     .place-item {
-        grid-template-columns: var(--space-xl) 1fr;
-        gap: var(--space-xs);
+        grid-template-columns: 20px var(--space-xl) 1fr;
+        gap: var(--space-sm);
     }
 
     .place-actions {
-        grid-column: 2;
+        grid-column: 3;
         gap: var(--space-sm);
         margin-top: var(--space-xs);
     }
@@ -1023,13 +1069,32 @@ flex-grow: 0; */
     }
 
     .planner-details {
+        grid-column: 3;
         margin-top: var(--space-xs);
+    }
+    
+    .planner-day-rows .planner-item::after {
+        left: calc(20px + var(--space-sm) + (var(--space-xl) / 2) - 1px);
     }
 }
 
 @media (max-width: 480px) {
     .place-item {
-        grid-template-columns: 28px 1fr;
+        grid-template-columns: 16px 24px 1fr;
+        gap: var(--space-sm);
+    }
+    
+    .drag-handle {
+        width: 16px;
+    }
+    
+    .drag-handle svg {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .planner-day-rows .planner-item::after {
+        left: calc(16px + var(--space-sm) + (24px / 2) - 1px);
     }
 
     .place-icon {

@@ -7,6 +7,11 @@ const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
 const importantPackRows = document.getElementById('importantPackRows');
 
+// Drag and drop state
+let draggedElement = null;
+let draggedType = null; // 'plan' or 'pack'
+let draggedSourceDay = null;
+
 // Leaflet Map initialization
 let map;
 let placeMarkersLayer;
@@ -241,7 +246,18 @@ function createPlanRow() {
     const planRow = document.createElement('div');
     planRow.className = 'place-item planner-item';
     planRow.dataset.placeNumber = '0'; // Placeholder, will be recalculated
+    planRow.draggable = true;
     planRow.innerHTML = `
+        <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6" cy="3" r="1.5" fill="#666"/>
+                <circle cx="10" cy="3" r="1.5" fill="#666"/>
+                <circle cx="6" cy="8" r="1.5" fill="#666"/>
+                <circle cx="10" cy="8" r="1.5" fill="#666"/>
+                <circle cx="6" cy="13" r="1.5" fill="#666"/>
+                <circle cx="10" cy="13" r="1.5" fill="#666"/>
+            </svg>
+        </button>
         ${createPlaceIcon(0)}
         <input 
             type="text" 
@@ -383,7 +399,18 @@ function hasPackValue(rowElement) {
 function createPackRow() {
     const packRow = document.createElement('div');
     packRow.className = 'checkbox-item pack-item';
+    packRow.draggable = true;
     packRow.innerHTML = `
+        <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6" cy="3" r="1.5" fill="#666"/>
+                <circle cx="10" cy="3" r="1.5" fill="#666"/>
+                <circle cx="6" cy="8" r="1.5" fill="#666"/>
+                <circle cx="10" cy="8" r="1.5" fill="#666"/>
+                <circle cx="6" cy="13" r="1.5" fill="#666"/>
+                <circle cx="10" cy="13" r="1.5" fill="#666"/>
+            </svg>
+        </button>
         <input type="checkbox" class="pack-checkbox" name="pack">
         <input type="text" class="input-field pack-input" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
     `;
@@ -529,6 +556,159 @@ if (importantPackRows) {
     });
 
     ensureTrailingEmptyPackRow();
+}
+
+// Drag and drop handlers
+function handleDragStart(event) {
+    draggedElement = event.target;
+    draggedType = draggedElement.classList.contains('planner-item') ? 'plan' : 'pack';
+    draggedSourceDay = draggedType === 'plan' ? draggedElement.closest('.event-plan-day') : null;
+    
+    // Don't allow dragging empty template rows
+    if (draggedType === 'plan' && !hasPlaceValue(draggedElement)) {
+        event.preventDefault();
+        return;
+    }
+    if (draggedType === 'pack' && !hasPackValue(draggedElement)) {
+        event.preventDefault();
+        return;
+    }
+    
+    draggedElement.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', draggedElement.innerHTML);
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    
+    const target = event.target.closest('.planner-item, .pack-item');
+    if (!target || target === draggedElement) {
+        return;
+    }
+    
+    // Check if same type
+    const targetType = target.classList.contains('planner-item') ? 'plan' : 'pack';
+    if (targetType !== draggedType) {
+        return;
+    }
+    
+    // Allow dropping on the empty pack template row (we insert before it)
+    
+    target.classList.add('drag-over');
+}
+
+function handleDragLeave(event) {
+    const target = event.target.closest('.planner-item, .pack-item');
+    if (target) {
+        target.classList.remove('drag-over');
+    }
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const target = event.target.closest('.planner-item, .pack-item');
+    if (!target || target === draggedElement) {
+        return;
+    }
+    
+    // Check if same type
+    const targetType = target.classList.contains('planner-item') ? 'plan' : 'pack';
+    if (targetType !== draggedType) {
+        return;
+    }
+    
+    target.classList.remove('drag-over');
+    
+    const isPlanTemplateTarget = draggedType === 'plan' && !hasPlaceValue(target);
+    const isPackTemplateTarget = draggedType === 'pack' && !hasPackValue(target);
+
+    const targetContainer = target.parentNode;
+    const sameContainer = targetContainer === draggedElement.parentNode;
+
+    if (isPlanTemplateTarget) {
+        // Insert before the template row so it stays at the bottom.
+        targetContainer.insertBefore(draggedElement, target);
+    } else if (isPackTemplateTarget) {
+        // Insert before the pack template row so it stays at the bottom.
+        targetContainer.insertBefore(draggedElement, target);
+    } else if (sameContainer) {
+        // Reorder within the same container.
+        const allItems = Array.from(targetContainer.children);
+        const draggedIndex = allItems.indexOf(draggedElement);
+        const targetIndex = allItems.indexOf(target);
+        if (draggedIndex < targetIndex) {
+            targetContainer.insertBefore(draggedElement, target.nextSibling);
+        } else {
+            targetContainer.insertBefore(draggedElement, target);
+        }
+    } else {
+        // Move across days into the target container.
+        targetContainer.insertBefore(draggedElement, target);
+    }
+
+    if (draggedType === 'plan') {
+        if (draggedSourceDay) {
+            ensureTrailingEmptyRow(draggedSourceDay);
+        }
+        const targetDay = draggedElement.closest('.event-plan-day');
+        if (targetDay) {
+            ensureTrailingEmptyRow(targetDay);
+        }
+        recalculatePlaceNumbers();
+    }
+}
+
+function handleDragEnd(event) {
+    event.target.classList.remove('dragging');
+    
+    // Remove all drag-over classes
+    document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    
+    draggedElement = null;
+    draggedType = null;
+    draggedSourceDay = null;
+}
+
+// Attach drag event listeners to plan rows container
+if (plannerDaysContainer) {
+    plannerDaysContainer.addEventListener('dragstart', (event) => {
+        if (event.target.classList.contains('planner-item')) {
+            handleDragStart(event);
+        }
+    });
+    
+    plannerDaysContainer.addEventListener('dragover', handleDragOver);
+    plannerDaysContainer.addEventListener('dragleave', handleDragLeave);
+    plannerDaysContainer.addEventListener('drop', handleDrop);
+    plannerDaysContainer.addEventListener('dragend', (event) => {
+        if (event.target.classList.contains('planner-item')) {
+            handleDragEnd(event);
+        }
+    });
+}
+
+// Attach drag event listeners to pack rows container
+if (importantPackRows) {
+    importantPackRows.addEventListener('dragstart', (event) => {
+        if (event.target.classList.contains('pack-item')) {
+            handleDragStart(event);
+        }
+    });
+    
+    importantPackRows.addEventListener('dragover', handleDragOver);
+    importantPackRows.addEventListener('dragleave', handleDragLeave);
+    importantPackRows.addEventListener('drop', handleDrop);
+    importantPackRows.addEventListener('dragend', (event) => {
+        if (event.target.classList.contains('pack-item')) {
+            handleDragEnd(event);
+        }
+    });
 }
 
 // Initialize planner with Day 1

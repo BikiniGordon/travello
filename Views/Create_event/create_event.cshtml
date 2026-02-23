@@ -168,7 +168,17 @@
                     <div class="input-row">
                         <label class="text-lg font-semibold text-dark">IMPORTANT THING TO PACK</label>
                         <div id="importantPackRows" class="important-pack-rows">
-                            <div class="checkbox-item pack-item">
+                            <div class="checkbox-item pack-item" draggable="true">
+                                <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="6" cy="3" r="1.5" fill="#666"/>
+                                        <circle cx="10" cy="3" r="1.5" fill="#666"/>
+                                        <circle cx="6" cy="8" r="1.5" fill="#666"/>
+                                        <circle cx="10" cy="8" r="1.5" fill="#666"/>
+                                        <circle cx="6" cy="13" r="1.5" fill="#666"/>
+                                        <circle cx="10" cy="13" r="1.5" fill="#666"/>
+                                    </svg>
+                                </button>
                                 <input type="checkbox" class="pack-checkbox" name="pack">
                                 <input type="text" class="input-field pack-input" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
                             </div>
@@ -186,7 +196,7 @@
                         <div class="expenses-summary">
                             <label class="text-lg font-regular text-dark">Expenses Summary</label>
                             <div class="expense-row">
-                                <span class="text-lg font-regular">Total balance</span>
+                                <span class="text-lg font-regular">Total</span>
                                 <span id="plannerTotalAmount" class="text-lg font-regular text-dark">$ 0</span>
                             </div>
                         </div>
