@@ -17,21 +17,18 @@
     --text-2xl: 40px;
     --text-3xl: 56px;
     --text-4xl: 64px;
-
-    --font-weight-semilight: 300;
-    --font-weight-bold: 700;
-
-    --font-family: "Segoe UI", sans-serif;
 }
 
-.text-sm  { font-size: var(--text-sm); }
-.text-md  { font-size: var(--text-md); }
-.text-xl  { font-size: var(--text-xl); }
-.text-2xl { font-size: var(--text-2xl); }
-.text-3xl { font-size: var(--text-3xl); }
-.text-4xl { font-size: var(--text-4xl); }
+.text-xs  { font-size: var(--text-xs); line-height: 1.2;}
+.text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+.text-md  { font-size: var(--text-md); line-height: 1.2;}
+.text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+.text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+.text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+.text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+.text-4xl { font-size: var(--text-4xl); line-height: 1.2;}
 
-.font-semilight  { font-weight: 300; }
+.font-semilight  { font-weight: 350; }
 .font-regular    { font-weight: 400; }
 .font-medium     { font-weight: 500; }
 .font-semibold   { font-weight: 600; }
@@ -68,7 +65,6 @@ header {
 }
 
 .Logo {
-    font-family: var(--font-family);
     font-weight: 600;
 }
 
@@ -153,7 +149,6 @@ header {
 
 .DropDownLogo {
     color: #000;
-    font-family: var(--font-family);
     font-size: 24px;
     font-weight: 600;
 }
@@ -164,9 +159,15 @@ header {
     gap: var(--space-md);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1025px) {
     :root {
-        --space-paddingout: 16px;
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 56px;
 
         --space-xs: 6px;
         --space-sm: 12px;
@@ -174,20 +175,19 @@ header {
         --space-lg: 28px;
         --space-xl: 40px;
         --space-2xl: 56px;
-
-        --text-sm: 17px;
-        --text-md: 19px;
-        --text-lg: 22px;
-        --text-xl: 28px;
-        --text-2xl: 36px;
-        --text-3xl: 48px;
-        --text-4xl: 48px;
+        --space-paddingout: 32px;
     }
 }
 
 @media (max-width: 768px) {
     :root {
-        --logo-size: 24px;
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 48px;
 
         --space-xs: 4px;
         --space-sm: 8px;
@@ -195,14 +195,7 @@ header {
         --space-lg: 24px;
         --space-xl: 32px;
         --space-2xl: 48px;
-
-        --text-sm: 16px;
-        --text-md: 18px;
-        --text-lg: 20px;
-        --text-xl: 24px;
-        --text-2xl: 32px;
-        --text-3xl: 40px;
-        --text-4xl: 32px;
+        --space-paddingout: 16px;
     }
 
     .InsiderNavLink {
