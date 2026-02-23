@@ -14,6 +14,38 @@ function initializeTagButtons() {
     });
 }
 
+function initializePhotoUpload() {
+    const uploadButton = document.getElementById('uploadPhotoButton');
+    const uploadInput = document.getElementById('uploadPhotoInput');
+    const photoPlaceholder = document.querySelector('.photo-placeholder');
+
+    if (!uploadButton || !uploadInput || !photoPlaceholder) {
+        return;
+    }
+
+    uploadButton.addEventListener('click', () => {
+        uploadInput.click();
+    });
+
+    uploadButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            uploadInput.click();
+        }
+    });
+
+    uploadInput.addEventListener('change', (event) => {
+        const selectedFile = event.target.files?.[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(selectedFile);
+        photoPlaceholder.style.backgroundImage = `url('${objectUrl}')`;
+    });
+}
+
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
 const importantPackRows = document.getElementById('importantPackRows');
@@ -761,6 +793,7 @@ if (importantPackRows) {
 
 // Initialize planner with Day 1
 document.addEventListener('DOMContentLoaded', () => {
+    initializePhotoUpload();
     initializeTagButtons();
 
     if (plannerDaysContainer) {

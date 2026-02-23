@@ -1,7 +1,7 @@
-@* toggle tag
+@* toggle tag  o
 add/remove tag
 add btn
-tag btn bg color
+tag btn bg color o
 upload photo
  *@
 
@@ -31,7 +31,7 @@ upload photo
                 <!-- Upload Photo Section -->
                 <div class="upload-photo">
                     <div class="photo-placeholder">
-                        <div class="upload-button">
+                        <div id="uploadPhotoButton" class="upload-button" role="button" tabindex="0" aria-label="Upload photo">
                             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clip-path="url(#clip0_616_1324)">
                             <path d="M13.125 9.375V11.875C13.125 12.2065 12.9933 12.5245 12.7589 12.7589C12.5245 12.9933 12.2065 13.125 11.875 13.125H3.125C2.79348 13.125 2.47554 12.9933 2.24112 12.7589C2.0067 12.5245 1.875 12.2065 1.875 11.875V9.375M10.625 5L7.5 1.875M7.5 1.875L4.375 5M7.5 1.875V9.375" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -44,6 +44,7 @@ upload photo
                             </svg>
                             <span class="text-sm font-semilight text-muted">UPLOAD PHOTO</span>
                         </div>
+                        <input type="file" id="uploadPhotoInput" accept="image/*" style="display: none;" />
                     </div>
                 </div>
 
