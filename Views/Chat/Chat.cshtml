@@ -8,16 +8,16 @@
 <script src="~/js/Chat.js" asp-append-version="true"></script>
 <body>
     @* ดึง navbar มาด้วย *@
-    <div class="chat-header">
-        <h id="header-let">Let</h>
-        <h id="header-chats">CHATS !</h>
+    <div id="chat-header">
+        <h id="header-let" class="text-2xl font-regular">Let</h>
+        <h id="header-chats" class="text-2xl font-regular ">CHATS !</h>
     </div>
-    <div class="chat-container">
-        <img class="chat-background-image" src="~/images/chat_img_background.svg" />
-        <div class="white-overlay"></div>
-        <div class="search-block">
+    <div id="chat-container">
+        <img id="chat-background-image" src="~/images/chat_img_background.svg" />
+        <div id="white-overlay"></div>
+        <div id="search-block">
             <img id="search-icon" src="~/images/search_icon.svg" />
-            <p>Search Chat</p>
+            <input type="text" id="search-chat-card" class="text-sm font-semibold " placeholder="Search Chat" />
         </div>
         <div class="chat-list">
             @foreach (var chatroom in Model.Take(4))
@@ -25,51 +25,49 @@
                 <div class="chat-card">
                     <img class="event-image" src="~/images/chat_img_background.svg" />
                     <div class="chat-info">
-                        <h4 class="chat-info">@chatroom.chat_name</h4>
+                        <h4 class="chat-info-header text-sm font-semibold">@chatroom.chat_name</h4>
                         <div class="info-row">
                             <img class="locate-icon" src="~/images/locate_icon.svg" />
-                            <p class="chat-info">@chatroom.event_id</p>
+                            <p class="chat-info-description text-sm font-semibold">@chatroom.event_id</p>
                         </div>
                         <div class="info-row">
                             <img class="date-icon" src="~/images/date_icon.svg" />
-                            <p class="chat-info">@chatroom.event_id</p>
+                            <p class="chat-info-description text-xs font-semibold">@chatroom.event_id</p>
                         </div>
                         <div class="info-row">
                             <img class="path-icon" src="~/images/path_icon.svg" />
-                            <p class="chat-info">@chatroom.last_message_id@*เวลา message ล่าสุดดึงจาก mesasgemodel*@</p>
+                            <p class="chat-info-description text-xs font-semibold">@chatroom.last_message_id@*เวลา message ล่าสุดดึงจาก mesasgemodel*@</p>
                         </div>
                     </div>
                 </div>
             }
         </div>
-        <div class="chat-room">
-            
-            <div class="chat-room-header">
-                <h4 id="chat-room-title">ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว</h4>
+        <div id="chat-room">
+            <div id="chat-room-header">
+                <h4 id="chat-room-title" class="text-sm font-semibold">ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว</h4>
                 <img id="chat-room-setting-icon" src="~/images/setting_icon.svg"/>
             </div>
 
-            <div class="chat-body" id="chat-messages-container">
-                
+            <div id="chat-body">
                 <div class="message-row other-message">
                     <img class="talker" src="~/images/chat_img_background.svg"/>
-                    <div class="message-bubble">
+                    <div class="message-bubble text-sm font-regular">
                         Everest mountain<br>
                         Everest mountain<br>
                         Everest mountain
                     </div>
                 </div>
 
-                <div class="message-row my-message poll-message-row">
+                <div class="message-row poll-message-row">
                     <div class="poll-container">
-                        <h4 class="poll-title">What will we eat the morning of the trip?</h4>
-                        <p class="poll-timer">Poll end up in 5 hours</p>
+                        <h4 class="poll-title text-lg font-regular">What will we eat the morning of the trip?</h4>
+                        <p class="poll-timer text-sm font-regular">Poll end up in 5 hours</p>
 
                         <div class="poll-option">
                             <div class="poll-option-top">
                                 <div class="poll-radio-group">
                                     <div class="poll-radio"></div>
-                                    <span class="poll-label">Ramen</span>
+                                    <span class="poll-label text-sm font-semibold">Ramen</span>
                                 </div>
                                 <div class="poll-voter-avatars">
                                     <img src="~/images/chat_img_background.svg" class="voter-img" />
@@ -86,7 +84,7 @@
                             <div class="poll-option-top">
                                 <div class="poll-radio-group">
                                     <div class="poll-radio"></div>
-                                    <span class="poll-label">Ramen</span>
+                                    <span class="poll-label text-sm font-semibold">Ramen</span>
                                 </div>
                                 <div class="poll-voter-avatars">
                                     <img src="~/images/chat_img_background.svg" class="voter-img" />
@@ -102,7 +100,7 @@
                             <div class="poll-option-top">
                                 <div class="poll-radio-group">
                                     <div class="poll-radio"></div>
-                                    <span class="poll-label">Ramen</span>
+                                    <span class="poll-label text-sm font-semibold">Ramen</span>
                                 </div>
                                 <div class="poll-voter-avatars">
                                     <img src="~/images/chat_img_background.svg" class="voter-img" />
@@ -111,10 +109,6 @@
                             <div class="poll-progress-bg">
                                 <div class="poll-progress-fill" style="width: 20%;"></div>
                             </div>
-                        </div>
-
-                        <div class="poll-creator-badge">
-                            <img src="~/images/chat_img_background.svg" alt="Creator" />
                         </div>
                     </div>
                 </div>
@@ -128,7 +122,7 @@
                     <svg class="action-icon" alt="add photo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera-icon lucide-camera"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/></svg>
                 </div>
                 
-                <input type="text" id="message-input" placeholder="Type your message..." />
+                <input type="text" id="message-input" class="text-sm font-regular" placeholder="Type your message..." />
                 
                 <button class="send-btn" onclick="sendMessage()">
                     <img src="~/images/send_icon.svg" alt="Send" />

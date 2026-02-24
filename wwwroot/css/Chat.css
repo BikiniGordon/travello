@@ -1,65 +1,146 @@
 @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Thai:wght@100..900&display=swap');
 
+:root {
+    --text-xs: 12px;
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-paddingout: 72px;
+}
+
+@media (max-width: 1025px) {
+    :root {
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 56px;
+
+        --space-xs: 6px;
+        --space-sm: 12px;
+        --space-md: 20px;
+        --space-lg: 28px;
+        --space-xl: 40px;
+        --space-2xl: 56px;
+        --space-paddingout: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 48px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+    
+}
+
+.text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+.text-md  { font-size: var(--text-md); line-height: 1.2;}
+.text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+.text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+.text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+.text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+
+.font-semilight  { font-weight: 350; }
+.font-regular    { font-weight: 400; }
+.font-medium     { font-weight: 500; }
+.font-semibold   { font-weight: 600; }
+.font-bold       { font-weight: 700; } 
+
+
+.text-brown {
+    color: #562F06;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+
 body {
     background-color: #CCD6D5;
-    max-width: 1440px;
+    /* max-width: 1440px; */
     margin: 0;
-    width: 100%;
+    /* width: 100%; */
     padding: 0;
 }
 
 .main-content {
     max-width: 1440px;
-    margin: 0 auto; /* เพื่อให้ 1440px อยู่กึ่งกลางจอ */
+    margin: 0 auto;
     width: 100%;
 }
 
-.chat-container{
-    position: relative;   /* ต้องมีเพื่อให้ absolute ข้างในอิงตำแหน่งจากกล่องนี้ */
-    width: 1418px;        /* บังคับกรอบให้กว้างเท่ารูปเป๊ะๆ */
-    margin: 0 auto;       /* จัดให้กรอบอยู่กึ่งกลางหน้าจอ */
-    height: 860px;
+#chat-container{
+    position: relative;   
+    max-width: 1418px;      
+    width: 100%;
+    margin: 0 auto;      
+    height: calc(100vh - 90px);
+    min-height: 600px;
+    /* height: 860px; */
     overflow: hidden;
     
 }
 
-.chat-header{
+#chat-header{
+    max-height: 69px;
+    width: 100%;
     text-align: center;
-    font-size: 40px;
-    padding-left: 592px ;
-    padding-right: 592px ;
-    padding-top: 14px;
-    padding-bottom: 14px;
-}
-
-.chat-header{
-    width: 1440px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    box-sizing: border-box;
 }
 
 #header-let{
-    font-family: 'Alex Brush';
+    font-family: 'Alex Brush', 'Segoe UI', sans-serif;
+    margin-right: 8px;
 }
 
 #header-chats{
-    font-family: 'Segoe UI';
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.chat-background-image{
+#chat-background-image{
     /* border: solid black; */
     justify-self: center;
-    width: 100%;
+    width: 97%;
     height: 100%;
     display: block;
     object-fit: cover;
     z-index: 1;
 }
 
-.white-overlay {
+#white-overlay {
     position: absolute;
-    
-    top: 0;           
-    left: 0;           
-    width: 100%;      
+    justify-self: center;
+    display: block;
+    top: 0;                   
+    width: 97%;    
     height: 100%;    
     background-color: #FFFFFF; 
     opacity: 50%;
@@ -71,7 +152,7 @@ body {
     height: 20px;
 }
 
-.search-block{
+#search-block{
     position: absolute;
     display: flex;
     align-items: center;
@@ -86,12 +167,19 @@ body {
     z-index: 3;
 }
 
-div.search-block p{
-    font-family: 'Segoe UI';
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0px;
-    padding: 0 0 0 8px;
+#search-chat-card  {
+    flex: 1;
+    margin: 0;
+    line-height: normal;
+    padding: 0px 0px 0px 8px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+}
+
+#search-chat-card::placeholder {
+    color: #888;
 }
 
 .chat-list {
@@ -112,6 +200,7 @@ div.search-block p{
     border-radius: 20px;
     overflow: hidden;
     z-index: 3;
+    cursor: pointer;
 }
 
 .event-image{
@@ -128,10 +217,10 @@ div.search-block p{
     gap: 8px;             
 }
 
-.chat-info h4 {
-    font-family: 'Segoe UI';
-    font-size: 18px;
-    font-weight: 600;
+.chat-info-header {
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    text-align: left;
+
     color: #000000;
     margin: 0;         
 }
@@ -140,14 +229,13 @@ div.search-block p{
     display: flex;
     flex-direction: row;   
     align-items: center;   
-    gap: 8px;            
+    /* gap: 8px;             */
 }
 
 .info-row p {
     margin: 0;
-    font-family: 'Segoe UI';
-    font-size: 16px;       
-    font-weight: 400;
+    padding-left: 8px;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #000000;
 }
 
@@ -166,13 +254,13 @@ div.search-block p{
     height: 18px;
 }
 
-.chat-list .chat-room:nth-child(4){
+.chat-list .chat-card:nth-child(4) {
     filter: blur(2px);
     pointer-events: none;
     transition: all 0.3s ease;
 }
 
-.chat-room{
+#chat-room{
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -184,7 +272,7 @@ div.search-block p{
     z-index: 3;
 }
 
-.chat-room-header{
+#chat-room-header{
     display: flex;
     flex-direction: row;
     width: 706px;   
@@ -198,8 +286,6 @@ div.search-block p{
 #chat-room-title{
     text-align: left;
     left: 24px;
-    font-size: 18px;
-    font-weight: 600;
     width: 628px;
 }
 
@@ -216,12 +302,7 @@ div.search-block p{
     object-fit: cover;
 }
 
-/* =========================================
-   ฝั่งขวา (Chat Room & Messages)
-========================================= */
-
-/* ปรับ Header ฝั่งขวา */
-.chat-room-header {
+#chat-room-header {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -237,9 +318,7 @@ div.search-block p{
 
 #chat-room-title {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #000;
 }
 
@@ -249,25 +328,26 @@ div.search-block p{
     cursor: pointer;
 }
 
-/* พื้นที่ข้อความตรงกลาง */
-.chat-body {
+#chat-body {
     flex: 1; 
     background-color: #FFFFFF;
     padding: 24px;
     overflow-y: auto; 
     display: flex;
     flex-direction: column;
-    gap: 24px; /* ระยะห่างระหว่างข้อความ */
+    gap: 42px; /* ระยะห่างระหว่างข้อความ */
 }
 
-/* แถวข้อความปกติ */
 .message-row {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     align-items: flex-start; 
 }
 
-/* ดันข้อความของเราไปทางขวา */
+.message-row.poll-message-row {
+    justify-content: center;
+}
+
 .message-row.my-message {
     justify-content: flex-end;
 }
@@ -280,42 +360,35 @@ div.search-block p{
 }
 
 .message-bubble {
-    background-color: #CEE5E2; /* สีเขียวมิ้นต์ */
+    background-color: #CEE7E6; 
     padding: 12px 20px;
     border-radius: 20px;
-    border-top-left-radius: 4px; /* มุมแหลมชี้ไปหารูปโปรไฟล์ */
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 16px;
+    border-top-left-radius: 0px; 
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #000;
-    line-height: 1.5;
     max-width: 60%; 
 }
 
 .poll-container {
     background-color: #F6F6F6;
     border-radius: 20px;
-    padding: 24px;
-    width: 380px;
+    padding: 32px 24px;
+    width: 369px;
     position: relative; 
 }
 
 .poll-title {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    margin: 0 0 8px 0;
-    line-height: 1.4;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
 }
 
 .poll-timer {
-    font-family: 'Segoe UI', sans-serif;
-    color: #FF4B4B; 
-    font-size: 14px;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    color: #FF0000; 
     margin: 0 0 24px 0;
 }
 
 .poll-option {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .poll-option-top {
@@ -328,7 +401,7 @@ div.search-block p{
 .poll-radio-group {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
 }
 
 .poll-radio {
@@ -341,9 +414,7 @@ div.search-block p{
 }
 
 .poll-label {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
 }
 
 .poll-voter-avatars {
@@ -363,41 +434,38 @@ div.search-block p{
 .poll-progress-bg {
     width: 100%;
     height: 10px;
-    background-color: #E2E2E2;
+    background-color: #CEE7E6;
     border-radius: 10px;
     overflow: hidden;
 }
 
 .poll-progress-fill {
     height: 100%;
-    background-color: #CEE5E2; 
+    background-color: #CEE7E6; 
     border-radius: 10px;
 }
 
-.poll-creator-badge {
+/* .poll-creator-badge {
     position: absolute;
     bottom: -20px;
     right: -20px;
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00A3FF, #0056FF); /* วงกลมสีฟ้า */
+    background: linear-gradient(135deg, #00A3FF, #0056FF); 
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
+} */
 
-.poll-creator-badge img {
+/* .poll-creator-badge img {
     width: 52px;
     height: 52px;
     border-radius: 50%;
     object-fit: cover;
-}
+} */
 
-/* =========================================
-   แถบพิมพ์ข้อความ (Message Input Box)
-========================================= */
 .message-box {
     display: flex;
     align-items: center;
@@ -427,8 +495,7 @@ div.search-block p{
     background: transparent;
     border: none;
     outline: none;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 16px;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #333;
 }
 
@@ -451,4 +518,85 @@ div.search-block p{
 .send-btn img {
     width: 20px;
     height: 20px;
+}
+
+/* =========================================
+   RESPONSIVE LAYOUT (ต้องอยู่ล่างสุดเสมอ เพื่อไม่ให้โดนเขียนทับ)
+========================================= */
+
+/* 💻 1. สำหรับจอขนาดกลาง (Tablet / iPad) */
+@media (max-width: 1025px) {
+    /* ย่อกล่องค้นหาและการ์ดแชทฝั่งซ้ายให้แคบลง */
+    #search-block { 
+        width: 350px; 
+        left: 24px; 
+    }
+    #chat-list { 
+        left: 24px; 
+    }
+    .chat-card { 
+        width: 350px; 
+    }
+
+    /* ให้กล่องแชทฝั่งขวาคำนวณพื้นที่ที่เหลือเอาเอง (จอ 100% - ฝั่งซ้ายและช่องว่าง) */
+    #chat-room {
+        width: calc(100% - 410px); 
+        right: 24px;
+    }
+    
+    /* ขยับกล่องโพลล์ให้ไม่ล้น */
+    .poll-container {
+        width: 100%;
+        max-width: 369px;
+        box-sizing: border-box;
+    }
+}
+
+/* 📱 2. สำหรับหน้าจอมือถือ (Mobile) */
+@media (max-width: 768px) {
+    /* ซ่อนแถบรายชื่อแชทฝั่งซ้ายทิ้งไปก่อนเลย */
+    #search-block, #chat-list {
+        display: none !important; 
+    }
+
+    /* ให้กล่องแชทฝั่งขวา ขยายกว้างเต็มจอ 100% */
+    #chat-room {
+        width: 100%;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        height: 100%;
+        border-radius: 0; /* เอาขอบโค้งออกให้ดูเนียนตาบนมือถือ */
+    }
+
+    /* ปรับ Header แชทให้เต็มจอ */
+    #chat-room-header {
+        width: 100%;
+        border-radius: 0;
+        padding: 16px;
+    }
+
+    /* กล่องข้อความ และ Poll ให้หดตามจอมือถือ */
+    #chat-body {
+        padding: 16px; /* ลด padding ด้านข้างลงหน่อย */
+    }
+    
+    .message-bubble {
+        max-width: 85%;
+    }
+    
+    .poll-container {
+        width: 100%;
+        padding: 24px 16px;
+    }
+    
+    /* ย่อปุ่มและช่องพิมพ์แชทด้านล่างให้พอดีนิ้ว */
+    .message-box {
+        padding: 12px 16px;
+        gap: 8px;
+    }
+    
+    .input-actions {
+        gap: 8px;
+    }
 }

@@ -12,8 +12,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>2g2wonqzfp</Fingerprint>
-      <Integrity>YgjAQyQo2GlH23l02xKupDSBRpNnamTY8ssxyUZtp3Y=</Integrity>
+      <Fingerprint>uep30et3hr</Fingerprint>
+      <Integrity>mtT7O6iZZaua07e7P4KucuqbrItuoX9Kj/0AHuzMAOk=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</OriginalItemSpec>
@@ -1296,23 +1296,23 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\lib\jquery\LICENSE.txt'))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Travello.brjiwzg4bb.bundle.scp.css'))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Travello.2socd33j75.bundle.scp.css'))">
       <SourceType>Package</SourceType>
       <SourceId>Travello</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/Travello</BasePath>
-      <RelativePath>Travello.brjiwzg4bb.bundle.scp.css</RelativePath>
+      <RelativePath>Travello.2socd33j75.bundle.scp.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>Reference</AssetMode>
       <AssetRole>Primary</AssetRole>
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ProjectBundle</AssetTraitValue>
-      <Fingerprint>brjiwzg4bb</Fingerprint>
-      <Integrity>eT+pUVE7y1CQA50v9A6qR6B6phihOXiLbkYkDuMdnRY=</Integrity>
+      <Fingerprint>2socd33j75</Fingerprint>
+      <Integrity>ju6iQFwhIwm1HYtPbuRMwGNapd8oVRno40YNd9g5D6c=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Travello.brjiwzg4bb.bundle.scp.css'))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Travello.2socd33j75.bundle.scp.css'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>
