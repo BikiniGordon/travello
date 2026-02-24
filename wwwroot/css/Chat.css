@@ -100,7 +100,7 @@ body {
     max-width: 1418px;      
     width: 100%;
     margin: 0 auto;      
-    height: calc(100vh - 90px);
+    height: 100vh;
     min-height: 600px;
     /* height: 860px; */
     overflow: hidden;
@@ -201,6 +201,7 @@ body {
     overflow: hidden;
     z-index: 3;
     cursor: pointer;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .event-image{
@@ -257,28 +258,32 @@ body {
 .chat-list .chat-card:nth-child(4) {
     filter: blur(2px);
     pointer-events: none;
-    transition: all 0.3s ease;
+    /* transition: all 0.3s ease; */
 }
 
-#chat-room{
+#chat-room {
     display: flex;
     flex-direction: column;
     position: absolute;
-    width: 706px;
-    height: 778px;
+    width: calc(100% - 712px); 
+    max-width: 706px; 
+    height: 778px; 
     top: 48px;
     right: 64px;
-
     z-index: 3;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
-#chat-room-header{
+#chat-room-header {
     display: flex;
     flex-direction: row;
-    width: 706px;   
+    align-items: center;
+    width: 100%; 
+    
     height: 62px;
-    padding: 16px 24px 24px 16px;
-    background-color: #CBCBCB;
+    padding: 0 24px;
+    box-sizing: border-box; 
+    background-color: #D6D6D6; 
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
 }
@@ -302,21 +307,17 @@ body {
     object-fit: cover;
 }
 
-#chat-room-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between; /* ดันซ้าย-ขวา */
-    width: 100%; 
-    height: 62px;
-    padding: 0 24px;
-    box-sizing: border-box; /* ให้ padding อยู่ในกรอบ */
-    background-color: #D6D6D6; /* สีเทาตามแบบ */
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
+#mobile-back-btn{
+    display: none; 
+    cursor: pointer;
+    margin-right: 8px;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
 }
 
 #chat-room-title {
+    flex: 1;
     margin: 0;
     font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #000;
@@ -367,6 +368,7 @@ body {
     font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #000;
     max-width: 60%; 
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .poll-container {
@@ -375,6 +377,7 @@ body {
     padding: 32px 24px;
     width: 369px;
     position: relative; 
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .poll-title {
@@ -520,67 +523,86 @@ body {
     height: 20px;
 }
 
-/* =========================================
-   RESPONSIVE LAYOUT (ต้องอยู่ล่างสุดเสมอ เพื่อไม่ให้โดนเขียนทับ)
-========================================= */
+/* Responsive */
 
-/* 💻 1. สำหรับจอขนาดกลาง (Tablet / iPad) */
 @media (max-width: 1025px) {
-    /* ย่อกล่องค้นหาและการ์ดแชทฝั่งซ้ายให้แคบลง */
     #search-block { 
-        width: 350px; 
+        width: 320px; 
         left: 24px; 
     }
-    #chat-list { 
+    .chat-list { 
         left: 24px; 
-    }
-    .chat-card { 
-        width: 350px; 
-    }
-
-    /* ให้กล่องแชทฝั่งขวาคำนวณพื้นที่ที่เหลือเอาเอง (จอ 100% - ฝั่งซ้ายและช่องว่าง) */
-    #chat-room {
-        width: calc(100% - 410px); 
-        right: 24px;
     }
     
-    /* ขยับกล่องโพลล์ให้ไม่ล้น */
+    .chat-card { 
+        width: 320px; 
+        height: 120px;
+    }
+
+    .event-image {
+        width: 120px;  
+        height: 120px; 
+    }
+
+    .chat-info {
+        padding: 0 12px; 
+        gap: 4px;       
+        width: calc(100% - 120px); 
+        box-sizing: border-box;
+    }
+
+    .chat-info-header {
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+    }
+
+    #chat-room {
+        width: calc(100% - 380px); /* คำนวณเผื่อฝั่งซ้าย 320px + margin */
+        right: 24px;
+    }
+
+
     .poll-container {
         width: 100%;
-        max-width: 369px;
+        max-width: 320px;
         box-sizing: border-box;
     }
 }
 
-/* 📱 2. สำหรับหน้าจอมือถือ (Mobile) */
 @media (max-width: 768px) {
-    /* ซ่อนแถบรายชื่อแชทฝั่งซ้ายทิ้งไปก่อนเลย */
+    #chat-header{
+        display: none;
+    }
     #search-block, #chat-list {
         display: none !important; 
     }
 
-    /* ให้กล่องแชทฝั่งขวา ขยายกว้างเต็มจอ 100% */
     #chat-room {
         width: 100%;
+        max-width: 100%;
         top: 0;
         right: 0;
         bottom: 0;
         height: 100%;
-        border-radius: 0; /* เอาขอบโค้งออกให้ดูเนียนตาบนมือถือ */
+        border-radius: 0; 
     }
 
-    /* ปรับ Header แชทให้เต็มจอ */
     #chat-room-header {
         width: 100%;
         border-radius: 0;
-        padding: 16px;
     }
 
-    /* กล่องข้อความ และ Poll ให้หดตามจอมือถือ */
-    #chat-body {
-        padding: 16px; /* ลด padding ด้านข้างลงหน่อย */
+    #chat-room-title{
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
     }
-    
+
+    #mobile-back-btn{
+    display: block; 
+    }
+
     .message-bubble {
         max-width: 85%;
     }
