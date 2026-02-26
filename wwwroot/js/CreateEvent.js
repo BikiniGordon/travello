@@ -3,8 +3,183 @@ function autoResize(textarea) {
     textarea.style.height = textarea.scrollHeight + 'px';
 }
 
+let tagHandlersInitialized = false;
+
+function getTagButtonValue(tagButton) {
+    const explicitValue = tagButton.dataset.tagValue;
+    if (explicitValue) {
+        return explicitValue.trim().toLowerCase();
+    }
+
+    const labelElement = tagButton.querySelector('.tag-label');
+    if (labelElement) {
+        return labelElement.textContent.trim().toLowerCase();
+    }
+
+    return tagButton.textContent.trim().toLowerCase();
+}
+
+function createCustomTagButton(tagText) {
+    const tagButton = document.createElement('button');
+    tagButton.type = 'button';
+    tagButton.className = 'tag-btn small removable text-sm font-regular default-font';
+    tagButton.dataset.tagValue = tagText;
+    tagButton.innerHTML = `
+        <span class="tag-label">${tagText}</span>
+        <span class="tag-remove-btn" role="button" aria-label="Remove tag" title="Remove tag">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M6.47643 6.47635L11.1905 11.1904M6.47643 11.1904L11.1905 6.47635M14.726 2.94082C17.9804 6.19519 17.9804 11.4716 14.726 14.7259C11.4716 17.9803 6.19527 17.9803 2.9409 14.7259C-0.313473 11.4716 -0.313473 6.19519 2.9409 2.94082C6.19527 -0.313551 11.4716 -0.313551 14.726 2.94082Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    `;
+    return tagButton;
+}
+
+function openTagInput(addButton) {
+    const tagContainer = addButton.closest('.tags-container');
+    if (!tagContainer || tagContainer.querySelector('.tag-input-wrapper')) {
+        return;
+    }
+
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = 'tag-input-wrapper';
+    inputWrapper.innerHTML = `
+        <input type="text" class="tag-input-field text-sm font-regular default-font" placeholder="Add tag" maxlength="30" aria-label="Tag name">
+        <button type="button" class="tag-input-confirm text-sm font-regular default-font">Add</button>
+    `;
+
+    const inputField = inputWrapper.querySelector('.tag-input-field');
+    const confirmButton = inputWrapper.querySelector('.tag-input-confirm');
+
+    const closeInput = () => {
+        inputWrapper.remove();
+        addButton.style.display = 'flex';
+        addButton.focus();
+    };
+
+    const submitTag = () => {
+        const tagName = inputField.value.trim();
+
+        if (!tagName) {
+            closeInput();
+            return;
+        }
+
+        const normalizedTagName = tagName.toLowerCase();
+        const duplicatedTag = Array.from(tagContainer.querySelectorAll('.tag-btn:not(.add-btn)')).some((tagButton) => {
+            return getTagButtonValue(tagButton) === normalizedTagName;
+        });
+
+        if (!duplicatedTag) {
+            const customTagButton = createCustomTagButton(tagName);
+            tagContainer.insertBefore(customTagButton, addButton);
+        }
+
+        closeInput();
+    };
+
+    confirmButton.addEventListener('click', submitTag);
+    inputField.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            submitTag();
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeInput();
+        }
+    });
+
+    inputField.addEventListener('blur', () => {
+        setTimeout(() => {
+            if (!inputWrapper.contains(document.activeElement)) {
+                closeInput();
+            }
+        }, 0);
+    });
+
+    addButton.style.display = 'none';
+    tagContainer.insertBefore(inputWrapper, addButton);
+    inputField.focus();
+}
+
+function initializeTagButtons() {
+    if (tagHandlersInitialized) {
+        return;
+    }
+
+    document.addEventListener('click', (event) => {
+        const addButton = event.target.closest('.tag-btn.add-btn');
+        if (addButton) {
+            event.preventDefault();
+            openTagInput(addButton);
+            return;
+        }
+
+        const removeButton = event.target.closest('.tag-remove-btn');
+        if (removeButton) {
+            event.preventDefault();
+            const removableTagButton = removeButton.closest('.tag-btn.removable');
+            if (removableTagButton) {
+                removableTagButton.remove();
+            }
+            return;
+        }
+
+        const tagButton = event.target.closest('.tag-btn:not(.add-btn)');
+        if (!tagButton) {
+            return;
+        }
+
+        event.preventDefault();
+        tagButton.classList.toggle('is-selected');
+    });
+
+    tagHandlersInitialized = true;
+}
+
+function initializePhotoUpload() {
+    const uploadButton = document.getElementById('uploadPhotoButton');
+    const uploadInput = document.getElementById('uploadPhotoInput');
+    const photoPlaceholder = document.querySelector('.photo-placeholder');
+
+    if (!uploadButton || !uploadInput || !photoPlaceholder) {
+        return;
+    }
+
+    uploadButton.addEventListener('click', () => {
+        uploadInput.click();
+    });
+
+    uploadButton.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            uploadInput.click();
+        }
+    });
+
+    uploadInput.addEventListener('change', (event) => {
+        const selectedFile = event.target.files?.[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(selectedFile);
+        photoPlaceholder.style.backgroundImage = `url('${objectUrl}')`;
+    });
+}
+
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
+const importantPackRows = document.getElementById('importantPackRows');
+
+// Drag and drop state
+let draggedElement = null;
+let draggedType = null; // 'plan' or 'pack'
+let draggedSourceDay = null;
 
 // Leaflet Map initialization
 let map;
@@ -236,11 +411,51 @@ function createPlaceIcon(placeNumber = 1) {
     `;
 }
 
+function createExpenseRow() {
+    const expenseRow = document.createElement('div');
+    expenseRow.className = 'planner-expense-row';
+    expenseRow.innerHTML = `
+        <input 
+            type="text" 
+            class="input-field section-placeholder planner-expense-name-input" 
+            placeholder="Expense name" 
+            data-text-size="sm" 
+            data-font-weight="regular"
+        >
+        <div class="price-input">
+            <input 
+                type="number" 
+                class="input-field section-placeholder planner-expense-input" 
+                placeholder="0" 
+                min="0" 
+                step="0.01" 
+                data-text-size="sm" 
+                data-font-weight="regular"
+            >
+            <span>$</span>
+        </div>
+        <button type="button" class="action-btn planner-expense-delete-btn" title="Delete expense" aria-label="Delete expense">✕</button>
+    `;
+
+    return expenseRow;
+}
+
 function createPlanRow() {
     const planRow = document.createElement('div');
     planRow.className = 'place-item planner-item';
     planRow.dataset.placeNumber = '0'; // Placeholder, will be recalculated
+    planRow.draggable = true;
     planRow.innerHTML = `
+        <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6" cy="3" r="1.5" fill="#666"/>
+                <circle cx="10" cy="3" r="1.5" fill="#666"/>
+                <circle cx="6" cy="8" r="1.5" fill="#666"/>
+                <circle cx="10" cy="8" r="1.5" fill="#666"/>
+                <circle cx="6" cy="13" r="1.5" fill="#666"/>
+                <circle cx="10" cy="13" r="1.5" fill="#666"/>
+            </svg>
+        </button>
         ${createPlaceIcon(0)}
         <input 
             type="text" 
@@ -279,18 +494,7 @@ function createPlanRow() {
                 data-font-weight="regular"
                 oninput="autoResize(this)"
             ></textarea>
-            <div class="price-input planner-expense-wrap hidden">
-                <input 
-                    type="number" 
-                    class="input-field section-placeholder planner-expense-input" 
-                    placeholder="0" 
-                    min="0" 
-                    step="0.01" 
-                    data-text-size="sm" 
-                    data-font-weight="regular"
-                >
-                <span>$</span>
-            </div>
+            <div class="planner-expense-wrap hidden"></div>
         </div>
     `;
 
@@ -366,6 +570,54 @@ function updateTotalExpenses() {
     plannerTotalAmount.textContent = `$ ${total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }
 
+function getPackRows() {
+    if (!importantPackRows) {
+        return [];
+    }
+
+    return Array.from(importantPackRows.querySelectorAll('.pack-item'));
+}
+
+function hasPackValue(rowElement) {
+    const packInput = rowElement.querySelector('.pack-input');
+    return Boolean(packInput && packInput.value.trim() !== '');
+}
+
+function createPackRow() {
+    const packRow = document.createElement('div');
+    packRow.className = 'checkbox-item pack-item';
+    packRow.draggable = true;
+    packRow.innerHTML = `
+        <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6" cy="3" r="1.5" fill="#666"/>
+                <circle cx="10" cy="3" r="1.5" fill="#666"/>
+                <circle cx="6" cy="8" r="1.5" fill="#666"/>
+                <circle cx="10" cy="8" r="1.5" fill="#666"/>
+                <circle cx="6" cy="13" r="1.5" fill="#666"/>
+                <circle cx="10" cy="13" r="1.5" fill="#666"/>
+            </svg>
+        </button>
+        <input type="checkbox" class="pack-checkbox" name="pack">
+        <input type="text" class="input-field pack-input" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
+    `;
+
+    return packRow;
+}
+
+function ensureTrailingEmptyPackRow() {
+    if (!importantPackRows) {
+        return;
+    }
+
+    const rows = getPackRows();
+    const lastRow = rows[rows.length - 1];
+
+    if (!lastRow || hasPackValue(lastRow)) {
+        importantPackRows.appendChild(createPackRow());
+    }
+}
+
 plannerDaysContainer.addEventListener('input', (event) => {
     const target = event.target;
 
@@ -428,8 +680,8 @@ plannerDaysContainer.addEventListener('click', (event) => {
     const noteBtn = target.closest('.planner-note-btn');
     if (noteBtn) {
         const noteInput = rowElement.querySelector('.planner-note-input');
-        noteInput.classList.toggle('hidden');
-        if (!noteInput.classList.contains('hidden')) {
+        if (noteInput.classList.contains('hidden')) {
+            noteInput.classList.remove('hidden');
             noteInput.focus();
             autoResize(noteInput);
         }
@@ -439,10 +691,28 @@ plannerDaysContainer.addEventListener('click', (event) => {
     const expenseBtn = target.closest('.planner-expense-btn');
     if (expenseBtn) {
         const expenseWrap = rowElement.querySelector('.planner-expense-wrap');
-        expenseWrap.classList.toggle('hidden');
-        if (!expenseWrap.classList.contains('hidden')) {
-            expenseWrap.querySelector('.planner-expense-input').focus();
+        expenseWrap.classList.remove('hidden');
+        const newExpenseRow = createExpenseRow();
+        expenseWrap.appendChild(newExpenseRow);
+        newExpenseRow.querySelector('.planner-expense-name-input').focus();
+        updateTotalExpenses();
+        return;
+    }
+
+    const expenseDeleteBtn = target.closest('.planner-expense-delete-btn');
+    if (expenseDeleteBtn) {
+        const expenseRow = expenseDeleteBtn.closest('.planner-expense-row');
+        const expenseWrap = expenseDeleteBtn.closest('.planner-expense-wrap');
+
+        if (expenseRow) {
+            expenseRow.remove();
         }
+
+        if (expenseWrap && expenseWrap.querySelectorAll('.planner-expense-row').length === 0) {
+            expenseWrap.classList.add('hidden');
+        }
+
+        updateTotalExpenses();
         return;
     }
 
@@ -458,8 +728,9 @@ plannerDaysContainer.addEventListener('click', (event) => {
             delete rowElement.dataset.markerName;
             rowElement.querySelector('.planner-note-input').value = '';
             rowElement.querySelector('.planner-note-input').classList.add('hidden');
-            rowElement.querySelector('.planner-expense-input').value = '';
-            rowElement.querySelector('.planner-expense-wrap').classList.add('hidden');
+            const expenseWrap = rowElement.querySelector('.planner-expense-wrap');
+            expenseWrap.innerHTML = '';
+            expenseWrap.classList.add('hidden');
         } else {
             rowElement.remove();
         }
@@ -470,8 +741,187 @@ plannerDaysContainer.addEventListener('click', (event) => {
     }
 });
 
+if (importantPackRows) {
+    importantPackRows.addEventListener('input', (event) => {
+        const target = event.target;
+        if (!target.classList.contains('pack-input')) {
+            return;
+        }
+
+        const currentRow = target.closest('.pack-item');
+        if (!currentRow) {
+            return;
+        }
+
+        const rows = getPackRows();
+        const isLastRow = rows[rows.length - 1] === currentRow;
+
+        if (target.value.trim() !== '' && isLastRow) {
+            ensureTrailingEmptyPackRow();
+        }
+    });
+
+    ensureTrailingEmptyPackRow();
+}
+
+// Drag and drop handlers
+function handleDragStart(event) {
+    draggedElement = event.target;
+    draggedType = draggedElement.classList.contains('planner-item') ? 'plan' : 'pack';
+    draggedSourceDay = draggedType === 'plan' ? draggedElement.closest('.event-plan-day') : null;
+    
+    // Don't allow dragging empty template rows
+    if (draggedType === 'plan' && !hasPlaceValue(draggedElement)) {
+        event.preventDefault();
+        return;
+    }
+    if (draggedType === 'pack' && !hasPackValue(draggedElement)) {
+        event.preventDefault();
+        return;
+    }
+    
+    draggedElement.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', draggedElement.innerHTML);
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    
+    const target = event.target.closest('.planner-item, .pack-item');
+    if (!target || target === draggedElement) {
+        return;
+    }
+    
+    // Check if same type
+    const targetType = target.classList.contains('planner-item') ? 'plan' : 'pack';
+    if (targetType !== draggedType) {
+        return;
+    }
+    
+    // Allow dropping on the empty pack template row (we insert before it)
+    
+    target.classList.add('drag-over');
+}
+
+function handleDragLeave(event) {
+    const target = event.target.closest('.planner-item, .pack-item');
+    if (target) {
+        target.classList.remove('drag-over');
+    }
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const target = event.target.closest('.planner-item, .pack-item');
+    if (!target || target === draggedElement) {
+        return;
+    }
+    
+    // Check if same type
+    const targetType = target.classList.contains('planner-item') ? 'plan' : 'pack';
+    if (targetType !== draggedType) {
+        return;
+    }
+    
+    target.classList.remove('drag-over');
+    
+    const isPlanTemplateTarget = draggedType === 'plan' && !hasPlaceValue(target);
+    const isPackTemplateTarget = draggedType === 'pack' && !hasPackValue(target);
+
+    const targetContainer = target.parentNode;
+    const sameContainer = targetContainer === draggedElement.parentNode;
+
+    if (isPlanTemplateTarget) {
+        // Insert before the template row so it stays at the bottom.
+        targetContainer.insertBefore(draggedElement, target);
+    } else if (isPackTemplateTarget) {
+        // Insert before the pack template row so it stays at the bottom.
+        targetContainer.insertBefore(draggedElement, target);
+    } else if (sameContainer) {
+        // Reorder within the same container.
+        const allItems = Array.from(targetContainer.children);
+        const draggedIndex = allItems.indexOf(draggedElement);
+        const targetIndex = allItems.indexOf(target);
+        if (draggedIndex < targetIndex) {
+            targetContainer.insertBefore(draggedElement, target.nextSibling);
+        } else {
+            targetContainer.insertBefore(draggedElement, target);
+        }
+    } else {
+        // Move across days into the target container.
+        targetContainer.insertBefore(draggedElement, target);
+    }
+
+    if (draggedType === 'plan') {
+        if (draggedSourceDay) {
+            ensureTrailingEmptyRow(draggedSourceDay);
+        }
+        const targetDay = draggedElement.closest('.event-plan-day');
+        if (targetDay) {
+            ensureTrailingEmptyRow(targetDay);
+        }
+        recalculatePlaceNumbers();
+    }
+}
+
+function handleDragEnd(event) {
+    event.target.classList.remove('dragging');
+    
+    // Remove all drag-over classes
+    document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    
+    draggedElement = null;
+    draggedType = null;
+    draggedSourceDay = null;
+}
+
+// Attach drag event listeners to plan rows container
+if (plannerDaysContainer) {
+    plannerDaysContainer.addEventListener('dragstart', (event) => {
+        if (event.target.classList.contains('planner-item')) {
+            handleDragStart(event);
+        }
+    });
+    
+    plannerDaysContainer.addEventListener('dragover', handleDragOver);
+    plannerDaysContainer.addEventListener('dragleave', handleDragLeave);
+    plannerDaysContainer.addEventListener('drop', handleDrop);
+    plannerDaysContainer.addEventListener('dragend', (event) => {
+        if (event.target.classList.contains('planner-item')) {
+            handleDragEnd(event);
+        }
+    });
+}
+
+// Attach drag event listeners to pack rows container
+if (importantPackRows) {
+    importantPackRows.addEventListener('dragstart', (event) => {
+        if (event.target.classList.contains('pack-item')) {
+            handleDragStart(event);
+        }
+    });
+    
+    importantPackRows.addEventListener('dragover', handleDragOver);
+    importantPackRows.addEventListener('dragleave', handleDragLeave);
+    importantPackRows.addEventListener('drop', handleDrop);
+    importantPackRows.addEventListener('dragend', (event) => {
+        if (event.target.classList.contains('pack-item')) {
+            handleDragEnd(event);
+        }
+    });
+}
+
 // Initialize planner with Day 1
 document.addEventListener('DOMContentLoaded', () => {
+    initializePhotoUpload();
+    initializeTagButtons();
+
     if (plannerDaysContainer) {
         createDay(1);
     }
