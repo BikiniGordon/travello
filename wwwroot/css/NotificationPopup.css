@@ -225,7 +225,7 @@ h1, h2, h3, h4, h5, h6, p {
     padding-bottom: var(--space-xs);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1025px) {
     .notification-popup {
         width: min(92vw, 380px);
         right: 12px;
