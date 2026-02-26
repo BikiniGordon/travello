@@ -100,7 +100,8 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .notification-popup {
-    display: none;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     width: min(92vw, 420px);
     max-height: min(72vh, 620px);
@@ -113,16 +114,39 @@ h1, h2, h3, h4, h5, h6, p {
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-3px) scaleY(0.94);
+    transform-origin: top right;
+    transition: opacity 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        visibility 0s linear 260ms;
 }
 
 .notification-popup.show {
-    display: flex;
-    flex-direction: column;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scaleY(1);
+    transition: opacity 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        visibility 0s linear 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notification-popup,
+    .notification-popup.show {
+        transition: none;
+        transform: none;
+    }
 }
 
 .notification-list {
     flex: 1;
     min-height: 0;
+    padding-top: var(--space-xs);
+    padding-bottom: var(--space-xs);
     overflow-y: auto;
     overflow-x: hidden;
     -ms-overflow-style: none;
@@ -131,6 +155,23 @@ h1, h2, h3, h4, h5, h6, p {
     flex-direction: column;
     gap: var(--space-sm);
     border-radius: 10px;
+    --edge-fade-size: 22px;
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black var(--edge-fade-size),
+        black calc(100% - var(--edge-fade-size)),
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black var(--edge-fade-size),
+        black calc(100% - var(--edge-fade-size)),
+        transparent 100%
+    );
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
 
 .notification-list::-webkit-scrollbar {
@@ -152,7 +193,7 @@ h1, h2, h3, h4, h5, h6, p {
     padding: var(--space-xs) var(--space-xs) var(--space-sm) var(--space-xs);
     border-bottom: 1px solid #D9D9D9;
     cursor: pointer;
-    /* border-radius: 10px; */
+    border-radius: 6px;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
