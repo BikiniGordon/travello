@@ -103,8 +103,6 @@ h1, h2, h3, h4, h5, h6, p {
     display: flex;
     flex-direction: column;
     position: absolute;
-    /* display: none;
-    position: fixed; */
     width: min(92vw, 420px);
     max-height: min(72vh, 620px);
     top: 80px;
@@ -115,7 +113,6 @@ h1, h2, h3, h4, h5, h6, p {
     gap: var(--space-sm);
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    /* z-index: 1000; */
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
