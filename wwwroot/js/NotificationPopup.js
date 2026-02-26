@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (notificationButtons.length > 0) {
         notificationButtons.forEach((notificationButton) => {
-            notificationButton.addEventListener('click', (event) => {
+            notificationButton.addEventListener('click', () => {
                 notificationPopup.classList.toggle('show');
             });
         });
