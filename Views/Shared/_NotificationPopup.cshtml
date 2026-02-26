@@ -1,0 +1,51 @@
+<div class="notification-popup" id="notificationPopup">
+    <div class="notification-list" id="notificationList"></div>
+    <p class="notification-empty noti-text-xs noti-font-semibold noti-text-muted" id="notificationEmpty">No notifications yet.</p>
+</div>
+
+<script id="initialNotificationData" type="application/json">
+@* notification mock up *@
+[
+  {
+    "time": "Just now",
+    "title": "Notification Title",
+    "message": "This is a sample notification message.",
+    "status": "default",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/Privacy"
+  },
+  {
+    "time": "30 minutes ago",
+    "title": "Your request has been Approved.",
+    "message": "Event: Cafe walk tour",
+    "status": "approved",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/CreateEvent"
+  },
+  {
+    "time": "3 hours ago",
+    "title": "Your request has been Rejected.",
+    "message": "Event: Cafe walk tour 0",
+    "status": "rejected",
+    "imageUrl": "/images/notification.png",
+    "url": "/EditProfile/EditProfile"
+  },
+  {
+    "time": "2 weeks ago",
+    "title": "Notification Title",
+    "message": "This is a sample notification message.",
+    "reason": "This is a sample reason for the notification.",
+    "status": "default",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/Index"
+  },
+  {
+    "time": "3 weeks ago",
+    "title": "Notification Title",
+    "message": "This is a sample notification message.",
+    "status": "default",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/Privacy"
+  }
+]
+</script>
