@@ -12,8 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/create_event.css" asp-append-version="true">
 </head>
 <body>
     @Html.Partial("_NavBar")
@@ -25,7 +25,7 @@
                 <!-- Upload Photo Section -->
                 <div class="upload-photo">
                     <div class="photo-placeholder">
-                        <div class="upload-button">
+                        <div id="uploadPhotoButton" class="upload-button" role="button" tabindex="0" aria-label="Upload photo">
                             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clip-path="url(#clip0_616_1324)">
                             <path d="M13.125 9.375V11.875C13.125 12.2065 12.9933 12.5245 12.7589 12.7589C12.5245 12.9933 12.2065 13.125 11.875 13.125H3.125C2.79348 13.125 2.47554 12.9933 2.24112 12.7589C2.0067 12.5245 1.875 12.2065 1.875 11.875V9.375M10.625 5L7.5 1.875M7.5 1.875L4.375 5M7.5 1.875V9.375" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -38,6 +38,7 @@
                             </svg>
                             <span class="text-sm font-semilight text-muted">UPLOAD PHOTO</span>
                         </div>
+                        <input type="file" id="uploadPhotoInput" accept="image/*" style="display: none;" />
                     </div>
                 </div>
 
@@ -77,49 +78,42 @@
                             <button class="tag-btn text-sm font-regular default-font">RELAX</button>
                             <button class="tag-btn text-sm font-regular default-font">SHOPPING</button>
                             <button class="tag-btn text-sm font-regular default-font">ADVENTURE</button>
-                            <button class="tag-btn text-md font-regular add-btn">+</button>
                         </div>
 
                         <label class="text-sm font-regular text-gray">TAG</label>
                         <div class="tags-container">
-                            <button class="tag-btn small text-sm font-regular default-font">
-                                TEST_TAG_1
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                                    <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
-                                </svg>
-                            </button>
-                            <button class="tag-btn small text-sm font-regular default-font">
-                                TEST_TAG_2222
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                                    <path d="M7.78 6l4.11-4.11c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0L7.07 5.29 2.96 1.18c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71L6.36 6l-4.11 4.11c-.2.2-.2.51 0 .71.1.1.23.15.36.15s.26-.05.36-.15L7.07 6.71l4.11 4.11c.1.1.23.15.36.15.12 0 .26-.05.36-.15.2-.2.2-.51 0-.71L7.78 6z"/>
-                                </svg>
-                            </button>
                             <button class="tag-btn text-md font-regular add-btn">+</button>
                         </div>
                     </section>
 
                     <!-- Remaining -->
                     <section class="form-section form-with-note">
-                        <input 
-                            type="number" 
-                            class="input-field section-placeholder"
-                            placeholder="MAXIMUM NUMBER OF ATTENDEES"
-                            data-text-size="lg"
-                            data-font-weight="semibold"
-                        >
+                        <div class="input-row">
+                            <label class="text-lg font-semibold text-dark">MAXIMUM NUMBER OF ATTENDEES</label>
+                            <input 
+                                type="number" 
+                                class="input-field section-placeholder"
+                                placeholder="Enter number"
+                                min="0"
+                                data-text-size="md"
+                                data-font-weight="regular"
+                            >
+                        </div>
                         <p class="text-sm font-regular text-dark">*When the number of attendees reaches the limit, registration will be closed automatically.</p>
                     </section>
 
                     <!-- Questions for Attendees -->
                     <section class="form-section">
-                        <textarea 
-                            class="textarea-field auto-resize section-placeholder" 
-                            rows="1"
-                            placeholder="QUESTIONS FOR ATTENDEES"
-                            data-text-size="lg"
-                            data-font-weight="semibold"
-                            oninput="autoResize(this)"
-                        ></textarea>
+                        <div class="input-row">
+                            <label class="text-lg font-semibold text-dark">REGISTRATION QUESTIONS</label>                            <textarea 
+                                class="textarea-field auto-resize section-placeholder" 
+                                rows="1"
+                                placeholder="Enter questions for attendees"
+                                data-text-size="md"
+                                data-font-weight="regular"
+                                oninput="autoResize(this)"
+                            ></textarea>
+                        </div>
                     </section>
                 </div>
 
@@ -163,9 +157,21 @@
                     ></textarea>
                     <div class="input-row">
                         <label class="text-lg font-semibold text-dark">IMPORTANT THING TO PACK</label>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="add-items" name="pack">
-                            <input type="text" class="input-field" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
+                        <div id="importantPackRows" class="important-pack-rows">
+                            <div class="checkbox-item pack-item" draggable="true">
+                                <button type="button" class="drag-handle" aria-label="Drag to reorder" title="Drag to reorder">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="6" cy="3" r="1.5" fill="#666"/>
+                                        <circle cx="10" cy="3" r="1.5" fill="#666"/>
+                                        <circle cx="6" cy="8" r="1.5" fill="#666"/>
+                                        <circle cx="10" cy="8" r="1.5" fill="#666"/>
+                                        <circle cx="6" cy="13" r="1.5" fill="#666"/>
+                                        <circle cx="10" cy="13" r="1.5" fill="#666"/>
+                                    </svg>
+                                </button>
+                                <input type="checkbox" class="pack-checkbox" name="pack">
+                                <input type="text" class="input-field pack-input" placeholder="Add some items" data-text-size="md" data-font-weight="regular">
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -180,7 +186,7 @@
                         <div class="expenses-summary">
                             <label class="text-lg font-regular text-dark">Expenses Summary</label>
                             <div class="expense-row">
-                                <span class="text-lg font-regular">Total balance</span>
+                                <span class="text-lg font-regular">Total</span>
                                 <span id="plannerTotalAmount" class="text-lg font-regular text-dark">$ 0</span>
                             </div>
                         </div>
@@ -196,9 +202,9 @@
         </div>
     </main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="~/js/CreateEvent.js" asp-append-version="true"></script>
     <script src="~/js/NavBar.js" asp-append-version="true"></script>
     <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
-    <script src="~/js/create_event.js" asp-append-version="true"></script>
     <script>
         document.addEventListener('DOMContentLoaded', initializeMap);
     </script>
