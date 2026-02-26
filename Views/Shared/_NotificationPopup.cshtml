@@ -1,25 +1,51 @@
 <div class="notification-popup" id="notificationPopup">
-    <div class="notification">
-        <div class="notification-image">
-            <img src="images/notification.png" alt="notification image" class="notification-img">
-        </div>
-        <div class="notification-content">
-            <div class="notification-time">
-                <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <rect opacity="0.1" width="25" height="25" fill="url(#pattern0_387_7890)"/>
-                    <defs>
-                    <pattern id="pattern0_387_7890" patternContentUnits="objectBoundingBox" width="1" height="1">
-                    <use xlink:href="#image0_387_7890" transform="scale(0.01)"/>
-                    </pattern>
-                    <image id="image0_387_7890" width="100" height="100" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
-                    </defs>
-                </svg>
-                <p class="notification-time-text noti-text-md noti-font-semibold noti-text-muted">Just now</p>
-            </div>
-            <div class="notification-details">
-                <p class="notification-title noti-text-md noti-font-semibold">Notification Title</p>
-                <p class="notification-message noti-text-md noti-font-semibold">This is a sample notification message.</p>
-            </div>
-        </div>
-    </div>
+    <div class="notification-list" id="notificationList"></div>
+    <p class="notification-empty noti-text-xs noti-font-semibold noti-text-muted" id="notificationEmpty">No notifications yet.</p>
 </div>
+
+<script id="initialNotificationData" type="application/json">
+@* notification mock up *@
+[
+  {
+    "time": "Just now",
+    "title": "Notification Title",
+    "message": "This is a sample notification message.",
+    "status": "default",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/Privacy"
+  },
+  {
+    "time": "30 minutes ago",
+    "title": "Your request has been Approved.",
+    "message": "Event: Cafe walk tour",
+    "status": "approved",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/CreateEvent"
+  },
+  {
+    "time": "3 hours ago",
+    "title": "Your request has been Rejected.",
+    "message": "Event: Cafe walk tour 0",
+    "status": "rejected",
+    "imageUrl": "/images/notification.png",
+    "url": "/EditProfile/EditProfile"
+  },
+  {
+    "time": "2 weeks ago",
+    "title": "Notification Title",
+    "message": "This is a sample notification message.",
+    "reason": "This is a sample reason for the notification.",
+    "status": "default",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/Index"
+  },
+  {
+    "time": "3 weeks ago",
+    "title": "Notification Title",
+    "message": "This is a sample notification message.",
+    "status": "default",
+    "imageUrl": "/images/notification.png",
+    "url": "/Home/Privacy"
+  }
+]
+</script>
