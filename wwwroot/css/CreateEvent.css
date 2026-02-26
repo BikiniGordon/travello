@@ -668,6 +668,69 @@ flex-grow: 0; */
     /* background-color: hsla(0, 0%, 85%, 0.30); */
 }
 
+.tag-btn.removable {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.tag-label {
+    line-height: 1;
+}
+
+.tag-remove-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tag-remove-btn svg {
+    display: block;
+}
+
+.tag-remove-btn:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.tag-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.tag-input-field {
+    height: 100%;
+    width: 130px;
+    min-width: 110px;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--accent);
+    border-radius: 38px;
+    background-color: #D9D9D94D;
+}
+
+.tag-input-field:focus {
+    outline: none;
+    border-color: #999;
+}
+
+.tag-input-confirm {
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid #D9D9D9;
+    border-radius: 38px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tag-input-confirm:hover {
+    background-color: #e8e8e8;
+}
+
 
 
 /* Field Hint Text */

@@ -3,15 +3,141 @@ function autoResize(textarea) {
     textarea.style.height = textarea.scrollHeight + 'px';
 }
 
-function initializeTagButtons() {
-    const tagButtons = document.querySelectorAll('.tag-btn:not(.add-btn)');
+let tagHandlersInitialized = false;
 
-    tagButtons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            button.classList.toggle('is-selected');
+function getTagButtonValue(tagButton) {
+    const explicitValue = tagButton.dataset.tagValue;
+    if (explicitValue) {
+        return explicitValue.trim().toLowerCase();
+    }
+
+    const labelElement = tagButton.querySelector('.tag-label');
+    if (labelElement) {
+        return labelElement.textContent.trim().toLowerCase();
+    }
+
+    return tagButton.textContent.trim().toLowerCase();
+}
+
+function createCustomTagButton(tagText) {
+    const tagButton = document.createElement('button');
+    tagButton.type = 'button';
+    tagButton.className = 'tag-btn small removable text-sm font-regular default-font';
+    tagButton.dataset.tagValue = tagText;
+    tagButton.innerHTML = `
+        <span class="tag-label">${tagText}</span>
+        <span class="tag-remove-btn" role="button" aria-label="Remove tag" title="Remove tag">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M6.47643 6.47635L11.1905 11.1904M6.47643 11.1904L11.1905 6.47635M14.726 2.94082C17.9804 6.19519 17.9804 11.4716 14.726 14.7259C11.4716 17.9803 6.19527 17.9803 2.9409 14.7259C-0.313473 11.4716 -0.313473 6.19519 2.9409 2.94082C6.19527 -0.313551 11.4716 -0.313551 14.726 2.94082Z" stroke="#1E1E1E" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    `;
+    return tagButton;
+}
+
+function openTagInput(addButton) {
+    const tagContainer = addButton.closest('.tags-container');
+    if (!tagContainer || tagContainer.querySelector('.tag-input-wrapper')) {
+        return;
+    }
+
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = 'tag-input-wrapper';
+    inputWrapper.innerHTML = `
+        <input type="text" class="tag-input-field text-sm font-regular default-font" placeholder="Add tag" maxlength="30" aria-label="Tag name">
+        <button type="button" class="tag-input-confirm text-sm font-regular default-font">Add</button>
+    `;
+
+    const inputField = inputWrapper.querySelector('.tag-input-field');
+    const confirmButton = inputWrapper.querySelector('.tag-input-confirm');
+
+    const closeInput = () => {
+        inputWrapper.remove();
+        addButton.style.display = 'flex';
+        addButton.focus();
+    };
+
+    const submitTag = () => {
+        const tagName = inputField.value.trim();
+
+        if (!tagName) {
+            closeInput();
+            return;
+        }
+
+        const normalizedTagName = tagName.toLowerCase();
+        const duplicatedTag = Array.from(tagContainer.querySelectorAll('.tag-btn:not(.add-btn)')).some((tagButton) => {
+            return getTagButtonValue(tagButton) === normalizedTagName;
         });
+
+        if (!duplicatedTag) {
+            const customTagButton = createCustomTagButton(tagName);
+            tagContainer.insertBefore(customTagButton, addButton);
+        }
+
+        closeInput();
+    };
+
+    confirmButton.addEventListener('click', submitTag);
+    inputField.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            submitTag();
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeInput();
+        }
     });
+
+    inputField.addEventListener('blur', () => {
+        setTimeout(() => {
+            if (!inputWrapper.contains(document.activeElement)) {
+                closeInput();
+            }
+        }, 0);
+    });
+
+    addButton.style.display = 'none';
+    tagContainer.insertBefore(inputWrapper, addButton);
+    inputField.focus();
+}
+
+function initializeTagButtons() {
+    if (tagHandlersInitialized) {
+        return;
+    }
+
+    document.addEventListener('click', (event) => {
+        const addButton = event.target.closest('.tag-btn.add-btn');
+        if (addButton) {
+            event.preventDefault();
+            openTagInput(addButton);
+            return;
+        }
+
+        const removeButton = event.target.closest('.tag-remove-btn');
+        if (removeButton) {
+            event.preventDefault();
+            const removableTagButton = removeButton.closest('.tag-btn.removable');
+            if (removableTagButton) {
+                removableTagButton.remove();
+            }
+            return;
+        }
+
+        const tagButton = event.target.closest('.tag-btn:not(.add-btn)');
+        if (!tagButton) {
+            return;
+        }
+
+        event.preventDefault();
+        tagButton.classList.toggle('is-selected');
+    });
+
+    tagHandlersInitialized = true;
 }
 
 function initializePhotoUpload() {
