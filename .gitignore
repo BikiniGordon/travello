@@ -14,6 +14,15 @@ obj/
 .vscode/
 .idea/
 
+# Node
+node_modules/
+
+# DB
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
 # Logs
 *.log
 
