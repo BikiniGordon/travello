@@ -1,12 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Jagree\\source\\repos\\travello\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\paiyy\\OneDrive\\WebApp\\travello\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "..\\..\\..\\..\\Jagree\\source\\repos\\travello\\Travello\\Views\\Home\\Index.cshtml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-17T04:21:12.675Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

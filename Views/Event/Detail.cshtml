@@ -226,7 +226,7 @@
                             <img src="~/images/@attendee.ProfileImage" alt="@attendee.Name">
                             <div>
                                 <strong>@attendee.Name</strong>
-                                <div class="text-xs">@attendee.Status</div>
+                                <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div>
                             </div>
                         </div>
                     }

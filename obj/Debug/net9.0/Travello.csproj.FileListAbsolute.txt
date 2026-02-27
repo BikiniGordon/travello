@@ -110,3 +110,16 @@ C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\compres
 C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\compressed\f3zyjk5pj1-f13uzj45wi.gz
 C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\Travello.csproj.Up2Date
 C:\Users\jiray\Documents\Webapp\Webapp Project\travello\obj\Debug\net9.0\compressed\ey18a2qs37-8a6l6v7pgo.gz
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.csproj.AssemblyReference.cache
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.AssemblyInfoInputs.cache
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.AssemblyInfo.cs
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.csproj.CoreCompileInputs.cache
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.RazorAssemblyInfo.cache
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.RazorAssemblyInfo.cs
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.sourcelink.json
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.dll
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\refint\Travello.dll
+C:\Users\paiyy\OneDrive\WebApp\travello\obj\Debug\net9.0\Travello.pdb

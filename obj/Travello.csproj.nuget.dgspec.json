@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj": {}
+    "C:\\Users\\paiyy\\OneDrive\\WebApp\\travello\\Travello.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj": {
+    "C:\\Users\\paiyy\\OneDrive\\WebApp\\travello\\Travello.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj",
+        "projectUniqueName": "C:\\Users\\paiyy\\OneDrive\\WebApp\\travello\\Travello.csproj",
         "projectName": "Travello",
-        "projectPath": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj",
-        "packagesPath": "C:\\Users\\jiray\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\",
+        "projectPath": "C:\\Users\\paiyy\\OneDrive\\WebApp\\travello\\Travello.csproj",
+        "packagesPath": "C:\\Users\\paiyy\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\paiyy\\OneDrive\\WebApp\\travello\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\jiray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\paiyy\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -60,6 +66,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.13, 9.0.13]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[9.0.13, 9.0.13]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.13, 9.0.13]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[9.0.13, 9.0.13]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -68,7 +92,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
