@@ -261,8 +261,68 @@ body {
     /* transition: all 0.3s ease; */
 }
 
-#chat-room {
+#empty-room{
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: calc(100% - 712px); 
+    max-width: 706px; 
+    height: 778px; 
+    top: 48px;
+    right: 64px;
+    z-index: 3;
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+#empty-room{
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+}
+
+#setting-room{
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: calc(100% - 712px); 
+    max-width: 706px; 
+    height: 778px; 
+    top: 48px;
+    right: 64px;
+    z-index: 3;
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+#setting-option{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    top: 130px;
+    gap: 8px;
+}
+
+#event-image-setting{
+    position: absolute;
+    flex: 1;
+    max-width: 128px;
+    max-height: 92px;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    top: 28px;
+    object-fit: cover;
+}
+
+#chat-room {
+    display: none;
     flex-direction: column;
     position: absolute;
     width: calc(100% - 712px); 
