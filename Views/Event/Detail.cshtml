@@ -209,6 +209,7 @@
     </div>
 
     <!-- Attendees Modal -->
+    <!-- boo -->
     <div id="attendeesModal" class="modal-overlay" aria-hidden="true">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="attendeesTitle">
             <div class="modal-header">
@@ -226,7 +227,8 @@
                             <img src="~/images/@attendee.ProfileImage" alt="@attendee.Name">
                             <div>
                                 <strong>@attendee.Name</strong>
-                                <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div>
+                                <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div> 
+                                
                             </div>
                         </div>
                     }
