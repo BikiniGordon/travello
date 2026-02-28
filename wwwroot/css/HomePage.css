@@ -108,7 +108,7 @@
     width: 100%;
 }
 
-.ActivitiesAndSearch {
+.EventsAndSearch {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -133,14 +133,22 @@
     height: 26px;
 }
 
-.SearchInput {
-    width: 100%;
+.LocationSearchInput {
+    width: 70%;
     border: none;
     outline: none;
     background: transparent;
 }
 
-.ActivityRow {
+.DateSearchInput {
+    width: 30%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: rgba(29, 27, 32, 0.5);
+}
+
+.EventRow {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -148,9 +156,11 @@
     gap: 32px var(--space-lg);
     align-self: stretch;
     flex-wrap: wrap;
+
+    min-height: 800px;
 }
 
-.Activity {
+.Event {
     display: flex;
     width: 341px;
     flex-direction: column;
@@ -158,22 +168,22 @@
     position: relative;
 }
 
-.ActivityImage {
+.EventImage {
     height: 213px;
     align-self: stretch;
     aspect-ratio: 341/213;
+    background: #F5F6EE;
 
     border-radius: 18px;
-    background: url('/images/HomePageBackground.jpg') lightgray 50% / cover no-repeat;
 }
 
-.ActivityData {
+.EventData {
     display: flex;
     height: 178px;
     padding: 0 var(--space-xl);
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     gap: var(--space-sm);
     align-self: stretch;
     margin-top: -53px;
@@ -182,11 +192,11 @@
     background: #CCD6D5; /* Set this to 3 different bg */
 }
 
-.ActivityName {
+.event_title {
     font-family: "Segoe UI", sans-serif;
 }
 
-.ActivityDetails {
+.EventDetails {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -194,7 +204,7 @@
     align-self: stretch;
 }
 
-.ActivityLocation {
+.EventLocation {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -207,7 +217,7 @@
     aspect-ratio: 1/1;
 }
 
-.ActivityDuration {
+.EventDuration {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -219,7 +229,7 @@
     height: 21px;
 }
 
-.ActivityTag {
+.event_tag {
     display: flex;
     width: auto;
     padding: 3px 8px;
@@ -310,17 +320,24 @@
     display: flex;
     padding: var(--space-sm) var(--space-md);
     align-items: center;
+    cursor: pointer;
+    text-transform: uppercase;
 
     border-radius: 38px;
     border: 1px solid #849C84;
 }
 
+.active-tag-style {
+    background: rgba(132, 156, 132, 0.30);
+}
+
 .Pagination {
     display: flex;
+    flex-wrap: wrap;
     padding: var(--space-xs);
     justify-content: center;
     align-items: center;
-    gap: var(--space-space-xs, 8px);
+    gap: var(--space-xs);
     align-self: stretch;
 }
 
@@ -333,6 +350,8 @@
     background: transparent;
 
     border-radius: 50px;
+    color: black;
+    text-decoration: none;
 }
 
 .PageNumber {
@@ -348,6 +367,22 @@
     padding: 0;
     cursor: pointer;
     outline: none;
+    color: black;
+    text-decoration: none;
+}
+
+.PageNumber.active {
+    background-color: #CEE7E6;
+    border-radius: 20px;
+}
+
+.PageInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 31px;
+    height: 31px;
 }
 
 .PageInput {
@@ -357,6 +392,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
     
     background: none;
     border: none;
@@ -365,9 +401,36 @@
     outline: none;
 }
 
+.PageInput::placeholder {
+    text-align: center;
+    opacity: 1;
+}
+
+.PageInput::-webkit-outer-spin-button,
+.PageInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 html, body, footer {
     margin: 0;
     padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media (min-width: 1440px) {
+    .EventRow {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; 
+        gap: 32px; 
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 1025px) {
@@ -399,7 +462,7 @@ html, body, footer {
         gap: var(--space-xl);
     }
 
-    .ActivitiesAndSearch {
+    .EventsAndSearch {
         display: contents; 
     }
 
@@ -415,7 +478,7 @@ html, body, footer {
         align-items: center;
     }
 
-    .ActivityRow {
+    .EventRow {
         order: 3;
         width: 100%;
         justify-content: center;
@@ -460,6 +523,14 @@ html, body, footer {
         --space-xl: 32px;
         --space-2xl: 48px;
         --space-paddingout: 16px;
+    }
+
+    .LocationSearchInput {
+        width: 60%;
+    }
+
+    .DateSearchInput {
+        width: 40%;
     }
 
     /* Change might needs */
