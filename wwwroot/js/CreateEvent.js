@@ -359,98 +359,6 @@ function addMapMarker(lat, lng, name, placeNumber = null) {
     map.setView([lat, lng], 16);
 }
 
-function bindCreateEventFormSubmit() {
-    const form = document.getElementById('createEventForm');
-    if (!form) {
-        return;
-    }
-
-    const categoryInput = document.getElementById('categoryInput');
-    const selectedTagsInput = document.getElementById('selectedTagsInput');
-    const plannerJsonInput = document.getElementById('plannerJsonInput');
-    const packItemsInput = document.getElementById('packItemsInput');
-    const latitudeInput = document.getElementById('latitudeInput');
-    const longitudeInput = document.getElementById('longitudeInput');
-    const locationNameInput = document.getElementById('locationName');
-
-    form.addEventListener('submit', () => {
-        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
-        const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
-        if (categoryInput) {
-            categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
-        }
-
-        const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
-        const uniqueTags = Array.from(customTagButtons)
-            .map((button) => getTagButtonValue(button))
-            .filter((value, index, array) => value && array.indexOf(value) === index);
-        if (selectedTagsInput) {
-            selectedTagsInput.value = uniqueTags.join(',');
-        }
-
-        const itineraryRows = [];
-        const allDayElements = document.querySelectorAll('.event-plan-day');
-        allDayElements.forEach((dayElement) => {
-            const dayNumber = Number.parseInt(dayElement.dataset.day, 10);
-            const dayDate = dayElement.querySelector('.day-date-input')?.value || '';
-            const rowElements = dayElement.querySelectorAll('.planner-item');
-
-            rowElements.forEach((rowElement) => {
-                if (!hasPlaceValue(rowElement)) {
-                    return;
-                }
-
-                const placeInput = rowElement.querySelector('.planner-place-input');
-                const noteInput = rowElement.querySelector('.planner-note-input');
-                const expenseRows = rowElement.querySelectorAll('.planner-expense-row');
-                let expenseTotal = 0;
-
-                expenseRows.forEach((expenseRow) => {
-                    const amountInput = expenseRow.querySelector('.planner-expense-input');
-                    const amount = Number.parseFloat(amountInput?.value || '0');
-                    if (Number.isFinite(amount) && amount > 0) {
-                        expenseTotal += amount;
-                    }
-                });
-
-                itineraryRows.push({
-                    dayNumber,
-                    dayDate,
-                    placeName: placeInput?.value?.trim() || '',
-                    note: noteInput?.value?.trim() || '',
-                    expenseTotal
-                });
-            });
-        });
-
-        if (plannerJsonInput) {
-            plannerJsonInput.value = JSON.stringify(itineraryRows);
-        }
-
-        const packItems = Array.from(document.querySelectorAll('.pack-input'))
-            .map((input) => input.value.trim())
-            .filter((value) => value.length > 0);
-        if (packItemsInput) {
-            packItemsInput.value = packItems.join('|');
-        }
-
-        const firstMarkerRow = Array.from(document.querySelectorAll('.planner-item')).find((row) => row.dataset.markerLat && row.dataset.markerLng);
-
-        if (firstMarkerRow) {
-            if (latitudeInput) {
-                latitudeInput.value = firstMarkerRow.dataset.markerLat || '';
-            }
-            if (longitudeInput) {
-                longitudeInput.value = firstMarkerRow.dataset.markerLng || '';
-            }
-
-            if (locationNameInput && !locationNameInput.value.trim()) {
-                locationNameInput.value = firstMarkerRow.dataset.markerName || locationNameInput.value;
-            }
-        }
-    });
-}
-
 function initializeMap() {
     const mapContainer = document.getElementById('eventMap');
     if (!mapContainer) {
@@ -1013,7 +921,6 @@ if (importantPackRows) {
 document.addEventListener('DOMContentLoaded', () => {
     initializePhotoUpload();
     initializeTagButtons();
-    bindCreateEventFormSubmit();
 
     if (plannerDaysContainer) {
         createDay(1);
