@@ -359,6 +359,96 @@ function addMapMarker(lat, lng, name, placeNumber = null) {
     map.setView([lat, lng], 16);
 }
 
+function bindCreateEventFormSubmit() {
+    const form = document.getElementById('createEventForm');
+    if (!form) {
+        return;
+    }
+
+    const categoryInput = document.getElementById('selectedCategoryInput');
+    const tagsInput = document.getElementById('selectedTagsInput');
+    const plannerInput = document.getElementById('plannerJsonInput');
+    const packingListInput = document.getElementById('packingListJsonInput');
+
+    form.addEventListener('submit', () => {
+        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+        const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
+        if (categoryInput) {
+            categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
+        }
+
+        const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
+        const tags = Array.from(customTagButtons)
+            .map((button) => getTagButtonValue(button))
+            .filter((tagValue, index, array) => tagValue && array.indexOf(tagValue) === index);
+
+        if (tagsInput) {
+            tagsInput.value = tags.join(',');
+        }
+
+        const plannerRows = [];
+        const dayElements = document.querySelectorAll('.event-plan-day');
+
+        dayElements.forEach((dayElement) => {
+            const dayDate = dayElement.querySelector('.day-date-input')?.value || '';
+            const rowElements = dayElement.querySelectorAll('.planner-item');
+
+            rowElements.forEach((rowElement) => {
+                const placeInput = rowElement.querySelector('.planner-place-input');
+                const placeName = placeInput?.value?.trim() || '';
+                if (!placeName) {
+                    return;
+                }
+
+                const noteInput = rowElement.querySelector('.planner-note-input');
+                const note = noteInput?.value?.trim() || '';
+
+                const expenseRows = rowElement.querySelectorAll('.planner-expense-row');
+                const expenses = [];
+                expenseRows.forEach((expenseRow) => {
+                    const expenseName = expenseRow.querySelector('.planner-expense-name-input')?.value?.trim() || '';
+                    const amountRaw = expenseRow.querySelector('.planner-expense-input')?.value;
+                    const amount = Number.parseFloat(amountRaw || '0');
+
+                    if (!expenseName && (!Number.isFinite(amount) || amount <= 0)) {
+                        return;
+                    }
+
+                    expenses.push({
+                        name: expenseName,
+                        amount: Number.isFinite(amount) ? amount : 0
+                    });
+                });
+
+                const latitude = rowElement.dataset.markerLat ? Number.parseFloat(rowElement.dataset.markerLat) : null;
+                const longitude = rowElement.dataset.markerLng ? Number.parseFloat(rowElement.dataset.markerLng) : null;
+
+                plannerRows.push({
+                    placeName,
+                    dayDate,
+                    note,
+                    googleMapUrl: rowElement.dataset.googleMapUrl || '',
+                    latitude: Number.isFinite(latitude) ? latitude : null,
+                    longitude: Number.isFinite(longitude) ? longitude : null,
+                    expenses
+                });
+            });
+        });
+
+        if (plannerInput) {
+            plannerInput.value = JSON.stringify(plannerRows);
+        }
+
+        const packingList = Array.from(document.querySelectorAll('.pack-input'))
+            .map((input) => input.value.trim())
+            .filter((value) => value.length > 0);
+
+        if (packingListInput) {
+            packingListInput.value = JSON.stringify(packingList);
+        }
+    });
+}
+
 function initializeMap() {
     const mapContainer = document.getElementById('eventMap');
     if (!mapContainer) {
@@ -636,6 +726,7 @@ plannerDaysContainer.addEventListener('input', (event) => {
                 currentRow.dataset.markerLat = String(location.lat);
                 currentRow.dataset.markerLng = String(location.lng);
                 currentRow.dataset.markerName = location.name;
+                currentRow.dataset.googleMapUrl = inputValue;
                 target.value = location.name;
                 if (map) {
                     map.setView([location.lat, location.lng], 16);
@@ -648,6 +739,7 @@ plannerDaysContainer.addEventListener('input', (event) => {
                 delete currentRow.dataset.markerLat;
                 delete currentRow.dataset.markerLng;
                 delete currentRow.dataset.markerName;
+                delete currentRow.dataset.googleMapUrl;
             }
         }
 
@@ -726,6 +818,7 @@ plannerDaysContainer.addEventListener('click', (event) => {
             delete rowElement.dataset.markerLat;
             delete rowElement.dataset.markerLng;
             delete rowElement.dataset.markerName;
+            delete rowElement.dataset.googleMapUrl;
             rowElement.querySelector('.planner-note-input').value = '';
             rowElement.querySelector('.planner-note-input').classList.add('hidden');
             const expenseWrap = rowElement.querySelector('.planner-expense-wrap');
@@ -921,6 +1014,7 @@ if (importantPackRows) {
 document.addEventListener('DOMContentLoaded', () => {
     initializePhotoUpload();
     initializeTagButtons();
+    bindCreateEventFormSubmit();
 
     if (plannerDaysContainer) {
         createDay(1);

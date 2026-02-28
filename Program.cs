@@ -1,7 +1,24 @@
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using Travello.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDBsettings"));
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return new MongoClient(settings.ConnectionString);
+});
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(settings.DatabaseName);
+});
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
 
 var app = builder.Build();
 
