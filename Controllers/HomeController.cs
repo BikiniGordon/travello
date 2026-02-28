@@ -32,7 +32,7 @@ namespace Travello.Controllers
             int page_size = 9;
 
             var filterBuilder = Builders<EventModel>.Filter;
-            var filter = filterBuilder.Empty;
+            var filter = filterBuilder.Where(x => x.attendees_limit > x.attendees);
 
             // 1. Filter by Location
             // We use the string "location" to avoid C# List vs String conflicts
