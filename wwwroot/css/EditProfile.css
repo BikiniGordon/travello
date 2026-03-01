@@ -110,6 +110,17 @@
     background: rgba(217, 217, 217, 0.50);
 }
 
+.ProfileImage {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ProfileImageUpload {
+    display: none;
+}
+
 .UploadButton {
     display: flex;
     width: 162px;
@@ -154,11 +165,18 @@
     background: transparent;
     border: none;
     border-bottom: 1px solid #000;
+    outline: none;
 }
 
 .EditInput::placeholder {
     color: #000000;
     opacity: 1;
+}
+
+.ErrorMessage {
+    display: block;
+    color: rgb(200, 0, 0);
+    margin-top: var(--space-xs);
 }
 
 .DateAndGenderContainer {
@@ -195,6 +213,7 @@
 .InputSelection {
     border: none;
     background: none;
+    outline: none;
 }
 
 .Tags {
@@ -257,16 +276,30 @@
     align-items: center;
     width: 20px;
     height: 20px;
+    cursor: pointer;
 }
 
 .AddTag {
     display: flex;
-    padding: 0 var(--space-sm) var(--space-xs) var(--space-sm);
+    padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-sm);
     flex-direction: column;
     justify-content: center;
     align-items: center;
     border-radius: 38px;
     border: 1px solid #D9D9D9;
+    cursor: pointer;
+}
+
+.TagInput {
+    display: flex;
+    background: rgba(217, 217, 217, 0.30);
+    border: 1px solid #D9D9D9;
+    border-radius: 38px;
+    padding: var(--space-sm);
+    outline: none;
+    font-size: 14px;
+    font-weight: 350;
+    text-transform: uppercase;
 }
 
 .EditBio {
@@ -278,6 +311,7 @@
     border: none;
     background: none;
     border-bottom: 1px solid #000;
+    outline: none;
 }
 
 .EditBio::placeholder {
@@ -308,6 +342,10 @@
 html, body, footer {
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
 }
 
 @media (max-width: 1025px) {

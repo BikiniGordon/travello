@@ -192,9 +192,9 @@
     background: #CCD6D5; /* Set this to 3 different bg */
 }
 
-.event_title {
+/* .event_title {
     font-family: "Segoe UI", sans-serif;
-}
+} */
 
 .EventDetails {
     display: flex;
@@ -419,6 +419,10 @@ html, body, footer {
 
 html {
     scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
 }
 
 @media (min-width: 1440px) {
