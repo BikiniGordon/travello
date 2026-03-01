@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj": {}
+    "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj": {
+    "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj",
+        "projectUniqueName": "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj",
         "projectName": "Travello",
-        "projectPath": "C:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj",
+        "projectPath": "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj",
         "packagesPath": "C:\\Users\\Asus GL552VX-DM212D\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\obj\\",
+        "outputPath": "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus GL552VX-DM212D\\AppData\\Roaming\\NuGet\\NuGet.Config"

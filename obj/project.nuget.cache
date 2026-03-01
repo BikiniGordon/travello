@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kJ1JZWHBpfo=",
+  "dgSpecHash": "cKPR4KGJ008=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj",
+  "projectFilePath": "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Asus GL552VX-DM212D\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\Asus GL552VX-DM212D\\.nuget\\packages\\mongodb.bson\\3.6.0\\mongodb.bson.3.6.0.nupkg.sha512",
