@@ -1,0 +1,564 @@
+:root {
+    --logo-size: 32px;
+
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-paddingout: 72px;
+
+    --text-xs: 12px;
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+}
+
+.text-xs  { font-size: var(--text-xs); line-height: 1.2;}
+.text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+.text-md  { font-size: var(--text-md); line-height: 1.2;}
+.text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+.text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+.text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+.text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+.text-4xl { font-size: var(--text-4xl); line-height: 1.2;}
+
+.font-semilight  { font-weight: 350; }
+.font-regular    { font-weight: 400; }
+.font-medium     { font-weight: 500; }
+.font-semibold   { font-weight: 600; }
+.font-bold       { font-weight: 700; }
+
+.CenterContainer {
+    width: 100%;
+    /* max-width: 1440px; */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.HomePageContainer {
+    width: 100%;
+    min-height: 200vh;
+    position: relative;
+
+    background: linear-gradient(180deg, #83989B 91vh, #F5F6EE 180vh);
+}
+
+.HomePageBackground {
+    width: 100%;
+    height: 100vh;
+    margin-top: -80px;
+    position: relative;
+    z-index: 1;
+    background: 
+        linear-gradient(
+            to bottom, 
+            rgba(131, 152, 155, 0.5) 0%, 
+            rgba(131, 152, 155, 0.2) 70%, 
+            #83989B 100%
+        ),
+        url('/images/HomePageBackground.jpg') no-repeat;
+    background-position: center; 
+    background-size: cover;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ContextContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: var(--space-lg);
+    color: white;
+    align-self: stretch;
+    flex-wrap: wrap;
+}
+
+.SpecialText {
+    color: #E5A13D;
+    text-align: center;
+    font-family: "Alex Brush";
+}
+
+.DataPartContainer {
+    width: 100%;
+    padding: var(--space-lg) var(--space-paddingout);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2xl);
+    align-self: stretch;
+    background-color: #F5F6EE;
+}
+
+.MainDataPart {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    align-self: stretch;
+    width: 100%;
+}
+
+.EventsAndSearch {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xl);
+    flex: 1;
+}
+
+.SearchBar {
+    display: flex;
+    height: 40px;
+    padding: 10px 12px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    border: 1px solid #000;
+
+    border-radius: 50px;
+}
+
+.SearchIcon {
+    width: 26px;
+    height: 26px;
+}
+
+.LocationSearchInput {
+    width: 70%;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.DateSearchInput {
+    width: 30%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: rgba(29, 27, 32, 0.5);
+}
+
+.EventRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 32px var(--space-lg);
+    align-self: stretch;
+    flex-wrap: wrap;
+
+    min-height: 800px;
+}
+
+.Event {
+    display: flex;
+    width: 341px;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+}
+
+.EventImage {
+    height: 213px;
+    align-self: stretch;
+    aspect-ratio: 341/213;
+    background: #F5F6EE;
+
+    border-radius: 18px;
+}
+
+.EventData {
+    display: flex;
+    height: 178px;
+    padding: 0 var(--space-xl);
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    gap: var(--space-sm);
+    align-self: stretch;
+    margin-top: -53px;
+
+    border-radius: 18px;
+    background: #CCD6D5; /* Set this to 3 different bg */
+}
+
+/* .event_title {
+    font-family: "Segoe UI", sans-serif;
+} */
+
+.EventDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+    align-self: stretch;
+}
+
+.EventLocation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+}
+
+.LocationIcon {
+    width: 21px;
+    height: 21px;
+    aspect-ratio: 1/1;
+}
+
+.EventDuration {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+}
+
+.CalendarIcon {
+    width: 21px;
+    height: 21px;
+}
+
+.event_tag {
+    display: flex;
+    width: auto;
+    padding: 3px 8px;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    left: 16px;
+    top: 120px;
+    z-index: 10; 
+
+    border-radius: 10px;
+    background: #FFF;
+    color: #000;
+    font-size: 12px;
+    font-family: "Tahoma";
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+}
+
+.Tags {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-lg);
+    flex: 1 0 0;
+    max-width: 193px;
+}
+
+.TagsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-lg);
+    align-self: stretch;
+}
+
+.Category {
+    display: flex;
+    padding-bottom: var(--space-xs);
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 1px solid #232C22;
+}
+
+.CategoryHeader {
+    color: #232C22;
+}
+
+.CategoryTags {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: var(--space-sm);
+    align-self: stretch;
+}
+
+.Popular {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-lg);
+    align-self: stretch;
+}
+
+.PopularHeader {
+    display: flex;
+    padding-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    border-bottom: 1px solid #232C22;
+}
+
+.PopularTags {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: var(--space-sm);
+    align-self: stretch;
+}
+
+.Tag {
+    display: flex;
+    padding: var(--space-sm) var(--space-md);
+    align-items: center;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    border-radius: 38px;
+    border: 1px solid #849C84;
+}
+
+.active-tag-style {
+    background: rgba(132, 156, 132, 0.30);
+}
+
+.Pagination {
+    display: flex;
+    flex-wrap: wrap;
+    padding: var(--space-xs);
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-xs);
+    align-self: stretch;
+}
+
+.WordNav {
+    display: inline-flex;
+    height: 31px;
+    padding: 0 var(--space-xs);
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+
+    border-radius: 50px;
+    color: black;
+    text-decoration: none;
+}
+
+.PageNumber {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 31px;
+    height: 31px;
+
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    color: black;
+    text-decoration: none;
+}
+
+.PageNumber.active {
+    background-color: #CEE7E6;
+    border-radius: 20px;
+}
+
+.PageInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 31px;
+    height: 31px;
+}
+
+.PageInput {
+    display: flex;
+    width: 27px;
+    height: 22px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+.PageInput::placeholder {
+    text-align: center;
+    opacity: 1;
+}
+
+.PageInput::-webkit-outer-spin-button,
+.PageInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+html, body, footer {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+}
+
+@media (min-width: 1440px) {
+    .EventRow {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; 
+        gap: 32px; 
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1025px) {
+    :root {
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 56px;
+
+        --space-xs: 6px;
+        --space-sm: 12px;
+        --space-md: 20px;
+        --space-lg: 28px;
+        --space-xl: 40px;
+        --space-2xl: 56px;
+        --space-paddingout: 32px;
+    }
+
+    .ContextContainer {
+        gap: var(--space-md);
+    }
+
+    .MainDataPart {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xl);
+    }
+
+    .EventsAndSearch {
+        display: contents; 
+    }
+
+    .SearchBar {
+        order: 1; /* First: Search Bar */
+        width: 100%;
+    }
+
+    .Tags {
+        order: 2;
+        max-width: 100%;
+        width: 100%;
+        align-items: center;
+    }
+
+    .EventRow {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .Pagination {
+        order: 4;
+    }
+
+    .TagsContainer, .CategoryTags, .PopularTags {
+        align-items: flex-end;
+        text-align: center;
+        width: 100%;
+    }
+
+    .CategoryTags, .PopularTags {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .Tag {
+        justify-content: center;
+    }
+    /* Change might needs */
+}
+
+@media (max-width: 768px) {
+    :root {
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 48px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+
+    .LocationSearchInput {
+        width: 60%;
+    }
+
+    .DateSearchInput {
+        width: 40%;
+    }
+
+    /* Change might needs */
+}
+
+/* @media (max-width: 391px) {
+
+  :root {
+
+    --text-sm: 16px;
+    --text-md: 18px;
+    --text-lg: 20px;
+    --text-xl: 24px;
+    --text-2xl: 32px;
+    --text-3xl: 40px;
+    --text-4xl: 32px;
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-paddingout: 16px;
+  }
+
+} */

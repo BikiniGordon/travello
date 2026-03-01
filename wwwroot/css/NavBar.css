@@ -1,0 +1,235 @@
+:root {
+    --space-paddingout: 72px;
+    --logo-size: 32px;
+
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+
+    --text-xs: 12px;
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+}
+
+.text-xs  { font-size: var(--text-xs); line-height: 1.2;}
+.text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+.text-md  { font-size: var(--text-md); line-height: 1.2;}
+.text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+.text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+.text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+.text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+.text-4xl { font-size: var(--text-4xl); line-height: 1.2;}
+
+.font-semilight  { font-weight: 350; }
+.font-regular    { font-weight: 400; }
+.font-medium     { font-weight: 500; }
+.font-semibold   { font-weight: 600; }
+.font-bold       { font-weight: 700; }
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+}
+
+.NavBar {
+    display: flex;
+    width: 100%;
+    /* max-width: 1440px;  */
+    padding: var(--space-sm) var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+
+    box-shadow: -2px -2px 4px 0 rgba(192, 192, 192, 0.25) inset, 2px 2px 4px 0 rgba(0, 0, 0, 0.25) inset;
+    backdrop-filter: blur(20px);
+
+    z-index: 10;
+
+}
+
+.Logo, .TLogo {
+    color: white;
+    font-size: var(--text-xl); 
+    line-height: normal;
+}
+
+.Logo {
+    font-weight: 600;
+}
+
+.TLogo {
+    font-family: "Alex Brush";
+    font-weight: 400;
+}
+
+.RightNav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.CreateEvent {
+    display: flex;
+    padding: var(--space-xs) var(--space-sm);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.20);
+}
+
+.InsiderCreateEvent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.PlusIcon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.NavLink {
+    display: flex;
+    padding: var(--space-xs) var(--space-md);
+    align-items: center;
+    border: 2px solid #333;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.20);
+
+    position: relative;
+}
+
+.ChatButton, .NotiButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ProfilePic {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.ProfilePic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.MenuToggle, .DropdownMenu {
+    display: none;
+}
+
+.DropDownLogo {
+    color: #000;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.InsiderNavLink {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+@media (max-width: 1025px) {
+    :root {
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 56px;
+
+        --space-xs: 6px;
+        --space-sm: 12px;
+        --space-md: 20px;
+        --space-lg: 28px;
+        --space-xl: 40px;
+        --space-2xl: 56px;
+        --space-paddingout: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 48px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+
+    .InsiderNavLink {
+        display: none;
+    }
+
+    .MenuToggle {
+        display: flex;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .DropdownMenu {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: white;
+        border: 2px solid #333;
+        border-radius: 25px;
+        padding: var(--space-paddingout);
+        z-index: 1000;
+        
+        display: none; 
+    }
+
+    .DropdownMenu.show {
+        display: block;
+    }
+
+    .MobileIconStack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        align-items: center;
+    }
+}
