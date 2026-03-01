@@ -60,8 +60,9 @@ namespace Travello.Controllers
             var plannerRows = ParsePlannerRows(input.PlannerJson);
             var packingList = ParsePackingList(input.PackingListJson);
 
-            DateTime? startDate = ParseDateToUtc(input.StartDate);
-            DateTime? closingDate = ParseDateToUtc(input.ClosingDate);
+            DateTime? startDate = ParseDateTimeToUtc(input.StartDate, input.StartTime);
+            DateTime? explicitEndDate = ParseDateTimeToUtc(input.EndDate, input.EndTime);
+            DateTime? openDate = ParseDateToUtc(input.OpenDate);
             DateTime? itineraryEndDate = plannerRows
                 .Select(row => ParseDateToUtc(row.DayDate))
                 .Where(date => date.HasValue)
@@ -69,7 +70,7 @@ namespace Travello.Controllers
                 .OrderByDescending(date => date)
                 .FirstOrDefault();
 
-            DateTime? endDate = itineraryEndDate ?? closingDate ?? startDate;
+            DateTime? endDate = explicitEndDate ?? itineraryEndDate ?? startDate;
 
             var itinerary = plannerRows
                 .Where(row => !string.IsNullOrWhiteSpace(row.PlaceName))
@@ -88,6 +89,10 @@ namespace Travello.Controllers
 
                     return new ItineraryDocument
                     {
+                        DayIndex = row.DayIndex,
+                        DayLabel = string.IsNullOrWhiteSpace(row.DayLabel) ? null : row.DayLabel,
+                        PlaceIndex = row.PlaceIndex,
+                        DayDate = ParseDateToUtc(row.DayDate),
                         ActivityName = row.PlaceName?.Trim() ?? string.Empty,
                         ActivityTime = ParseDateToUtc(row.DayDate),
                         GoogleMapUrl = string.IsNullOrWhiteSpace(row.GoogleMapUrl) ? null : row.GoogleMapUrl,
@@ -139,7 +144,7 @@ namespace Travello.Controllers
                 Locations = locations,
                 StartDate = startDate,
                 EndDate = endDate,
-                ClosingDate = closingDate,
+                OpenDate = openDate,
                 EventTag = normalizedTags,
                 EventImgPath = null,
                 TripRules = input.TripRules,
@@ -176,6 +181,30 @@ namespace Travello.Controllers
             }
 
             return null;
+        }
+
+        private static DateTime? ParseDateTimeToUtc(string? dateValue, string? timeValue)
+        {
+            if (string.IsNullOrWhiteSpace(dateValue))
+            {
+                return null;
+            }
+
+            if (!DateTime.TryParse(dateValue, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsedDate))
+            {
+                return null;
+            }
+
+            if (TimeOnly.TryParse(timeValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedTime))
+            {
+                parsedDate = parsedDate.Date.Add(parsedTime.ToTimeSpan());
+            }
+            else
+            {
+                parsedDate = parsedDate.Date;
+            }
+
+            return DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
         }
 
         private static List<PlannerRowInputModel> ParsePlannerRows(string? plannerJson)

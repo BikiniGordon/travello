@@ -14,7 +14,9 @@ public class CreateEventInputModel
     public string? RecruitQuestion { get; set; }
     public string? StartDate { get; set; }
     public string? StartTime { get; set; }
-    public string? ClosingDate { get; set; }
+    public string? EndDate { get; set; }
+    public string? EndTime { get; set; }
+    public string? OpenDate { get; set; }
     public string? LocationName { get; set; }
     public string? TripRules { get; set; }
     public string? PlannerJson { get; set; }
@@ -47,9 +49,9 @@ public class EventDocument
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime? EndDate { get; set; }
 
-    [BsonElement("closing_date")]
+    [BsonElement("open_date")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-    public DateTime? ClosingDate { get; set; }
+    public DateTime? OpenDate { get; set; }
 
     [BsonElement("event_tag")]
     public List<string> EventTag { get; set; } = new();
@@ -94,6 +96,19 @@ public class LocationDocument
 
 public class ItineraryDocument
 {
+    [BsonElement("day_index")]
+    public int? DayIndex { get; set; }
+
+    [BsonElement("day_label")]
+    public string? DayLabel { get; set; }
+
+    [BsonElement("place_index")]
+    public int? PlaceIndex { get; set; }
+
+    [BsonElement("day_date")]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+    public DateTime? DayDate { get; set; }
+
     [BsonElement("activity_name")]
     public string ActivityName { get; set; } = string.Empty;
 
@@ -131,6 +146,15 @@ public class ExpenseItemDocument
 
 public class PlannerRowInputModel
 {
+    [JsonPropertyName("dayIndex")]
+    public int? DayIndex { get; set; }
+
+    [JsonPropertyName("dayLabel")]
+    public string? DayLabel { get; set; }
+
+    [JsonPropertyName("placeIndex")]
+    public int? PlaceIndex { get; set; }
+
     [JsonPropertyName("placeName")]
     public string? PlaceName { get; set; }
 

@@ -5,6 +5,7 @@
     <RollForward>LatestMajor</RollForward>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>travello-2f9c9b42-e0da-4760-a4c9-5d3f77de5cc2</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

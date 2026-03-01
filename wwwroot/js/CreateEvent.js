@@ -389,11 +389,14 @@ function bindCreateEventFormSubmit() {
         const plannerRows = [];
         const dayElements = document.querySelectorAll('.event-plan-day');
 
-        dayElements.forEach((dayElement) => {
+        dayElements.forEach((dayElement, dayArrayIndex) => {
+            const dayIndex = dayArrayIndex + 1;
+            const dayLabel = `DAY ${dayIndex}`;
             const dayDate = dayElement.querySelector('.day-date-input')?.value || '';
             const rowElements = dayElement.querySelectorAll('.planner-item');
 
-            rowElements.forEach((rowElement) => {
+            rowElements.forEach((rowElement, rowArrayIndex) => {
+                const placeIndex = rowArrayIndex + 1;
                 const placeInput = rowElement.querySelector('.planner-place-input');
                 const placeName = placeInput?.value?.trim() || '';
                 if (!placeName) {
@@ -424,6 +427,9 @@ function bindCreateEventFormSubmit() {
                 const longitude = rowElement.dataset.markerLng ? Number.parseFloat(rowElement.dataset.markerLng) : null;
 
                 plannerRows.push({
+                    dayIndex,
+                    dayLabel,
+                    placeIndex,
                     placeName,
                     dayDate,
                     note,

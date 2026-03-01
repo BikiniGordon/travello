@@ -117,7 +117,8 @@
                     <!-- Questions for Attendees -->
                     <section class="form-section">
                         <div class="input-row">
-                            <label class="text-lg font-semibold text-dark">REGISTRATION QUESTIONS</label>                            <textarea 
+                            <label class="text-lg font-semibold text-dark">REGISTRATION QUESTIONS</label>                            
+                            <textarea 
                                 name="RecruitQuestion"
                                 class="textarea-field auto-resize section-placeholder" 
                                 rows="1"
@@ -134,14 +135,20 @@
                 <section class="form-section section-group date-time-section">
                     <div class="input-row">
                         <label class="text-lg font-semibold text-dark">DATE AND TIME</label>
+                        <span class="text-sm font-regular text-muted">START DATE</span>
                         <div class="date-input-row">
                             <input type="date" name="StartDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                             <input type="time" name="StartTime" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                         </div>
+                        <span class="text-sm font-regular text-muted">END DATE</span>
+                        <div class="date-input-row">
+                            <input type="date" name="EndDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                            <input type="time" name="EndTime" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                        </div>
                     </div>
                     <div class="input-row">
                         <label class="text-lg font-semibold text-dark">REGISTRATION OPENS</label>
-                        <input type="date" name="ClosingDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                        <input type="date" name="OpenDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                     </div>
                 </section>
 
