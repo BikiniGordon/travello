@@ -1,0 +1,291 @@
+/* รูปโปรไฟล์ */
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+
+:root {
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+}
+.My_proflie { 
+    display: flex;
+    flex-wrap: wrap; 
+    gap: var(--space-xl);
+
+}
+
+.frame_1349 {
+    padding: var(--space-xl);
+    width: 100%; 
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: nowrap;   
+    justify-content: center; 
+    gap: var(--space-xl);
+}
+
+@media (max-width: 750px) {
+  .frame_1349 {
+    flex-direction: column;
+    align-items: center;  
+    padding: var(--space-md) !important;
+  }
+  .profile-card {
+    min-width: unset;         
+    width: 227px;           
+    height: 258px;
+  }
+
+  .frame_1677 {
+    align-items: left;  
+    text-align: left;
+  }
+
+  .header_abountme {
+    display: flex;
+    justify-content: left;
+    align-items: baseline;
+    gap: 10px;
+  }
+}
+.profile-card {
+    background-color: #e2e0d6;
+    border-radius: 50px; 
+    width: 355px;
+    max-width: 355px;
+    max-height: 355px; 
+    height: auto; 
+    border: solid 1px #D9D9D9;
+}
+
+#frame_photo_text {
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    display: flex;             
+    flex-direction: column;    /* สั่งให้ของข้างในเรียงกันเป็น "แนวตั้ง" */
+    align-items: center;       /* จัดของทุกชิ้นให้อยู่ "กึ่งกลาง" แนวนอนของการ์ด */
+    justify-content: center;   /* จัดของให้อยู่กึ่งกลางแนวตั้ง (ถ้าการ์ดมีความสูง) */
+    gap: var(--space-md);
+}
+
+.profile-img {
+    width: 135px;
+    height: 135px;
+    object-fit: cover;
+}
+
+#frame_photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;     /* จัดรูปให้อยู่ตรงกลางแนวตั้ง */
+}
+ฺิ
+.letter-spacing {
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+}
+
+.frame_1349 {
+    padding: var(--space-xl);
+    width: 100%; 
+    max-width: 100%;
+    display: flex;
+    justify-content: left;
+}
+.text_name {
+    font-size: 32px;
+}
+#frame_text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-family: 'Segoe UI', Tahoma;
+}
+.frame_1677 {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    gap: var(--space-lg);
+    flex: 1;
+    min-width: 0;
+}
+
+.font_alex {
+  font-family: "Alex Brush", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.5em;
+  line-height: 1;
+}
+.header_abountme {
+  font-family: 'Segoe UI', Tahoma;
+  align-items: baseline;
+  font-weight: 600;
+  font-style: normal;
+  font-size: var(--space-lg);
+  gap: 5px;
+}
+.tag{
+    font-family: 'Segoe UI', Tahoma;
+    font-weight: 600;
+    font-style: normal;
+    font-size: var(--space-md);
+}
+.box_aboutme {
+    white-space: nowrap; /* ป้องกันไม่ให้ข้อความตัดขึ้นบรรทัดใหม่ภายในก้อนนี้ */
+    display: block;
+}
+
+.box_element_tag {
+    display: flex;
+    flex-wrap: wrap; /* ถ้า Tag เยอะให้ไหลลงบรรทัดใหม่ */
+    gap: 12px;       /* ระยะห่างระหว่างแต่ละ Tag */
+    margin-top: 10px;
+}
+
+/* สไตล์ของแต่ละ Tag */
+.tag_item {
+    display: inline-flex;  /* ใช้ inline-flex เพื่อให้กล่องหดตามเนื้อหา */
+    align-items: center;   /* จัดกึ่งกลางแนวตั้ง (แก้ปัญหาตัวหนังสือลอย) */
+    justify-content: center;
+    min-height: 60.2px;
+    height: auto;          /* ความสูงที่แน่นอนตาม Figma */
+    width: auto;
+    padding: 0 12px;
+    background-color: #efede4;
+    border: 1px solid #d9d9d9;
+    border-radius: 38px;   /* ทำขอบมนแบบ Pill */
+    gap: 8px;
+}
+
+.tag_text {
+    line-height: 1;        /* ตัดช่องว่างส่วนเกินของฟอนต์ออก */
+    font-weight: 400;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+/* ปุ่มกากบาท (X) */
+.btn_close_tag {
+    background: #fff;        /* พื้นหลังวงกลมสีขาว */
+    border: 1px solid #ccc;
+    border-radius: 50%;      /* ทำเป็นวงกลม */
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+/* เอฟเฟกต์ตอนเอาเมาส์ไปวางที่ปุ่มปิด */
+.btn_close_tag:hover {
+    background-color: #ffefef;
+    color: #ff0000;
+    border-color: #ff0000;
+}
+.frame_1388{
+    width: 100%; 
+    display: flex;
+    flex-direction: column; 
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: var(--space-lg);
+    gap: var(--space-md);
+}
+.event_post{
+    border: 3px solid #562F06;
+    border-radius: 15px;
+    width: 100%;
+    min-height: 400px; 
+    height: auto; 
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column; /* จัดเนื้อหาเรียงลงมาเป็นแนวตั้ง */
+    gap: var(--space-md);
+    box-sizing: border-box; /* สำคัญมาก: เพื่อไม่ให้ padding ไปเพิ่มขนาดกล่อง */
+}
+.head_post{
+    font-family: 'Segoe UI', Tahoma;
+    font-weight: 700;
+    font-style: bold;
+    flex-direction: row;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.head_post p {
+    font-size: clamp(20px, 4vw, 36px) !important; /* ปรับขนาดตามความกว้างจอ */
+    margin: 0;
+    flex: 1;                /* ให้ตัวหนังสือเอาพื้นที่ที่เหลือไป */
+    min-width: 250px;       /* ป้องกันไม่ให้ตัวหนังสือโดนบีบจนเป็นแนวตั้ง */
+}
+.box_post_action{
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+    min-width: fit-content; 
+}
+.box_action{
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    display: inline-flex;  /* ใช้ inline-flex เพื่อให้กล่องหดตามเนื้อหา */
+    align-items: center;   /* จัดกึ่งกลางแนวตั้ง (แก้ปัญหาตัวหนังสือลอย) */
+    justify-content: center;
+    background-color: #807775;
+    border: 1px solid #807775;
+    border-radius: 15px;   /* ทำขอบมนแบบ Pill */
+
+}
+.box_action:hover {
+    background-color: #ffffff;
+    color: #ff0000;
+    border-color: #ff0000;
+}
+.box_detail{
+    background-color: #807775;
+    border: 1px solid #807775;
+}
+.box_chat{
+    background-color: #74A274;
+    border: 1px solid #74A274;
+}
+.box_delete{
+    background-color: #CB5B5B;
+    border: 1px solid #CB5B5B;
+}
+.text_action{
+    font-size: var(--space-md);
+    color: white;
+}
+.paragraph_post{
+    font-family: 'Segoe UI', Tahoma;
+    font-weight: 350;
+    font-style: Semilight;
+    font-size: var(--space-sm);
+    line-height: 1.5;
+}
+.photo_post{
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); /* แบ่งเป็น 3 คอลัมน์เท่าๆ กัน */
+    gap: var(--space-md);
+    width: 100%;
+    margin-top: var(--space-md);
+    box-sizing: border-box;
+
+}
+.photo_post_item{
+    width: 100%;
+    aspect-ratio: 16 / 10; /* ล็อกสัดส่วนรูปภาพให้เท่ากันทุกใบ (เปลี่ยนเลขได้ตามชอบ) */
+    border-radius: 15px;   /* เพิ่มความโค้งมนตามภาพตัวอย่าง */
+    object-fit: cover;     /* ให้รูปเต็มพื้นที่โดยไม่เบี้ยว */
+    display: block;
+    min-width: 0;          /* บังคับให้หดตัวได้ในระบบ Flex/Grid */
+}
