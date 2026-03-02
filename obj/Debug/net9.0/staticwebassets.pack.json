@@ -25,6 +25,10 @@
       "PackagePath": "staticwebassets\\images\\date_icon.svg"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg",
+      "PackagePath": "staticwebassets\\images\\leave_icon.svg"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\locate_icon.svg",
       "PackagePath": "staticwebassets\\images\\locate_icon.svg"
     },

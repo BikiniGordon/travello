@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "RDSmDu0vH7xHeAPLmre6Y6JL6W2nUsUkkETcA4tBOy0=",
+  "Hash": "NpbD6/bSJv7PQUOb6uaRtrdnpWBNAo+cTHuTMfChzRw=",
   "Source": "Travello",
   "BasePath": "_content/Travello",
   "Mode": "Default",
@@ -626,12 +626,12 @@
       "OriginalItemSpec": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\search_icon.svg"
     },
     {
-      "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-owt0m6jji0.gz",
+      "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-i88jz6vk0q.gz",
       "SourceId": "Travello",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\",
       "BasePath": "_content/Travello",
-      "RelativePath": "js/Chat#[.{fingerprint=owt0m6jji0}]?.js.gz",
+      "RelativePath": "js/Chat#[.{fingerprint=i88jz6vk0q}]?.js.gz",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Alternative",
@@ -640,8 +640,8 @@
       "RelatedAsset": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "xe16ts3nwg",
-      "Integrity": "V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs=",
+      "Fingerprint": "j75nfzc9wb",
+      "Integrity": "H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js"
@@ -689,12 +689,12 @@
       "OriginalItemSpec": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
     },
     {
-      "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-2q67lc2zge.gz",
+      "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-4dmu4astkb.gz",
       "SourceId": "Travello",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\",
       "BasePath": "_content/Travello",
-      "RelativePath": "css/Chat#[.{fingerprint=2q67lc2zge}]?.css.gz",
+      "RelativePath": "css/Chat#[.{fingerprint=4dmu4astkb}]?.css.gz",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Alternative",
@@ -703,8 +703,8 @@
       "RelatedAsset": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\Chat.css",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "imivo9005w",
-      "Integrity": "9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA=",
+      "Fingerprint": "k6h8jfqg8b",
+      "Integrity": "BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\Chat.css"
@@ -834,6 +834,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\locate_icon.svg"
+    },
+    {
+      "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\j0caqdg89n-88nhq0psf2.gz",
+      "SourceId": "Travello",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/Travello",
+      "RelativePath": "images/leave_icon#[.{fingerprint=88nhq0psf2}]?.svg.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "1hm5h5geup",
+      "Integrity": "+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg"
     },
     {
       "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\k1wyi4s823-jjsuc0puko.gz",
@@ -1606,8 +1627,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "2q67lc2zge",
-      "Integrity": "yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc=",
+      "Fingerprint": "4dmu4astkb",
+      "Integrity": "uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\Chat.css"
@@ -1695,6 +1716,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\date_icon.svg"
+    },
+    {
+      "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg",
+      "SourceId": "Travello",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\",
+      "BasePath": "_content/Travello",
+      "RelativePath": "images/leave_icon#[.{fingerprint}]?.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "88nhq0psf2",
+      "Integrity": "KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\leave_icon.svg"
     },
     {
       "Identity": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\locate_icon.svg",
@@ -1816,8 +1858,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "owt0m6jji0",
-      "Integrity": "aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88=",
+      "Fingerprint": "i88jz6vk0q",
+      "Integrity": "cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\Chat.js"
@@ -3106,13 +3148,13 @@
   ],
   "Endpoints": [
     {
-      "Route": "css/Chat.2q67lc2zge.css",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-2q67lc2zge.gz",
+      "Route": "css/Chat.4dmu4astkb.css",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-4dmu4astkb.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000336587008"
+          "Quality": "0.000184945441"
         }
       ],
       "ResponseHeaders": [
@@ -3122,15 +3164,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2970"
+          "Value": "5406"
         },
         {
           "Name": "ETag",
-          "Value": "\"9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA=\""
+          "Value": "\"BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:51:40 GMT"
+          "Value": "Mon, 02 Mar 2026 15:30:00 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3150,13 +3192,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc=\""
+          "Value": "W/\"uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "2q67lc2zge"
+          "Value": "4dmu4astkb"
         },
         {
           "Name": "label",
@@ -3164,12 +3206,12 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc="
+          "Value": "sha256-uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A="
         }
       ]
     },
     {
-      "Route": "css/Chat.2q67lc2zge.css",
+      "Route": "css/Chat.4dmu4astkb.css",
       "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\Chat.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -3179,7 +3221,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "13601"
+          "Value": "25601"
         },
         {
           "Name": "Content-Type",
@@ -3187,11 +3229,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc=\""
+          "Value": "\"uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:51:40 GMT"
+          "Value": "Mon, 02 Mar 2026 15:30:00 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3201,7 +3243,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "2q67lc2zge"
+          "Value": "4dmu4astkb"
         },
         {
           "Name": "label",
@@ -3209,13 +3251,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc="
+          "Value": "sha256-uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A="
         }
       ]
     },
     {
-      "Route": "css/Chat.2q67lc2zge.css.gz",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-2q67lc2zge.gz",
+      "Route": "css/Chat.4dmu4astkb.css.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-4dmu4astkb.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -3224,7 +3266,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2970"
+          "Value": "5406"
         },
         {
           "Name": "Content-Type",
@@ -3232,11 +3274,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA=\""
+          "Value": "\"BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:51:40 GMT"
+          "Value": "Mon, 02 Mar 2026 15:30:00 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3254,7 +3296,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "2q67lc2zge"
+          "Value": "4dmu4astkb"
         },
         {
           "Name": "label",
@@ -3262,18 +3304,18 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA="
+          "Value": "sha256-BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ="
         }
       ]
     },
     {
       "Route": "css/Chat.css",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-2q67lc2zge.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-4dmu4astkb.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000336587008"
+          "Quality": "0.000184945441"
         }
       ],
       "ResponseHeaders": [
@@ -3283,15 +3325,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2970"
+          "Value": "5406"
         },
         {
           "Name": "ETag",
-          "Value": "\"9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA=\""
+          "Value": "\"BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:51:40 GMT"
+          "Value": "Mon, 02 Mar 2026 15:30:00 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3311,13 +3353,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc=\""
+          "Value": "W/\"uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc="
+          "Value": "sha256-uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A="
         }
       ]
     },
@@ -3332,7 +3374,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "13601"
+          "Value": "25601"
         },
         {
           "Name": "Content-Type",
@@ -3340,11 +3382,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc=\""
+          "Value": "\"uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:51:40 GMT"
+          "Value": "Mon, 02 Mar 2026 15:30:00 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3354,13 +3396,13 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-yuJHOlkeYntryhWdK4db0y67c9aIVYi55cJHNcdw5zc="
+          "Value": "sha256-uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A="
         }
       ]
     },
     {
       "Route": "css/Chat.css.gz",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-2q67lc2zge.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\ey18a2qs37-4dmu4astkb.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -3369,7 +3411,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2970"
+          "Value": "5406"
         },
         {
           "Name": "Content-Type",
@@ -3377,11 +3419,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA=\""
+          "Value": "\"BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:51:40 GMT"
+          "Value": "Mon, 02 Mar 2026 15:30:00 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3399,7 +3441,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-9rMtAl+3d3OLy+AM67OGyY3XbOmU+tooeHnlipYunsA="
+          "Value": "sha256-BMijJy1kyNLTbX/z4OjYTMBPBAMrrukjHumjZNpgJnQ="
         }
       ]
     },
@@ -4592,6 +4634,304 @@
         {
           "Name": "integrity",
           "Value": "sha256-FZoYmbXVLVuaONBxZE4xYuSFfsJosSzf7AEOEqWRTtg="
+        }
+      ]
+    },
+    {
+      "Route": "images/leave_icon.88nhq0psf2.svg",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\j0caqdg89n-88nhq0psf2.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000078437525"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12748"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 25 Feb 2026 13:54:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "88nhq0psf2"
+        },
+        {
+          "Name": "label",
+          "Value": "images/leave_icon.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0="
+        }
+      ]
+    },
+    {
+      "Route": "images/leave_icon.88nhq0psf2.svg",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "18337"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 25 Feb 2026 13:54:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "88nhq0psf2"
+        },
+        {
+          "Name": "label",
+          "Value": "images/leave_icon.svg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0="
+        }
+      ]
+    },
+    {
+      "Route": "images/leave_icon.88nhq0psf2.svg.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\j0caqdg89n-88nhq0psf2.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12748"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 25 Feb 2026 13:54:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "88nhq0psf2"
+        },
+        {
+          "Name": "label",
+          "Value": "images/leave_icon.svg.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE="
+        }
+      ]
+    },
+    {
+      "Route": "images/leave_icon.svg",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\j0caqdg89n-88nhq0psf2.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000078437525"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12748"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 25 Feb 2026 13:54:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0="
+        }
+      ]
+    },
+    {
+      "Route": "images/leave_icon.svg",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "18337"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 25 Feb 2026 13:54:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-KIYKutqQZ1OkqLZc6TdOuY4R/AFlDmvgILSI7lUajM0="
+        }
+      ]
+    },
+    {
+      "Route": "images/leave_icon.svg.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\j0caqdg89n-88nhq0psf2.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12748"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/svg+xml"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 25 Feb 2026 13:54:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-+5kYG0u75YzGjN8uEXfLX+hHUWS2Bf+XzPFHkkHDabE="
         }
       ]
     },
@@ -6086,13 +6426,13 @@
       ]
     },
     {
-      "Route": "js/Chat.js",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-owt0m6jji0.gz",
+      "Route": "js/Chat.i88jz6vk0q.js",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-i88jz6vk0q.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.002564102564"
+          "Quality": "0.000415627598"
         }
       ],
       "ResponseHeaders": [
@@ -6102,19 +6442,19 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "389"
+          "Value": "2405"
         },
         {
           "Name": "ETag",
-          "Value": "\"V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs=\""
+          "Value": "\"H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:43:36 GMT"
+          "Value": "Mon, 02 Mar 2026 15:29:35 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "no-cache"
+          "Value": "max-age=31536000, immutable"
         },
         {
           "Name": "Content-Encoding",
@@ -6130,18 +6470,26 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88=\""
+          "Value": "W/\"cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=\""
         }
       ],
       "EndpointProperties": [
         {
+          "Name": "fingerprint",
+          "Value": "i88jz6vk0q"
+        },
+        {
+          "Name": "label",
+          "Value": "js/Chat.js"
+        },
+        {
           "Name": "integrity",
-          "Value": "sha256-aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88="
+          "Value": "sha256-cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk="
         }
       ]
     },
     {
-      "Route": "js/Chat.js",
+      "Route": "js/Chat.i88jz6vk0q.js",
       "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js",
       "Selectors": [],
       "ResponseHeaders": [
@@ -6151,7 +6499,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1046"
+          "Value": "8948"
         },
         {
           "Name": "Content-Type",
@@ -6159,121 +6507,21 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88=\""
+          "Value": "\"cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:43:36 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88="
-        }
-      ]
-    },
-    {
-      "Route": "js/Chat.js.gz",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-owt0m6jji0.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "389"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/javascript"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:43:36 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs="
-        }
-      ]
-    },
-    {
-      "Route": "js/Chat.owt0m6jji0.js",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-owt0m6jji0.gz",
-      "Selectors": [
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip",
-          "Quality": "0.002564102564"
-        }
-      ],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "389"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:43:36 GMT"
+          "Value": "Mon, 02 Mar 2026 15:29:35 GMT"
         },
         {
           "Name": "Cache-Control",
           "Value": "max-age=31536000, immutable"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/javascript"
-        },
-        {
-          "Name": "ETag",
-          "Value": "W/\"aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "owt0m6jji0"
+          "Value": "i88jz6vk0q"
         },
         {
           "Name": "label",
@@ -6281,13 +6529,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88="
+          "Value": "sha256-cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk="
         }
       ]
     },
     {
-      "Route": "js/Chat.owt0m6jji0.js",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js",
+      "Route": "js/Chat.i88jz6vk0q.js.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-i88jz6vk0q.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -6296,7 +6544,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1046"
+          "Value": "2405"
         },
         {
           "Name": "Content-Type",
@@ -6304,56 +6552,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88=\""
+          "Value": "\"H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:43:36 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "owt0m6jji0"
-        },
-        {
-          "Name": "label",
-          "Value": "js/Chat.js"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-aDUTlyCLfp58GCBMyCRfODA0dbuj8B3rK4whkNzeV88="
-        }
-      ]
-    },
-    {
-      "Route": "js/Chat.owt0m6jji0.js.gz",
-      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-owt0m6jji0.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "389"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/javascript"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Wed, 25 Feb 2026 13:43:36 GMT"
+          "Value": "Mon, 02 Mar 2026 15:29:35 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -6371,7 +6574,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "owt0m6jji0"
+          "Value": "i88jz6vk0q"
         },
         {
           "Name": "label",
@@ -6379,7 +6582,144 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-V5blCsfGMFbCbGhoRGUdP60UOitXzltA9ycqGUEuvbs="
+          "Value": "sha256-H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI="
+        }
+      ]
+    },
+    {
+      "Route": "js/Chat.js",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-i88jz6vk0q.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000415627598"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2405"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 02 Mar 2026 15:29:35 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk="
+        }
+      ]
+    },
+    {
+      "Route": "js/Chat.js",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8948"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 02 Mar 2026 15:29:35 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk="
+        }
+      ]
+    },
+    {
+      "Route": "js/Chat.js.gz",
+      "AssetFile": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\Debug\\net9.0\\compressed\\dc5j3cxort-i88jz6vk0q.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2405"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 02 Mar 2026 15:29:35 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-H1WmKJyaWxlRaST3eplUxHgr4Z58q46SSHkKreUKqRI="
         }
       ]
     },
