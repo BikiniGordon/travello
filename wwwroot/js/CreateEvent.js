@@ -370,7 +370,88 @@ function bindCreateEventFormSubmit() {
     const plannerInput = document.getElementById('plannerJsonInput');
     const packingListInput = document.getElementById('packingListJsonInput');
 
-    form.addEventListener('submit', () => {
+    const requiredFieldConfigs = [
+        { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
+        { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+        { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
+        { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
+        { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
+        { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
+        { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
+        { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
+        { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
+        { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+    ]
+        .map((config) => ({
+            ...config,
+            input: form.querySelector(config.selector)
+        }))
+        .filter((config) => Boolean(config.input));
+
+    function getValidationMessageElement(fieldName) {
+        return form.querySelector(`.field-validation-message[data-valmsg-for="${fieldName}"]`);
+    }
+
+    function setValidationMessage(fieldName, message) {
+        const messageElement = getValidationMessageElement(fieldName);
+        if (!messageElement) {
+            return;
+        }
+
+        messageElement.textContent = message;
+    }
+
+    function isInputFilled(inputElement) {
+        if (!inputElement) {
+            return false;
+        }
+
+        if (inputElement.type === 'number') {
+            return inputElement.value !== '';
+        }
+
+        return inputElement.value.trim() !== '';
+    }
+
+    function validateRequiredField(config) {
+        const hasValue = isInputFilled(config.input);
+        setValidationMessage(config.name, hasValue ? '' : config.message);
+        return hasValue;
+    }
+
+    function validateAllRequiredFields() {
+        let allValid = true;
+
+        requiredFieldConfigs.forEach((config) => {
+            const isValid = validateRequiredField(config);
+            if (!isValid && allValid) {
+                config.input.focus();
+                allValid = false;
+            } else if (!isValid) {
+                allValid = false;
+            }
+        });
+
+        return allValid;
+    }
+
+    requiredFieldConfigs.forEach((config) => {
+        const eventName = config.input.type === 'date' || config.input.type === 'time' ? 'change' : 'input';
+        config.input.addEventListener('blur', () => {
+            validateRequiredField(config);
+        });
+        config.input.addEventListener(eventName, () => {
+            validateRequiredField(config);
+        });
+    });
+
+    form.addEventListener('submit', (event) => {
+        const isValid = validateAllRequiredFields();
+        if (!isValid) {
+            event.preventDefault();
+            return;
+        }
+
         const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
         const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
         if (categoryInput) {

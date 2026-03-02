@@ -23,7 +23,7 @@
         {
             <div class="text-sm font-regular" style="color: #2e7d32; margin-bottom: 12px;">@successMessage</div>
         }
-        <form id="createEventForm" method="post" asp-controller="Home" asp-action="CreateEvent">
+        <form id="createEventForm" method="post" asp-controller="Home" asp-action="CreateEvent" novalidate>
             @Html.AntiForgeryToken()
         <div class="layout">
             <!-- Left Column -->
@@ -57,11 +57,11 @@
                             name="EventTitle"
                             class="input-field section-placeholder"
                             placeholder="EVENT TITLE"
-                            required
                             data-text-size="lg"
                             data-font-weight="semibold"
                         >
                         <p class="text-sm font-regular text-dark">*The event title should be clear and descriptive.</p>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="EventTitle"></span>
                     </section>
 
                     <!-- Detail -->
@@ -76,6 +76,7 @@
                             data-font-weight="semibold"
                             oninput="autoResize(this)"
                         ></textarea>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="Detail"></span>
                     </section>
 
 
@@ -111,6 +112,7 @@
                                 data-font-weight="regular"
                             >
                         </div>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="AttendeesLimit"></span>
                         <p class="text-sm font-regular text-dark">*When the number of attendees reaches the limit, registration will be closed automatically.</p>
                     </section>
 
@@ -140,15 +142,20 @@
                             <input type="date" name="StartDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                             <input type="time" name="StartTime" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                         </div>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="StartDate"></span>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="StartTime"></span>
                         <span class="text-sm font-regular text-muted">END DATE</span>
                         <div class="date-input-row">
                             <input type="date" name="EndDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                             <input type="time" name="EndTime" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
                         </div>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="EndDate"></span>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="EndTime"></span>
                     </div>
                     <div class="input-row">
                         <label class="text-lg font-semibold text-dark">REGISTRATION OPENS</label>
                         <input type="date" name="OpenDate" class="input-field date-field" data-text-size="sm" data-font-weight="regular">
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="OpenDate"></span>
                     </div>
                 </section>
 
@@ -162,6 +169,7 @@
                             </svg>
                             <input type="text" name="LocationName" class="input-field location-field" placeholder="Enter location" data-text-size="md" data-font-weight="regular">
                         </div>
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="LocationName"></span>
                     </div>
                 </section>
 
@@ -176,6 +184,7 @@
                         data-font-weight="semibold"
                         oninput="autoResize(this)"
                     ></textarea>
+                    <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="TripRules"></span>
                     <div class="input-row">
                         <label class="text-lg font-semibold text-dark">IMPORTANT THING TO PACK</label>
                         <div id="importantPackRows" class="important-pack-rows">

@@ -96,6 +96,13 @@ h1, h2, h3, h4, h5, h6, p {
 .text-dark { color: #1E1E1E; }
 .text-gray { color: rgba(30, 30, 30, 0.5); }
 .text-error { color: #D55351; display: block;}
+.field-validation-message {
+    margin-top: 4px;
+}
+
+.field-validation-message:empty {
+    display: none;
+}
 .text-muted { color: #333; }
 
 .default-font {

@@ -38,6 +38,59 @@ namespace Travello.Controllers
             if (string.IsNullOrWhiteSpace(input.EventTitle))
             {
                 ModelState.AddModelError(nameof(input.EventTitle), "Event title is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.Detail))
+            {
+                ModelState.AddModelError(nameof(input.Detail), "Detail is required.");
+            }
+
+            if (!input.AttendeesLimit.HasValue)
+            {
+                ModelState.AddModelError(nameof(input.AttendeesLimit), "Maximum number of attendees is required.");
+            }
+            else if (input.AttendeesLimit.Value < 0)
+            {
+                ModelState.AddModelError(nameof(input.AttendeesLimit), "Maximum number of attendees must be zero or greater.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.StartDate))
+            {
+                ModelState.AddModelError(nameof(input.StartDate), "Start date is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.StartTime))
+            {
+                ModelState.AddModelError(nameof(input.StartTime), "Start time is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.EndDate))
+            {
+                ModelState.AddModelError(nameof(input.EndDate), "End date is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.EndTime))
+            {
+                ModelState.AddModelError(nameof(input.EndTime), "End time is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.OpenDate))
+            {
+                ModelState.AddModelError(nameof(input.OpenDate), "Registration open date is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.LocationName))
+            {
+                ModelState.AddModelError(nameof(input.LocationName), "Location is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(input.TripRules))
+            {
+                ModelState.AddModelError(nameof(input.TripRules), "Trip rules are required.");
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return View("~/Views/Create_event/CreateEvent.cshtml");
             }
 
