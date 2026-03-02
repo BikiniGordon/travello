@@ -87,3 +87,19 @@ function finalizeTag(text) {
 
     tagList.insertBefore(newTag, btn);
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const notification = document.getElementById("statusNotification");
+    
+    if (notification) {
+        // 1. Slide down
+        setTimeout(() => {
+            notification.classList.add("show");
+        }, 100);
+
+        // 2. Wait 3 seconds, then slide back up
+        setTimeout(() => {
+            notification.classList.remove("show");
+        }, 3000);
+    }
+});

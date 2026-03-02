@@ -34,9 +34,10 @@ namespace Travello.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(UserViewModel updatedUser)
         {
-
             if (!ModelState.IsValid)
             {
+                TempData["StatusMessage"] = "Update failed: Please check the errors below.";
+                TempData["StatusType"] = "error";
                 return View(updatedUser); 
             }
 
@@ -46,68 +47,78 @@ namespace Travello.Controllers
 
             if (existingWithSameName != null)
             {
-                // This adds a specific error to the 'username' field
                 ModelState.AddModelError("username", "This username is already taken.");
                 return View(updatedUser);
             }
-            // 1. Fetch the original record to prevent losing non-editable data
+
             var existingUser = await _userCollection.Find(u => u.user_id == updatedUser.user_id).FirstOrDefaultAsync();
             if (existingUser == null) return NotFound();
 
-            // 2. Handle the Image Upload
+            // --- Image Handling ---
             if (updatedUser.ProfileImageUpload != null)
             {
-            // --- PART 1: SAVE NEW IMAGE ---
-            string folder = "images/profiles/";
-            string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, folder);
-            if (!string.IsNullOrEmpty(existingUser.profile_img_path) && 
-                !existingUser.profile_img_path.Contains("default.png"))
-            {
-                string oldPath = Path.Combine(_hostEnvironment.WebRootPath, existingUser.profile_img_path.TrimStart('/'));
-                if (System.IO.File.Exists(oldPath))
+                string folder = "images/profiles/";
+                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, folder);
+                
+                if (!string.IsNullOrEmpty(existingUser.profile_img_path) && 
+                    !existingUser.profile_img_path.Contains("default.png"))
                 {
-                    System.IO.File.Delete(oldPath);
+                    string oldPath = Path.Combine(_hostEnvironment.WebRootPath, existingUser.profile_img_path.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath))
+                    {
+                        System.IO.File.Delete(oldPath);
+                    }
                 }
-            }
 
-            // Create the folder on your laptop if it's missing
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
 
-            string fileName = Guid.NewGuid().ToString() + "_" + updatedUser.ProfileImageUpload.FileName;
-            string serverPath = Path.Combine(uploadsFolder, fileName);
+                string fileName = Guid.NewGuid().ToString() + "_" + updatedUser.ProfileImageUpload.FileName;
+                string serverPath = Path.Combine(uploadsFolder, fileName);
 
-            using (var fileStream = new FileStream(serverPath, FileMode.Create))
-            {
-                await updatedUser.ProfileImageUpload.CopyToAsync(fileStream);
-            }
-            
-            // Set the NEW path for MongoDB
-            updatedUser.profile_img_path = "/" + folder + fileName;
+                using (var fileStream = new FileStream(serverPath, FileMode.Create))
+                {
+                    await updatedUser.ProfileImageUpload.CopyToAsync(fileStream);
+                }
+                
+                updatedUser.profile_img_path = "/" + folder + fileName;
             }
             else
             {
-                // --- PART 2: KEEP OLD IMAGE ---
-                // This prevents the database from being updated with a NULL image path
                 updatedUser.profile_img_path = existingUser.profile_img_path;
             }
             
+            // --- Tag Handling ---
             if (updatedUser.user_tag != null)
             {
                 updatedUser.user_tag = updatedUser.user_tag
-                    .Select(t => t.Trim().ToUpper()) // Force uppercase
-                    .Distinct()                      // Remove any accidental duplicates
+                    .Select(t => t.Trim().ToUpper())
+                    .Distinct()
                     .ToList();
             }
-            // 3. Keep data that wasn't in the form (like tags or IDs)
+
+            // --- Final Save & Notification ---
             updatedUser.user_id = existingUser.user_id;
             updatedUser.event_id = existingUser.event_id;
             updatedUser.password_hash = existingUser.password_hash;
-            // 4. Update MongoDB
-            var filter = Builders<UserViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
-            await _userCollection.ReplaceOneAsync(filter, updatedUser);
+
+            try 
+            {
+                var filter = Builders<UserViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
+                await _userCollection.ReplaceOneAsync(filter, updatedUser);
+
+                // SUCCESS MESSAGE
+                TempData["StatusMessage"] = "Profile updated successfully!";
+                TempData["StatusType"] = "success";
+            }
+            catch (Exception)
+            {
+                // ERROR MESSAGE
+                TempData["StatusMessage"] = "Something went wrong. Please try again.";
+                TempData["StatusType"] = "error";
+            }
 
             return RedirectToAction("EditProfile");
         }

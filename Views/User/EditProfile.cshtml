@@ -6,6 +6,13 @@
 <link rel="stylesheet" href="~/css/EditProfile.css" />
 <link rel="stylesheet" href="~/css/NavBar.css" />
 
+@if (TempData["StatusMessage"] != null)
+{
+    <div id="statusNotification" class="notification @TempData["StatusType"] font-bold">
+        @TempData["StatusMessage"]
+    </div>
+}
+
 <div class="CenterContainer">
     <form class="EditProfileContainer" asp-controller="User" asp-action="EditProfile" method="post" enctype="multipart/form-data">
         
@@ -21,6 +28,7 @@
                 <div class="text-sm ProfileSubContainer">
                     PROFILE PICTURE
                     <div class="ProfilePicture">
+                        <input type="hidden" asp-for="profile_img_path" />
                         @if (string.IsNullOrEmpty(Model.profile_img_path) || Model.profile_img_path == "/images/profiles/default.png")
                         {
                             <svg id="placeholderSvg" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -59,7 +67,10 @@
                     <div class="ChoosingContainer text-sm font-semilight">
                         DATE OF BIRTH
                         <div class="ChoosingInputContainer">
-                            <input type="date" asp-for="date_of_birth" class="InputSelection" />
+                            @{
+                                var maxDate = DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                            }
+                            <input type="date" asp-for="date_of_birth" class="InputSelection" max="@maxDate"/>
                         </div>
                     </div>
                     <div class="ChoosingContainer text-sm font-semilight">
@@ -67,8 +78,9 @@
                         <div class="ChoosingInputContainer">
                             <select class="InputSelection" asp-for="gender" required>
                                 <option value="" disabled selected hidden>CHOOSE GENDER</option>
-                                <option value="male">MALE</option>
-                                <option value="female">FEMALE</option>
+                                <option value="Male">MALE</option>
+                                <option value="Female">FEMALE</option>
+                                <option value="Other">OTHER</option>
                             </select>
                         </div>
                     </div>

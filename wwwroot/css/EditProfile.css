@@ -32,6 +32,27 @@
 .font-semibold   { font-weight: 600; }
 .font-bold       { font-weight: 700; }
 
+.notification {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    z-index: 1000;
+    transition: top 0.5s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.notification.success { background-color: #00b64cd7; }
+.notification.error { background-color: rgb(200, 0, 0); }
+
+.notification.show {
+    top: 20px; 
+}
+
 .CenterContainer {
     width: 100%;
     min-height: 100vh;
