@@ -369,8 +369,10 @@ function bindCreateEventFormSubmit() {
     const tagsInput = document.getElementById('selectedTagsInput');
     const plannerInput = document.getElementById('plannerJsonInput');
     const packingListInput = document.getElementById('packingListJsonInput');
+    const uploadPhotoButton = document.getElementById('uploadPhotoButton');
 
     const requiredFieldConfigs = [
+        { name: 'UploadPhoto', selector: '#uploadPhotoInput', message: 'Upload photo is required.' },
         { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
         { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
         { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
@@ -406,6 +408,10 @@ function bindCreateEventFormSubmit() {
             return false;
         }
 
+        if (inputElement.type === 'file') {
+            return Boolean(inputElement.files && inputElement.files.length > 0);
+        }
+
         if (inputElement.type === 'number') {
             return inputElement.value !== '';
         }
@@ -436,7 +442,7 @@ function bindCreateEventFormSubmit() {
     }
 
     requiredFieldConfigs.forEach((config) => {
-        const eventName = config.input.type === 'date' || config.input.type === 'time' ? 'change' : 'input';
+        const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
         config.input.addEventListener('blur', () => {
             validateRequiredField(config);
         });
@@ -444,6 +450,26 @@ function bindCreateEventFormSubmit() {
             validateRequiredField(config);
         });
     });
+
+    const uploadPhotoConfig = requiredFieldConfigs.find((config) => config.name === 'UploadPhoto');
+    let uploadDialogWasOpened = false;
+
+    if (uploadPhotoButton && uploadPhotoConfig) {
+        uploadPhotoButton.addEventListener('click', () => {
+            uploadDialogWasOpened = true;
+        });
+
+        window.addEventListener('focus', () => {
+            if (!uploadDialogWasOpened) {
+                return;
+            }
+
+            uploadDialogWasOpened = false;
+            setTimeout(() => {
+                validateRequiredField(uploadPhotoConfig);
+            }, 0);
+        });
+    }
 
     form.addEventListener('submit', (event) => {
         const isValid = validateAllRequiredFields();
