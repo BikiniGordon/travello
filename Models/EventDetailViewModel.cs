@@ -24,6 +24,13 @@ namespace Travello.Models
         public List<ExpenseViewModel> Expenses { get; set; } = new();
     }
 
+        public class LocationViewModel
+    {
+        public string PlaceName { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
+
 
     public class DayViewModel
     {
@@ -70,5 +77,7 @@ namespace Travello.Models
         public List<AttendeeViewModel> Attendees { get; set; } = new();
         public List<JoinQuestionViewModel> JoinQuestions { get; set; } = new();
         public List<AdditionViewModel> Additions { get; set; } = new();
+
+        public List<LocationViewModel> Locations { get; set; } = new();
     }
 }

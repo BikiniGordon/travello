@@ -30,28 +30,50 @@ namespace Travello.Controllers
                 PackingList = new List<string> { "คนรู้ใจ", "เสื้อกันหนาว", "รองเท้า" },
 
                 Days = new List<DayViewModel>
+            {
+                new DayViewModel 
                 {
-                    new DayViewModel
+                    DayNumber = 1,
+                    Places = new List<PlaceViewModel>
                     {
-                        DayNumber = 1,
-                        Places = new List<PlaceViewModel>
+                        new PlaceViewModel
                         {
-                            new PlaceViewModel
+                            Name = "สวนลุม",
+                            Description = "เจอกันเวลา 9 โมงเช้า",
+                            Expenses = new List<ExpenseViewModel>
                             {
-                                Name = "สวนลุม",
-                                Description = "เจอกันเวลา 9 โมงเช้า",
-                                Expenses = new List<ExpenseViewModel>
-                                {
-                                    new ExpenseViewModel { Name = "ค่าเดินทาง", Amount = 20 }
-                                }
-                            },
-                            new PlaceViewModel
+                                new ExpenseViewModel { Name = "ค่าเดินทาง", Amount = 20 }
+                            }
+                        },
+                        new PlaceViewModel
+                        {
+                            Name = "วัดอรุณ",
+                            Description = "สวดมนต์เอาฤกษ์เอาชัย"
+                        }
+                    }
+                }, 
+                new DayViewModel  
+                {
+                    DayNumber = 2,
+                    Places = new List<PlaceViewModel>
+                    {
+                        new PlaceViewModel
+                        {
+                            Name = "โรงเรียนอัสสัมชัญบางรัก",
+                            Description = "แวะโรงเรียนเก่า",
+                            Expenses = new List<ExpenseViewModel>
                             {
-                                Name = "วัดอรุณ",
-                                Description = "สวดมนต์เอาฤกษ์เอาชัย"
+                                new ExpenseViewModel { Name = "ค่าจอดรถ", Amount = 100 }
                             }
                         }
                     }
+                }  
+            },
+                Locations = new List<LocationViewModel>
+                {
+                    new LocationViewModel { PlaceName = "สวนลุม",  Latitude = 13.7280, Longitude = 100.5418 },
+                    new LocationViewModel { PlaceName = "วัดอรุณ", Latitude = 13.7436, Longitude = 100.4888 },
+                    new LocationViewModel { PlaceName = "โรงเรียนอัสสัมชัญบางรัก", Latitude = 13.7234, Longitude = 100.516128 },
                 },
 
                 Attendees = new List<AttendeeViewModel>
@@ -60,6 +82,8 @@ namespace Travello.Controllers
                     new AttendeeViewModel { Id=2, Name="Tom",    ProfileImage="pic.png", IsApproved=true },
                     new AttendeeViewModel { Id=3, Name="Robin",  ProfileImage="pic.png", IsApproved=true },
                     new AttendeeViewModel { Id=4, Name="Sam",    ProfileImage="pic.png", IsApproved=false },
+                    new AttendeeViewModel { Id=5, Name="Alex",   ProfileImage="pic.png", IsApproved=false },
+                    new AttendeeViewModel { Id=5, Name="Alex",   ProfileImage="pic.png", IsApproved=false },
                 },
 
                 JoinQuestions = new List<JoinQuestionViewModel>
@@ -88,6 +112,7 @@ namespace Travello.Controllers
                 new { Id=2, Name="Tom",    ProfileImage="/images/pic.png", IsApproved=true  },
                 new { Id=3, Name="Robin",  ProfileImage="/images/pic.png", IsApproved=true  },
                 new { Id=4, Name="Sam",    ProfileImage="/images/pic.png", IsApproved=false },
+                
             };
 
             bool isOwner = false; // true
