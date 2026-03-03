@@ -1,0 +1,284 @@
+@model Travello.Models.EventDetailViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Noto+Sans+Thai:wght@100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="~/css/styleDetail.css" />
+</head>
+
+<body>
+    <div class="all">
+        <header class="nav">
+
+        </header>
+        <main class="details">
+            <section class="frist">
+                <div class="left">
+                    <div class="event-name">
+                        @* <h1 class="text-2xl font-bold">@Model.EventTitle</h1> *@
+                        <h1 class="text-2xl font-bold">ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว</h1>
+                        <div class="tag">
+                            @* <p class="text-xs font-regular">@Model.Category</p> *@
+                            <p class="text-xs font-regular">ADVENTURE</p>
+                        </div>
+                    </div>
+                    <div class="owner">
+                        @* <img class="profile" src="~/images/@Model.HostProfileImage"> *@
+                        <img class="profile" src="~/images/Ellipse 12.png" alt="Host profile">
+                        <p class="text-md font-regular">Hosted by</p>
+                        @* <span class="text-md font-semibold">@Model.HostName</span> *@
+                        <span class="text-md font-semibold">Dearja</span>
+                    </div>
+                </div>
+                @* <img class="cover" src="~/images/@Model.CoverImage"> *@
+                <img class="cover" src="~/images/cover.png" alt="Event cover">
+            </section>
+
+            <div class="second">
+                <div class="left1">
+                    <div class="detail">
+                        <div class="boxforline">
+                            <h1 class="text-lg font-bold">DETAIL</h1>
+                            <hr class="line">
+                        </div>
+                        @* <p class="text-sm font-regular">@Model.Detail</p> *@
+                        <p class="text-sm font-regular">LORAM ipsum dolor sit amet, consectetur adipiscing elit.
+                            Vestibulum tempus ullamcorper neque tincidunt auctor. Morbi non tortor sit amet diam porta
+                            auctor id nec nibh. Quisque rutrum ex erat, et commodo mi scelerisque in. Fusce massa
+                            lectus, posuere tempus cursus sit amet, egestas vitae felis. </p>
+                    </div>
+                    <div class="trip-rules">
+                        <div class="boxforline">
+                            <h1 class="text-lg font-bold">TRIP RULES</h1>
+                            <hr class="line">
+                        </div>
+                        @* <p class="text-sm font-regular">@Model.TripRules</p> *@
+                        <p class="text-sm font-regular">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            Vestibulum tempus ullamcorper neque tincidunt auctor. Morbi </p>
+                    </div>
+                </div>
+
+                <div class="right1">
+                    <div class="inside">
+                        <div class="closing-date">
+                            <img class="icon" src="~/images/iconpre.png" alt="icon">
+                            @* <h2 class="text-md font-semibold text-brown">Closing date , @Model.ClosingDate.ToString("MM/dd/yyyy")</h2> *@
+                            <h2 class="text-md font-semibold text-brown">Closing date , 03/20/2026</h2>
+                        </div>
+                        <div class="closing-date">
+                            <img class="icon2pre" src="~/images/icon2pre.png" alt="icon">
+                            @* <h2 class="text-md font-semibold text-brown">@Model.StartDate.ToString("MM/dd/yyyy") - @Model.EndDate.ToString("MM/dd/yyyy")</h2> *@
+                            <h2 class="text-md font-semibold text-brown">03/20/2026 - 03/26/2026 : 1:30 AM - 1:30 AM</h2>
+                        </div>
+                        <div class="closing-date">
+                            <img class="icon" src="~/images/icon3pre.png" alt="icon">
+                            @* <h2 class="text-md font-semibold text-brown">@Model.Location</h2> *@
+                            <h2 class="text-md font-semibold text-brown">Everest mountain</h2>
+                        </div>
+                        <div class="closing-date">
+                            <img class="icon" src="~/images/icon4pre.png" alt="icon">
+                            @* <h2 class="text-md font-semibold text-brown">Remaining @Model.RemainingSlots people</h2> *@
+                            <h2 class="text-md font-semibold text-brown">Remaining 10 people</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="third">
+                <div class="left">
+                    <div class="top">
+                        <div class="boxforline">
+                            <h1 class="text-lg font-bold">IMPORTANT THINGS TO PACK</h1>
+                            <hr class="line">
+                        </div>
+                        <div class="chk-box">
+                            @foreach (var item in Model.PackingList)
+                            {
+                                <div class="choice">
+                                    <img class="icon4" src="~/images/Check_circle.svg" alt="check">
+                                    <p class="text-md font-regular">@item</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="below">
+                        <h1 class="text-lg font-bold text-brown">ITINERARY</h1>
+                        <div class="itinerary">
+                            @foreach (var day in Model.Days)
+                            {
+                                <div class="day">
+                                    <div class="boxforline">
+                                        <h3 class="text-md font-bold">DAY @day.DayNumber</h3>
+                                        <hr class="line">
+                                    </div>
+                                    @foreach (var place in day.Places)
+                                    {
+                                        <div class="place">
+                                            <div class="place-icon"></div>
+                                            <div class="place-content">
+                                                <p class="text-md font-semibold">@place.Name</p>
+                                                <p class="text-sm font-regular">@place.Description</p>
+                                                @foreach (var exp in place.Expenses)
+                                                {
+                                                    <div class="expense">
+                                                        <div class="expense-box">
+                                                            <div class="box">
+                                                                <img class="iconexpense" src="~/images/expense.svg" alt="expense">
+                                                                <h6 class="text-md font-bold">expense</h6>
+                                                                <h6 class="expensetext text-md font-regular">$ @exp.Amount</h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <div class="expens">
+                                <p class="text-md font-regular">EXPENSES SUMMARY</p>
+                                <div class="total">
+                                    <p class="text-md font-regular">Total balance</p>
+                                    @* <p class="expensetext text-sm font-regular">$ @Model.TotalExpenses</p> *@
+                                    <p class="expensetext text-sm font-regular">$ 4,280</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="adition">
+                            <div class="boxforline">
+                                <h1 class="text-lg font-bold">ADDITION</h1>
+                                <hr class="line">
+                            </div>
+                            <div class="inputadd">
+                                @foreach (var qa in Model.Additions)
+                                {
+                                    <p class="text-md font-semibold">@qa.Question</p>
+                                    <p class="text-md font-semibold">FINAL ANS : @qa.Answer</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right">
+                    <div class="attendees">
+                        <div class="text1">
+                            <p class="text-md font-semilight">ATTENDEES</p>
+                            <div class="number">
+                                @* <p class="text-sm font-semilight">@Model.AttendeeCount</p> *@
+                                <p class="text-sm font-semilight">21</p>
+                                <img class="dot2" src="~/images/Dot 2.svg" alt="dot">
+                            </div>
+                            <button id="seeAllBtn" class="see-all-btn text-sm font-semibold">See all</button>
+                        </div>
+                        <div class="photo">
+                            @foreach (var attendee in Model.Attendees.Take(3))
+                            {
+                                <div class="layout">
+                                    <div class="mix">
+                                        <div class="photoo">
+                                            <img class="pic" src="~/images/@attendee.ProfileImage" alt="@attendee.Name">
+                                            <p class="text-xs font-semibold">@attendee.Name</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Action Bar -->
+        <div class="action-bar-wrapper">
+            <div class="action-bar" id="actionBar">
+                <input type="hidden" id="userStatus" value="@Model.UserStatus" />
+                <span class="action-bar-title text-md font-semibold" id="actionBarTitle">@Model.EventTitle</span>
+                <div class="action-bar-buttons">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendees Modal -->
+    <div id="attendeesModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="attendeesTitle">
+            <div class="modal-header">
+                <div class="boxforline">
+                    <h3 id="attendeesTitle" class="text-lg font-semibold">Attendees</h3>
+                    <hr class="line">
+                </div>
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="attendee-list" id="attendeeList">
+                    @foreach (var attendee in Model.Attendees)
+                    {
+                        <div class="attendee">
+                            <img src="~/images/@attendee.ProfileImage" alt="@attendee.Name">
+                            <div>
+                                <strong>@attendee.Name</strong>
+                                <div class="text-xs">@attendee.Status</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Modal -->
+    <div id="joinModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <div class="boxforline">
+                    <h3 class="text-md font-semibold">COMPLETE REGISTRATION</h3>
+                    <hr class="line2">
+                </div>
+                <button class="modal-close" id="joinModalCloseBtn" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="joinQuestionList" class="join-question-list">
+                    @foreach (var q in Model.JoinQuestions)
+                    {
+                        <div class="join-question-item">
+                            <label>@q.QuestionText</label>
+                            <input type="text" data-question-id="@q.Id" />
+                        </div>
+                    }
+                </div>
+                <div class="join-submit-row">
+                    <button id="joinSubmitBtn" class="btn-action btn-join text-md font-semibold">SUBMIT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Confirm Modal -->
+    <div id="leaveModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal modal-confirm" role="dialog" aria-modal="true">
+            <button class="modal-close" id="leaveModalCloseBtn" aria-label="Close">×</button>
+            <p class="confirm-title text-sm font-semibold">CONFIRM LEAVE THIS TRIP ?</p>
+            <div class="confirm-buttons">
+                <button id="leaveCancelBtn" class="btn-action btn-confirm-cancel text-md font-semibold">CANCEL</button>
+                <button id="leaveConfirmBtn" class="btn-action btn-confirm-leave text-md font-semibold">LEAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="eventId" value="@Model.EventId">
+
+    <script src="~/js/modal.js"></script>
+    <script src="~/js/actionBar.js"></script>
+
+</body>
+
+</html>
