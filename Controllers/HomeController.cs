@@ -4,16 +4,19 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
 using Travello.Models;
+using Travello.Services;
 
 namespace Travello.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IMongoCollection<EventDocument> _eventsCollection;
+        private readonly IImageUploadService _imageUploadService;
 
-        public HomeController(IMongoCollection<EventDocument> eventsCollection)
+        public HomeController(IMongoCollection<EventDocument> eventsCollection, IImageUploadService imageUploadService)
         {
             _eventsCollection = eventsCollection;
+            _imageUploadService = imageUploadService;
         }
 
         public IActionResult Index()
@@ -37,6 +40,20 @@ namespace Travello.Controllers
         {
             var attendeesLimitRaw = Request.Form[nameof(input.AttendeesLimit)].ToString();
             int? attendeesLimit = null;
+            const long maxImageSizeBytes = 5 * 1024 * 1024;
+
+            if (input.UploadPhoto is { Length: > 0 })
+            {
+                if (!input.UploadPhoto.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError("UploadPhoto", "Upload photo must be an image file.");
+                }
+
+                if (input.UploadPhoto.Length > maxImageSizeBytes)
+                {
+                    ModelState.AddModelError("UploadPhoto", "Upload photo must be 5 MB or smaller.");
+                }
+            }
 
             if (string.IsNullOrWhiteSpace(input.EventTitle))
             {
@@ -137,6 +154,19 @@ namespace Travello.Controllers
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Create_event/CreateEvent.cshtml");
+            }
+
+            string? uploadedImageUrl = null;
+            if (input.UploadPhoto is { Length: > 0 })
+            {
+                try
+                {
+                    uploadedImageUrl = await _imageUploadService.UploadEventImageAsync(input.UploadPhoto, HttpContext.RequestAborted);
+                }
+                catch
+                {
+                    uploadedImageUrl = null;
+                }
             }
 
             var tags = (input.TagsCsv ?? string.Empty)
@@ -241,7 +271,7 @@ namespace Travello.Controllers
                 EndDate = endDate,
                 OpenDate = openDate,
                 EventTag = normalizedTags,
-                EventImgPath = null,
+                EventImgPath = uploadedImageUrl,
                 TripRules = input.TripRules,
                 RecruitQuestion = input.RecruitQuestion,
                 Attendees = 0,

@@ -374,7 +374,6 @@ function bindCreateEventFormSubmit() {
     const openDateInput = form.querySelector('input[name="OpenDate"]');
 
     const requiredFieldConfigs = [
-        { name: 'UploadPhoto', selector: '#uploadPhotoInput', message: 'Upload photo is required.' },
         { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
         { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
         { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },

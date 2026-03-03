@@ -1,11 +1,13 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace Travello.Models;
 
 public class CreateEventInputModel
 {
+    public IFormFile? UploadPhoto { get; set; }
     public string EventTitle { get; set; } = string.Empty;
     public string? Detail { get; set; }
     public int? AttendeesLimit { get; set; }

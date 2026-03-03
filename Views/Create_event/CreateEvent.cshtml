@@ -23,7 +23,7 @@
         {
             <div class="text-sm font-regular" style="color: #2e7d32; margin-bottom: 12px;">@successMessage</div>
         }
-        <form id="createEventForm" method="post" asp-controller="Home" asp-action="CreateEvent" novalidate>
+        <form id="createEventForm" method="post" asp-controller="Home" asp-action="CreateEvent" enctype="multipart/form-data" novalidate>
             @Html.AntiForgeryToken()
         <div class="layout">
             <!-- Left Column -->
@@ -44,7 +44,7 @@
                             </svg>
                             <span class="text-sm font-semilight text-muted">UPLOAD PHOTO</span>
                         </div>
-                        <input type="file" id="uploadPhotoInput" accept="image/*" style="display: none;" />
+                        <input type="file" id="uploadPhotoInput" name="UploadPhoto" accept="image/*" style="display: none;" />
                     </div>
                     <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="UploadPhoto"></span>
                 </div>

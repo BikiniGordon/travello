@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Travello.Models;
+using Travello.Services;
 
 LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
@@ -39,6 +40,7 @@ builder.Services.AddSingleton(serviceProvider =>
 });
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
+builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 
 var app = builder.Build();
 
