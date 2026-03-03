@@ -370,6 +370,12 @@ function bindCreateEventFormSubmit() {
     const plannerInput = document.getElementById('plannerJsonInput');
     const packingListInput = document.getElementById('packingListJsonInput');
     const uploadPhotoButton = document.getElementById('uploadPhotoButton');
+    const attendeesLimitInput = form.querySelector('input[name="AttendeesLimit"]');
+    const startDateInput = form.querySelector('input[name="StartDate"]');
+    const startTimeInput = form.querySelector('input[name="StartTime"]');
+    const endDateInput = form.querySelector('input[name="EndDate"]');
+    const endTimeInput = form.querySelector('input[name="EndTime"]');
+    const openDateInput = form.querySelector('input[name="OpenDate"]');
 
     const requiredFieldConfigs = [
         { name: 'UploadPhoto', selector: '#uploadPhotoInput', message: 'Upload photo is required.' },
@@ -441,6 +447,81 @@ function bindCreateEventFormSubmit() {
         return allValid;
     }
 
+    function parseDateTimeValue(dateValue, timeValue) {
+        if (!dateValue || !timeValue) {
+            return null;
+        }
+
+        const parsedDateTime = new Date(`${dateValue}T${timeValue}`);
+        if (Number.isNaN(parsedDateTime.getTime())) {
+            return null;
+        }
+
+        return parsedDateTime;
+    }
+
+    function parseDateValue(dateValue) {
+        if (!dateValue) {
+            return null;
+        }
+
+        const parsedDate = new Date(`${dateValue}T00:00`);
+        if (Number.isNaN(parsedDate.getTime())) {
+            return null;
+        }
+
+        return parsedDate;
+    }
+
+    function validateAttendeesLimitFormat() {
+        if (!attendeesLimitInput) {
+            return true;
+        }
+
+        const rawValue = attendeesLimitInput.value.trim();
+        if (rawValue === '') {
+            return true;
+        }
+
+        if (!/^\d+$/.test(rawValue)) {
+            setValidationMessage('AttendeesLimit', 'Maximum number of attendees must be a valid number.');
+            return false;
+        }
+
+        setValidationMessage('AttendeesLimit', '');
+        return true;
+    }
+
+    function validateDateOrdering() {
+        let isValid = true;
+
+        if (startDateInput && startTimeInput && endDateInput && endTimeInput) {
+            const startDateTime = parseDateTimeValue(startDateInput.value, startTimeInput.value);
+            const endDateTime = parseDateTimeValue(endDateInput.value, endTimeInput.value);
+
+            if (startDateTime && endDateTime && startDateTime >= endDateTime) {
+                setValidationMessage('EndDate', 'End date and time must be after start date and time.');
+                isValid = false;
+            } else {
+                setValidationMessage('EndDate', '');
+            }
+        }
+
+        if (openDateInput && startDateInput) {
+            const openDate = parseDateValue(openDateInput.value);
+            const startDate = parseDateValue(startDateInput.value);
+
+            if (openDate && startDate && openDate >= startDate) {
+                setValidationMessage('OpenDate', 'Registration open date must be before the start date.');
+                isValid = false;
+            } else {
+                setValidationMessage('OpenDate', '');
+            }
+        }
+
+        return isValid;
+    }
+
     requiredFieldConfigs.forEach((config) => {
         const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
         config.input.addEventListener('blur', () => {
@@ -472,9 +553,34 @@ function bindCreateEventFormSubmit() {
     }
 
     form.addEventListener('submit', (event) => {
-        const isValid = validateAllRequiredFields();
+        const requiredValid = validateAllRequiredFields();
+        const attendeesValid = validateAttendeesLimitFormat();
+        const dateOrderingValid = validateDateOrdering();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid;
+
         if (!isValid) {
             event.preventDefault();
+
+            if (!requiredValid) {
+                return;
+            }
+
+            if (!attendeesValid && attendeesLimitInput) {
+                attendeesLimitInput.focus();
+                return;
+            }
+
+            if (!dateOrderingValid) {
+                if (openDateInput && openDateInput.value.trim() !== '' && getValidationMessageElement('OpenDate')?.textContent) {
+                    openDateInput.focus();
+                    return;
+                }
+
+                if (endDateInput && getValidationMessageElement('EndDate')?.textContent) {
+                    endDateInput.focus();
+                }
+            }
+
             return;
         }
 
@@ -560,6 +666,18 @@ function bindCreateEventFormSubmit() {
             packingListInput.value = JSON.stringify(packingList);
         }
     });
+
+    if (attendeesLimitInput) {
+        attendeesLimitInput.addEventListener('input', validateAttendeesLimitFormat);
+        attendeesLimitInput.addEventListener('blur', validateAttendeesLimitFormat);
+    }
+
+    [startDateInput, startTimeInput, endDateInput, endTimeInput, openDateInput]
+        .filter((input) => Boolean(input))
+        .forEach((input) => {
+            input.addEventListener('change', validateDateOrdering);
+            input.addEventListener('blur', validateDateOrdering);
+        });
 }
 
 function initializeMap() {

@@ -35,6 +35,9 @@ namespace Travello.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent(CreateEventInputModel input)
         {
+            var attendeesLimitRaw = Request.Form[nameof(input.AttendeesLimit)].ToString();
+            int? attendeesLimit = null;
+
             if (string.IsNullOrWhiteSpace(input.EventTitle))
             {
                 ModelState.AddModelError(nameof(input.EventTitle), "Event title is required.");
@@ -45,13 +48,22 @@ namespace Travello.Controllers
                 ModelState.AddModelError(nameof(input.Detail), "Detail is required.");
             }
 
-            if (!input.AttendeesLimit.HasValue)
+            if (string.IsNullOrWhiteSpace(attendeesLimitRaw))
             {
                 ModelState.AddModelError(nameof(input.AttendeesLimit), "Maximum number of attendees is required.");
             }
-            else if (input.AttendeesLimit.Value < 0)
+            else if (!int.TryParse(attendeesLimitRaw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedAttendeesLimit))
+            {
+                ModelState.AddModelError(nameof(input.AttendeesLimit), "Maximum number of attendees must be a valid number.");
+            }
+            else if (parsedAttendeesLimit < 0)
             {
                 ModelState.AddModelError(nameof(input.AttendeesLimit), "Maximum number of attendees must be zero or greater.");
+            }
+            else
+            {
+                attendeesLimit = parsedAttendeesLimit;
+                input.AttendeesLimit = parsedAttendeesLimit;
             }
 
             if (string.IsNullOrWhiteSpace(input.StartDate))
@@ -89,6 +101,39 @@ namespace Travello.Controllers
                 ModelState.AddModelError(nameof(input.TripRules), "Trip rules are required.");
             }
 
+            DateTime? startDate = ParseDateTimeToUtc(input.StartDate, input.StartTime);
+            DateTime? explicitEndDate = ParseDateTimeToUtc(input.EndDate, input.EndTime);
+            DateTime? openDate = ParseDateToUtc(input.OpenDate);
+
+            if (!string.IsNullOrWhiteSpace(input.StartDate) &&
+                !string.IsNullOrWhiteSpace(input.StartTime) &&
+                !startDate.HasValue)
+            {
+                ModelState.AddModelError(nameof(input.StartDate), "Start date and time are invalid.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(input.EndDate) &&
+                !string.IsNullOrWhiteSpace(input.EndTime) &&
+                !explicitEndDate.HasValue)
+            {
+                ModelState.AddModelError(nameof(input.EndDate), "End date and time are invalid.");
+            }
+
+            if (startDate.HasValue && explicitEndDate.HasValue && startDate.Value >= explicitEndDate.Value)
+            {
+                ModelState.AddModelError(nameof(input.EndDate), "End date and time must be after start date and time.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(input.OpenDate) && !openDate.HasValue)
+            {
+                ModelState.AddModelError(nameof(input.OpenDate), "Registration open date is invalid.");
+            }
+
+            if (openDate.HasValue && startDate.HasValue && openDate.Value.Date >= startDate.Value.Date)
+            {
+                ModelState.AddModelError(nameof(input.OpenDate), "Registration open date must be before the start date.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Create_event/CreateEvent.cshtml");
@@ -113,9 +158,6 @@ namespace Travello.Controllers
             var plannerRows = ParsePlannerRows(input.PlannerJson);
             var packingList = ParsePackingList(input.PackingListJson);
 
-            DateTime? startDate = ParseDateTimeToUtc(input.StartDate, input.StartTime);
-            DateTime? explicitEndDate = ParseDateTimeToUtc(input.EndDate, input.EndTime);
-            DateTime? openDate = ParseDateToUtc(input.OpenDate);
             DateTime? itineraryEndDate = plannerRows
                 .Select(row => ParseDateToUtc(row.DayDate))
                 .Where(date => date.HasValue)
@@ -203,7 +245,7 @@ namespace Travello.Controllers
                 TripRules = input.TripRules,
                 RecruitQuestion = input.RecruitQuestion,
                 Attendees = 0,
-                AttendeesLimit = input.AttendeesLimit,
+                AttendeesLimit = attendeesLimit,
                 Itinerary = itinerary,
                 PackingList = packingList,
                 CreatedAt = DateTime.UtcNow
