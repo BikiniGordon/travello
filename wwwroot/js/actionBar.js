@@ -4,7 +4,7 @@
     const eventTitleEl = document.getElementById('actionBarTitle');
     const actionBarButtons = document.querySelector('.action-bar-buttons');
   
-    let userStatus = 'approved'; 
+    let userStatus = 'owner'; 
     // const userStatus = document.getElementById('userStatus').value;
 
     function renderActionBar(status) {
@@ -40,7 +40,7 @@
 
             const btn = document.createElement('button');
             btn.className = 'btn-action btn-rejected text-sm font-semibold';
-            btn.textContent = 'REQUEST TO JOIN HAS BEEN REJECTED';
+            btn.textContent = 'JOIN REQUEST REJECTED';
             btn.disabled = true;
             actionBarButtons.appendChild(btn);
 
@@ -179,7 +179,6 @@
     document.getElementById('leaveModal').addEventListener('click', function(e) {
         if (e.target === this) this.classList.remove('open');
     });
-
     // ---- Init ----
     renderActionBar(userStatus);
 

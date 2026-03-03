@@ -88,7 +88,7 @@ async function rejectAttendee(attendeeId) {
 
 
     const data = {
-        isOwner: false, //false
+        isOwner: true, //false
         attendees: [
             { id: 1, name: "Dearja",  profileImage: "/images/pic.png", isApproved: true  },
             { id: 2, name: "Tom",     profileImage: "/images/pic.png", isApproved: true  },
@@ -151,3 +151,45 @@ async function rejectAttendee(attendeeId) {
     }
 
 })();
+
+
+function renderAttendeePhotos(attendees) {
+    const container = document.getElementById('attendeePhotos');
+    if (!container) return;
+
+    const total = attendees.length;
+    let html = '';
+
+    attendees.slice(0, 2).forEach(person => {
+        html += `
+        <div class="layout">
+            <div class="mix">
+                <div class="photoo">
+                    <img class="pic" src="${person.profileImage}" alt="${person.name}">
+                    <p class="text-xs font-semibold">${person.name}</p>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    if (total > 2) {
+        const rest = attendees.slice(2);
+        const preview = rest.slice(0, 4);
+        const moreCount = total - 2;
+        const gridImgs = preview.map(p =>
+            `<img class="mini-pic" src="${p.profileImage}" alt="${p.name}">`
+        ).join('');
+
+        html += `
+        <div class="layout">
+            <div class="mix">
+                <div class="photoo">
+                    <div class="mini-grid">${gridImgs}</div>
+                    <p class="text-xs font-semibold">+${moreCount} more</p>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+}

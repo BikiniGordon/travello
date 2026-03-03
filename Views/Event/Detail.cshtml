@@ -1,3 +1,6 @@
+@{
+    Layout = null;
+}
 @model Travello.Models.EventDetailViewModel
 
 <!DOCTYPE html>
@@ -9,6 +12,7 @@
     <title>Detail</title>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Noto+Sans+Thai:wght@100..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/styleDetail.css" />
 </head>
 
@@ -111,6 +115,7 @@
                     <div class="below">
                         <h1 class="text-lg font-bold text-brown">ITINERARY</h1>
                         <div class="itinerary">
+                        @{int placeCounter = 0;}
                             @foreach (var day in Model.Days)
                             {
                                 <div class="day">
@@ -120,8 +125,9 @@
                                     </div>
                                     @foreach (var place in day.Places)
                                     {
+                                        placeCounter++;
                                         <div class="place">
-                                            <div class="place-icon"></div>
+                                            <div class="place-icon">@placeCounter</div>
                                             <div class="place-content">
                                                 <p class="text-md font-semibold">@place.Name</p>
                                                 <p class="text-sm font-regular">@place.Description</p>
@@ -131,7 +137,7 @@
                                                         <div class="expense-box">
                                                             <div class="box">
                                                                 <img class="iconexpense" src="~/images/expense.svg" alt="expense">
-                                                                <h6 class="text-md font-bold">expense</h6>
+                                                                <h6 class="text-md font-bold">@exp.Name</h6>
                                                                 <h6 class="expensetext text-md font-regular">$ @exp.Amount</h6>
                                                             </div>
                                                         </div>
@@ -179,20 +185,10 @@
                             </div>
                             <button id="seeAllBtn" class="see-all-btn text-sm font-semibold">See all</button>
                         </div>
-                        <div class="photo">
-                            @foreach (var attendee in Model.Attendees.Take(3))
-                            {
-                                <div class="layout">
-                                    <div class="mix">
-                                        <div class="photoo">
-                                            <img class="pic" src="~/images/@attendee.ProfileImage" alt="@attendee.Name">
-                                            <p class="text-xs font-semibold">@attendee.Name</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
+                        <div class="photo" id="attendeePhotos">
                         </div>
                     </div>
+                    <div id="detailMap" class="detail-map-container"></div>
                 </div>
             </div>
         </main>
@@ -280,6 +276,32 @@
 
     <script src="~/js/modal.js"></script>
     <script src="~/js/actionBar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="~/js/detailMap.js"></script>
+
+    <script>
+        const attendeesData = @Html.Raw(
+            System.Text.Json.JsonSerializer.Serialize(
+                Model.Attendees.Select(a => new {
+                    id = a.Id,
+                    name = a.Name,
+                    profileImage = "/images/" + a.ProfileImage
+                })
+            )
+        );
+
+        const itineraryData = @Html.Raw(
+        System.Text.Json.JsonSerializer.Serialize(
+            Model.Locations.Select((loc, i) => new {
+                name = loc.PlaceName,
+                lat  = loc.Latitude,
+                lng  = loc.Longitude
+            }).ToList()
+        )
+    );
+
+        renderAttendeePhotos(attendeesData);
+    </script>
 
 </body>
 
