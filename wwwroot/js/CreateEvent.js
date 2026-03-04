@@ -1,3 +1,4 @@
+// Auto-resizes a textarea to fit its content.
 function autoResize(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
@@ -5,6 +6,7 @@ function autoResize(textarea) {
 
 let tagHandlersInitialized = false;
 
+// Returns the normalized tag value from a tag button.
 function getTagButtonValue(tagButton) {
     const explicitValue = tagButton.dataset.tagValue;
     if (explicitValue) {
@@ -19,6 +21,7 @@ function getTagButtonValue(tagButton) {
     return tagButton.textContent.trim().toLowerCase();
 }
 
+// Creates a removable tag button for a custom tag.
 function createCustomTagButton(tagText) {
     const tagButton = document.createElement('button');
     tagButton.type = 'button';
@@ -35,6 +38,7 @@ function createCustomTagButton(tagText) {
     return tagButton;
 }
 
+// Opens the inline input used to add a custom tag.
 function openTagInput(addButton) {
     const tagContainer = addButton.closest('.tags-container');
     if (!tagContainer || tagContainer.querySelector('.tag-input-wrapper')) {
@@ -105,6 +109,7 @@ function openTagInput(addButton) {
     inputField.focus();
 }
 
+// Wires click handlers for category/tag add, remove, and selection.
 function initializeTagButtons() {
     if (tagHandlersInitialized) {
         return;
@@ -140,6 +145,7 @@ function initializeTagButtons() {
     tagHandlersInitialized = true;
 }
 
+// Connects the photo upload trigger and preview behavior.
 function initializePhotoUpload() {
     const uploadButton = document.getElementById('uploadPhotoButton');
     const uploadInput = document.getElementById('uploadPhotoInput');
@@ -176,9 +182,8 @@ const plannerDaysContainer = document.getElementById('eventPlannerDays');
 const plannerTotalAmount = document.getElementById('plannerTotalAmount');
 const importantPackRows = document.getElementById('importantPackRows');
 
-// Drag and drop state
 let draggedElement = null;
-let draggedType = null; // 'plan' or 'pack'
+let draggedType = null;
 let draggedSourceDay = null;
 
 // Leaflet Map initialization
@@ -187,28 +192,23 @@ let placeMarkersLayer;
 let defaultMapMarker;
 const defaultLocation = { lat: 13.7298889, lng: 100.7756574 }; // KMITL
 
-// Recalculate place numbers throughout the entire event
-// Only number rows that have actual place data (not empty templates)
+// Recalculates sequential place numbers across all planner rows.
 function recalculatePlaceNumbers() {
     const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
     let placeNumber = 0;
     
     allRows.forEach((row) => {
-        // Only number rows that have actual place data
         if (hasPlaceValue(row)) {
             placeNumber++;
             row.dataset.placeNumber = String(placeNumber);
-            
-            // Update the place icon SVG with new number
+
             const placeIcon = row.querySelector('.place-icon');
             if (placeIcon) {
                 placeIcon.outerHTML = createPlaceIcon(placeNumber);
             }
         } else {
-            // Empty template rows don't get numbered
             row.dataset.placeNumber = '0';
-            
-            // Update the place icon SVG to show placeholder (0)
+
             const placeIcon = row.querySelector('.place-icon');
             if (placeIcon) {
                 placeIcon.outerHTML = createPlaceIcon(0);
@@ -220,6 +220,7 @@ function recalculatePlaceNumbers() {
     return placeNumber;
 }
 
+// Rebuilds map markers so they match planner rows and order.
 function syncMapMarkers() {
     if (!map || !placeMarkersLayer) {
         return;
@@ -267,8 +268,8 @@ function syncMapMarkers() {
     }
 }
 
+// Builds marker SVG markup, optionally including a place number.
 function createMapMarkerSVG(placeNumber = null) {
-    // SVG marker with optional number for map markers
     if (placeNumber !== null && placeNumber > 0) {
         return `
             <svg width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -278,7 +279,6 @@ function createMapMarkerSVG(placeNumber = null) {
             </svg>
         `;
     }
-    // Default marker without number for default location
     return `
         <svg width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
@@ -287,15 +287,15 @@ function createMapMarkerSVG(placeNumber = null) {
     `;
 }
 
+// Converts an SVG string to a data URL for marker icons.
 function getSVGDataURL(svgString) {
     const encoded = encodeURIComponent(svgString);
     return `data:image/svg+xml,${encoded}`;
 }
 
+// Parses a Google Maps URL into place name and coordinates.
 function parseGoogleMapsURL(url) {
     try {
-        // Extract place name from URL path
-        // Format: /maps/place/PLACE_NAME/@coordinates
         const placeMatch = url.match(/\/maps\/place\/([^/@]+)/);
         let placeName = 'Unknown Location';
         
@@ -303,8 +303,6 @@ function parseGoogleMapsURL(url) {
             placeName = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
         }
 
-        // Prefer the last !3d..!4d.. pair because URLs can contain multiple pairs.
-        // The first pair is often the map viewport and can cause different places to share one coordinate.
         const coordPairs = Array.from(url.matchAll(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/g));
 
         let lat;
@@ -315,7 +313,6 @@ function parseGoogleMapsURL(url) {
             lat = Number.parseFloat(lastPair[1]);
             lng = Number.parseFloat(lastPair[2]);
         } else {
-            // Fallback: links like .../@13.736,100.523,17z
             const atMatch = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
             if (atMatch) {
                 lat = Number.parseFloat(atMatch[1]);
@@ -327,13 +324,11 @@ function parseGoogleMapsURL(url) {
             return null;
         }
 
-        // Validate that coordinates are reasonable
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
             console.warn('Invalid coordinates parsed from URL');
             return null;
         }
 
-        console.log('Parsed location:', { lat, lng, name: placeName }); // Debug log
         return { lat, lng, name: placeName };
     } catch (error) {
         console.error('Error parsing Google Maps URL:', error);
@@ -341,6 +336,7 @@ function parseGoogleMapsURL(url) {
     }
 }
 
+// Adds a marker to the map and centers the viewport on it.
 function addMapMarker(lat, lng, name, placeNumber = null) {
     if (!map) return;
 
@@ -355,10 +351,331 @@ function addMapMarker(lat, lng, name, placeNumber = null) {
         .bindPopup(name)
         .addTo(map);
 
-    // Pan to the new marker
     map.setView([lat, lng], 16);
 }
 
+// Handles create-event form validation and payload serialization.
+function bindCreateEventFormSubmit() {
+    const form = document.getElementById('createEventForm');
+    if (!form) {
+        return;
+    }
+
+    const categoryInput = document.getElementById('selectedCategoryInput');
+    const tagsInput = document.getElementById('selectedTagsInput');
+    const plannerInput = document.getElementById('plannerJsonInput');
+    const packingListInput = document.getElementById('packingListJsonInput');
+    const uploadPhotoButton = document.getElementById('uploadPhotoButton');
+    const attendeesLimitInput = form.querySelector('input[name="AttendeesLimit"]');
+    const startDateInput = form.querySelector('input[name="StartDate"]');
+    const startTimeInput = form.querySelector('input[name="StartTime"]');
+    const endDateInput = form.querySelector('input[name="EndDate"]');
+    const endTimeInput = form.querySelector('input[name="EndTime"]');
+    const openDateInput = form.querySelector('input[name="OpenDate"]');
+
+    const requiredFieldConfigs = [
+        { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
+        { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+        { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
+        { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
+        { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
+        { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
+        { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
+        { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
+        { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
+        { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+    ]
+        .map((config) => ({
+            ...config,
+            input: form.querySelector(config.selector)
+        }))
+        .filter((config) => Boolean(config.input));
+
+    function getValidationMessageElement(fieldName) {
+        return form.querySelector(`.field-validation-message[data-valmsg-for="${fieldName}"]`);
+    }
+
+    function setValidationMessage(fieldName, message) {
+        const messageElement = getValidationMessageElement(fieldName);
+        if (!messageElement) {
+            return;
+        }
+
+        messageElement.textContent = message;
+    }
+
+    function isInputFilled(inputElement) {
+        if (!inputElement) {
+            return false;
+        }
+
+        if (inputElement.type === 'file') {
+            return Boolean(inputElement.files && inputElement.files.length > 0);
+        }
+
+        if (inputElement.type === 'number') {
+            return inputElement.value !== '';
+        }
+
+        return inputElement.value.trim() !== '';
+    }
+
+    function validateRequiredField(config) {
+        const hasValue = isInputFilled(config.input);
+        setValidationMessage(config.name, hasValue ? '' : config.message);
+        return hasValue;
+    }
+
+    function validateAllRequiredFields() {
+        let allValid = true;
+
+        requiredFieldConfigs.forEach((config) => {
+            const isValid = validateRequiredField(config);
+            if (!isValid && allValid) {
+                config.input.focus();
+                allValid = false;
+            } else if (!isValid) {
+                allValid = false;
+            }
+        });
+
+        return allValid;
+    }
+
+    function parseDateTimeValue(dateValue, timeValue) {
+        if (!dateValue || !timeValue) {
+            return null;
+        }
+
+        const parsedDateTime = new Date(`${dateValue}T${timeValue}`);
+        if (Number.isNaN(parsedDateTime.getTime())) {
+            return null;
+        }
+
+        return parsedDateTime;
+    }
+
+    function parseDateValue(dateValue) {
+        if (!dateValue) {
+            return null;
+        }
+
+        const parsedDate = new Date(`${dateValue}T00:00`);
+        if (Number.isNaN(parsedDate.getTime())) {
+            return null;
+        }
+
+        return parsedDate;
+    }
+
+    function validateAttendeesLimitFormat() {
+        if (!attendeesLimitInput) {
+            return true;
+        }
+
+        const rawValue = attendeesLimitInput.value.trim();
+        if (rawValue === '') {
+            return true;
+        }
+
+        if (!/^\d+$/.test(rawValue)) {
+            setValidationMessage('AttendeesLimit', 'Maximum number of attendees must be a valid number.');
+            return false;
+        }
+
+        setValidationMessage('AttendeesLimit', '');
+        return true;
+    }
+
+    function validateDateOrdering() {
+        let isValid = true;
+
+        if (startDateInput && startTimeInput && endDateInput && endTimeInput) {
+            const startDateTime = parseDateTimeValue(startDateInput.value, startTimeInput.value);
+            const endDateTime = parseDateTimeValue(endDateInput.value, endTimeInput.value);
+
+            if (startDateTime && endDateTime && startDateTime >= endDateTime) {
+                setValidationMessage('EndDate', 'End date and time must be after start date and time.');
+                isValid = false;
+            } else {
+                setValidationMessage('EndDate', '');
+            }
+        }
+
+        if (openDateInput && startDateInput) {
+            const openDate = parseDateValue(openDateInput.value);
+            const startDate = parseDateValue(startDateInput.value);
+
+            if (openDate && startDate && openDate >= startDate) {
+                setValidationMessage('OpenDate', 'Registration open date must be before the start date.');
+                isValid = false;
+            } else {
+                setValidationMessage('OpenDate', '');
+            }
+        }
+
+        return isValid;
+    }
+
+    requiredFieldConfigs.forEach((config) => {
+        const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
+        config.input.addEventListener('blur', () => {
+            validateRequiredField(config);
+        });
+        config.input.addEventListener(eventName, () => {
+            validateRequiredField(config);
+        });
+    });
+
+    const uploadPhotoConfig = requiredFieldConfigs.find((config) => config.name === 'UploadPhoto');
+    let uploadDialogWasOpened = false;
+
+    if (uploadPhotoButton && uploadPhotoConfig) {
+        uploadPhotoButton.addEventListener('click', () => {
+            uploadDialogWasOpened = true;
+        });
+
+        window.addEventListener('focus', () => {
+            if (!uploadDialogWasOpened) {
+                return;
+            }
+
+            uploadDialogWasOpened = false;
+            setTimeout(() => {
+                validateRequiredField(uploadPhotoConfig);
+            }, 0);
+        });
+    }
+
+    form.addEventListener('submit', (event) => {
+        const requiredValid = validateAllRequiredFields();
+        const attendeesValid = validateAttendeesLimitFormat();
+        const dateOrderingValid = validateDateOrdering();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid;
+
+        if (!isValid) {
+            event.preventDefault();
+
+            if (!requiredValid) {
+                return;
+            }
+
+            if (!attendeesValid && attendeesLimitInput) {
+                attendeesLimitInput.focus();
+                return;
+            }
+
+            if (!dateOrderingValid) {
+                if (openDateInput && openDateInput.value.trim() !== '' && getValidationMessageElement('OpenDate')?.textContent) {
+                    openDateInput.focus();
+                    return;
+                }
+
+                if (endDateInput && getValidationMessageElement('EndDate')?.textContent) {
+                    endDateInput.focus();
+                }
+            }
+
+            return;
+        }
+
+        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+        const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
+        if (categoryInput) {
+            categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
+        }
+
+        const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
+        const tags = Array.from(customTagButtons)
+            .map((button) => getTagButtonValue(button))
+            .filter((tagValue, index, array) => tagValue && array.indexOf(tagValue) === index);
+
+        if (tagsInput) {
+            tagsInput.value = tags.join(',');
+        }
+
+        const plannerRows = [];
+        const dayElements = document.querySelectorAll('.event-plan-day');
+
+        dayElements.forEach((dayElement, dayArrayIndex) => {
+            const dayIndex = dayArrayIndex + 1;
+            const dayLabel = `DAY ${dayIndex}`;
+            const dayDate = dayElement.querySelector('.day-date-input')?.value || '';
+            const rowElements = dayElement.querySelectorAll('.planner-item');
+
+            rowElements.forEach((rowElement, rowArrayIndex) => {
+                const placeIndex = rowArrayIndex + 1;
+                const placeInput = rowElement.querySelector('.planner-place-input');
+                const placeName = placeInput?.value?.trim() || '';
+                if (!placeName) {
+                    return;
+                }
+
+                const noteInput = rowElement.querySelector('.planner-note-input');
+                const note = noteInput?.value?.trim() || '';
+
+                const expenseRows = rowElement.querySelectorAll('.planner-expense-row');
+                const expenses = [];
+                expenseRows.forEach((expenseRow) => {
+                    const expenseName = expenseRow.querySelector('.planner-expense-name-input')?.value?.trim() || '';
+                    const amountRaw = expenseRow.querySelector('.planner-expense-input')?.value;
+                    const amount = Number.parseFloat(amountRaw || '0');
+
+                    if (!expenseName && (!Number.isFinite(amount) || amount <= 0)) {
+                        return;
+                    }
+
+                    expenses.push({
+                        name: expenseName,
+                        amount: Number.isFinite(amount) ? amount : 0
+                    });
+                });
+
+                const latitude = rowElement.dataset.markerLat ? Number.parseFloat(rowElement.dataset.markerLat) : null;
+                const longitude = rowElement.dataset.markerLng ? Number.parseFloat(rowElement.dataset.markerLng) : null;
+
+                plannerRows.push({
+                    dayIndex,
+                    dayLabel,
+                    placeIndex,
+                    placeName,
+                    dayDate,
+                    note,
+                    googleMapUrl: rowElement.dataset.googleMapUrl || '',
+                    latitude: Number.isFinite(latitude) ? latitude : null,
+                    longitude: Number.isFinite(longitude) ? longitude : null,
+                    expenses
+                });
+            });
+        });
+
+        if (plannerInput) {
+            plannerInput.value = JSON.stringify(plannerRows);
+        }
+
+        const packingList = Array.from(document.querySelectorAll('.pack-input'))
+            .map((input) => input.value.trim())
+            .filter((value) => value.length > 0);
+
+        if (packingListInput) {
+            packingListInput.value = JSON.stringify(packingList);
+        }
+    });
+
+    if (attendeesLimitInput) {
+        attendeesLimitInput.addEventListener('input', validateAttendeesLimitFormat);
+        attendeesLimitInput.addEventListener('blur', validateAttendeesLimitFormat);
+    }
+
+    [startDateInput, startTimeInput, endDateInput, endTimeInput, openDateInput]
+        .filter((input) => Boolean(input))
+        .forEach((input) => {
+            input.addEventListener('change', validateDateOrdering);
+            input.addEventListener('blur', validateDateOrdering);
+        });
+}
+
+// Initializes the Leaflet map, tile layer, and default marker.
 function initializeMap() {
     const mapContainer = document.getElementById('eventMap');
     if (!mapContainer) {
@@ -366,16 +683,13 @@ function initializeMap() {
         return;
     }
 
-    // Initialize Leaflet map
     map = L.map('eventMap').setView([defaultLocation.lat, defaultLocation.lng], 18);
 
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
     }).addTo(map);
 
-    // Create custom marker icon
     const customIcon = L.icon({
         iconUrl: getSVGDataURL(createMapMarkerSVG()),
         iconSize: [35, 41],
@@ -383,7 +697,6 @@ function initializeMap() {
         popupAnchor: [0, -41]
     });
 
-    // Add marker with custom icon
     defaultMapMarker = L.marker([defaultLocation.lat, defaultLocation.lng], { icon: customIcon })
         .bindPopup('KMITL, Bangkok, Thailand')
         .addTo(map);
@@ -391,6 +704,7 @@ function initializeMap() {
     placeMarkersLayer = L.layerGroup().addTo(map);
 }
 
+// Builds planner place icon markup, with or without a number.
 function createPlaceIcon(placeNumber = 1) {
     // For empty template rows (placeNumber === 0), show empty shield without number
     if (placeNumber === 0) {
@@ -411,6 +725,7 @@ function createPlaceIcon(placeNumber = 1) {
     `;
 }
 
+// Creates one expense row for the planner.
 function createExpenseRow() {
     const expenseRow = document.createElement('div');
     expenseRow.className = 'planner-expense-row';
@@ -440,6 +755,7 @@ function createExpenseRow() {
     return expenseRow;
 }
 
+// Creates one draggable planner row.
 function createPlanRow() {
     const planRow = document.createElement('div');
     planRow.className = 'place-item planner-item';
@@ -501,6 +817,7 @@ function createPlanRow() {
     return planRow;
 }
 
+// Creates a day section with an initial empty planner row.
 function createDay(dayNumber) {
     const dayElement = document.createElement('div');
     dayElement.className = 'event-plan-day';
@@ -520,15 +837,18 @@ function createDay(dayNumber) {
     return dayElement;
 }
 
+// Returns planner rows for a given day.
 function getRows(dayElement) {
     return Array.from(dayElement.querySelectorAll('.planner-item'));
 }
 
+// Checks whether a planner row has a place value.
 function hasPlaceValue(rowElement) {
     const placeInput = rowElement.querySelector('.planner-place-input');
     return Boolean(placeInput && placeInput.value.trim() !== '');
 }
 
+// Ensures a day ends with one empty planner row.
 function ensureTrailingEmptyRow(dayElement) {
     const rows = getRows(dayElement);
     const lastRow = rows[rows.length - 1];
@@ -539,6 +859,7 @@ function ensureTrailingEmptyRow(dayElement) {
     }
 }
 
+// Creates the next day when the current day has content.
 function ensureNextDay(currentDayElement) {
     const dayNumber = Number(currentDayElement.dataset.day);
     if (!Number.isFinite(dayNumber)) {
@@ -556,6 +877,7 @@ function ensureNextDay(currentDayElement) {
     }
 }
 
+// Recalculates and renders the planner expense total.
 function updateTotalExpenses() {
     const expenseInputs = plannerDaysContainer.querySelectorAll('.planner-expense-input');
     let total = 0;
@@ -570,6 +892,7 @@ function updateTotalExpenses() {
     plannerTotalAmount.textContent = `$ ${total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }
 
+// Returns all packing list rows.
 function getPackRows() {
     if (!importantPackRows) {
         return [];
@@ -578,11 +901,13 @@ function getPackRows() {
     return Array.from(importantPackRows.querySelectorAll('.pack-item'));
 }
 
+// Checks whether a packing row has text.
 function hasPackValue(rowElement) {
     const packInput = rowElement.querySelector('.pack-input');
     return Boolean(packInput && packInput.value.trim() !== '');
 }
 
+// Creates one draggable packing row.
 function createPackRow() {
     const packRow = document.createElement('div');
     packRow.className = 'checkbox-item pack-item';
@@ -605,6 +930,7 @@ function createPackRow() {
     return packRow;
 }
 
+// Ensures the packing list ends with one empty row.
 function ensureTrailingEmptyPackRow() {
     if (!importantPackRows) {
         return;
@@ -636,6 +962,7 @@ plannerDaysContainer.addEventListener('input', (event) => {
                 currentRow.dataset.markerLat = String(location.lat);
                 currentRow.dataset.markerLng = String(location.lng);
                 currentRow.dataset.markerName = location.name;
+                currentRow.dataset.googleMapUrl = inputValue;
                 target.value = location.name;
                 if (map) {
                     map.setView([location.lat, location.lng], 16);
@@ -648,6 +975,7 @@ plannerDaysContainer.addEventListener('input', (event) => {
                 delete currentRow.dataset.markerLat;
                 delete currentRow.dataset.markerLng;
                 delete currentRow.dataset.markerName;
+                delete currentRow.dataset.googleMapUrl;
             }
         }
 
@@ -726,6 +1054,7 @@ plannerDaysContainer.addEventListener('click', (event) => {
             delete rowElement.dataset.markerLat;
             delete rowElement.dataset.markerLng;
             delete rowElement.dataset.markerName;
+            delete rowElement.dataset.googleMapUrl;
             rowElement.querySelector('.planner-note-input').value = '';
             rowElement.querySelector('.planner-note-input').classList.add('hidden');
             const expenseWrap = rowElement.querySelector('.planner-expense-wrap');
@@ -764,7 +1093,7 @@ if (importantPackRows) {
     ensureTrailingEmptyPackRow();
 }
 
-// Drag and drop handlers
+// Starts drag state for planner and packing rows.
 function handleDragStart(event) {
     draggedElement = event.target;
     draggedType = draggedElement.classList.contains('planner-item') ? 'plan' : 'pack';
@@ -785,6 +1114,7 @@ function handleDragStart(event) {
     event.dataTransfer.setData('text/html', draggedElement.innerHTML);
 }
 
+// Maintains drag-over state and validates compatible drop targets.
 function handleDragOver(event) {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
@@ -793,18 +1123,16 @@ function handleDragOver(event) {
     if (!target || target === draggedElement) {
         return;
     }
-    
-    // Check if same type
+
     const targetType = target.classList.contains('planner-item') ? 'plan' : 'pack';
     if (targetType !== draggedType) {
         return;
     }
-    
-    // Allow dropping on the empty pack template row (we insert before it)
-    
+
     target.classList.add('drag-over');
 }
 
+// Removes drag-over styling when leaving a row.
 function handleDragLeave(event) {
     const target = event.target.closest('.planner-item, .pack-item');
     if (target) {
@@ -812,6 +1140,7 @@ function handleDragLeave(event) {
     }
 }
 
+// Moves dragged rows and re-syncs planner numbering state.
 function handleDrop(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -821,7 +1150,6 @@ function handleDrop(event) {
         return;
     }
     
-    // Check if same type
     const targetType = target.classList.contains('planner-item') ? 'plan' : 'pack';
     if (targetType !== draggedType) {
         return;
@@ -836,13 +1164,10 @@ function handleDrop(event) {
     const sameContainer = targetContainer === draggedElement.parentNode;
 
     if (isPlanTemplateTarget) {
-        // Insert before the template row so it stays at the bottom.
         targetContainer.insertBefore(draggedElement, target);
     } else if (isPackTemplateTarget) {
-        // Insert before the pack template row so it stays at the bottom.
         targetContainer.insertBefore(draggedElement, target);
     } else if (sameContainer) {
-        // Reorder within the same container.
         const allItems = Array.from(targetContainer.children);
         const draggedIndex = allItems.indexOf(draggedElement);
         const targetIndex = allItems.indexOf(target);
@@ -852,7 +1177,6 @@ function handleDrop(event) {
             targetContainer.insertBefore(draggedElement, target);
         }
     } else {
-        // Move across days into the target container.
         targetContainer.insertBefore(draggedElement, target);
     }
 
@@ -868,10 +1192,10 @@ function handleDrop(event) {
     }
 }
 
+// Clears drag state and temporary drag-over classes.
 function handleDragEnd(event) {
     event.target.classList.remove('dragging');
-    
-    // Remove all drag-over classes
+
     document.querySelectorAll('.drag-over').forEach(el => {
         el.classList.remove('drag-over');
     });
@@ -881,7 +1205,6 @@ function handleDragEnd(event) {
     draggedSourceDay = null;
 }
 
-// Attach drag event listeners to plan rows container
 if (plannerDaysContainer) {
     plannerDaysContainer.addEventListener('dragstart', (event) => {
         if (event.target.classList.contains('planner-item')) {
@@ -899,7 +1222,6 @@ if (plannerDaysContainer) {
     });
 }
 
-// Attach drag event listeners to pack rows container
 if (importantPackRows) {
     importantPackRows.addEventListener('dragstart', (event) => {
         if (event.target.classList.contains('pack-item')) {
@@ -917,10 +1239,11 @@ if (importantPackRows) {
     });
 }
 
-// Initialize planner with Day 1
+// Initializes create-event page behavior on DOM ready.
 document.addEventListener('DOMContentLoaded', () => {
     initializePhotoUpload();
     initializeTagButtons();
+    bindCreateEventFormSubmit();
 
     if (plannerDaysContainer) {
         createDay(1);
