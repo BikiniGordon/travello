@@ -1,7 +1,7 @@
 @using Travello.Models
-@model Travello.Models.EditProfileViewModel
+@model Travello.Models.CreateAccountViewModel
 @{
-    ViewData["Title"] = "Edit Profile";
+    ViewData["Title"] = "Create Account";
 }
 <link rel="stylesheet" href="~/css/EditProfile.css" />
 <link rel="stylesheet" href="~/css/NavBar.css" />
@@ -19,11 +19,19 @@
         <input type="hidden" asp-for="user_id" />
 
         <div class="EditProfileHeader">
-            EDIT PROFILE
+            CREATE ACCOUNT
             <hr class="EditProfileLine">
         </div>
 
         <div class="EditFormContainer">
+
+            <div class="InputFieldsContainer">
+                <input type="text" asp-for="username" class="EditInput text-sm font-semilight" placeholder="USERNAME" />
+                <span asp-validation-for="username" class="ErrorMessage text-sm"></span>
+                <input type="text" class="EditInput text-sm font-semilight" placeholder="PASSWORD" />
+                <input type="text" asp-for="username" class="EditInput text-sm font-semilight" placeholder="PASSWORD CONFIRMATION" />
+            </div>
+
             <div class="ProfilePartContainer">
                 <div class="text-sm ProfileSubContainer">
                     PROFILE PICTURE
@@ -38,7 +46,7 @@
                         }
                         else
                         {
-                            <img class="ProfileImage" src="@Model.profile_img_path"/> 
+                            <img class="ProfileImage" src="@Model.profile_img_path?t=@DateTime.Now.Ticks"/> 
                         }
                     </div>
                     <input class="ProfileImageUpload" type="file" id="fileBrowser" asp-for="ProfileImageUpload" accept=".jpg,.jpeg,.png" style="display:none;" onchange="previewImage(this)"/>
@@ -56,8 +64,6 @@
             </div>
 
             <div class="InputFieldsContainer">
-                <input type="text" asp-for="username" class="EditInput text-sm font-semilight" placeholder="USERNAME" />
-                <span asp-validation-for="username" class="ErrorMessage text-sm"></span>
                 <input type="text" asp-for="first_name" class="EditInput text-sm font-semilight" placeholder="FIRST NAME" />
                 <span asp-validation-for="first_name" class="ErrorMessage text-sm"></span>
                 <input type="text" asp-for="last_name" class="EditInput text-sm font-semilight" placeholder="LAST NAME" />

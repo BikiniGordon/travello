@@ -7,15 +7,41 @@ namespace Travello.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IMongoCollection<UserViewModel> _userCollection;
+        private readonly IMongoCollection<EditProfileViewModel> _userCollection;
         private readonly IWebHostEnvironment _hostEnvironment;
 
         public UserController(IMongoDatabase database, IWebHostEnvironment hostEnvironment)
         {
-            _userCollection = database.GetCollection<UserViewModel>("User");
+            _userCollection = database.GetCollection<EditProfileViewModel>("User");
             _hostEnvironment = hostEnvironment;
         }
 
+        // 1. This shows the empty form when you go to /User/CreateAccount
+        [HttpGet]
+        public IActionResult CreateAccount()
+        {
+            // Initialize the model with a default tag list so the View doesn't crash
+            var model = new CreateAccountViewModel {
+                user_tag = new List<string>()
+            };
+            return View(model);
+        }
+
+        // 2. This handles the "UPDATE" (Submit) button click
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount(CreateAccountViewModel newUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(newUser);
+            }
+
+            // TODO: Add logic to hash password and save to MongoDB
+            // await _userCollection.InsertOneAsync(newUser);
+
+            return RedirectToAction("Login");
+        }
+        
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
@@ -32,7 +58,7 @@ namespace Travello.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProfile(UserViewModel updatedUser)
+        public async Task<IActionResult> EditProfile(EditProfileViewModel updatedUser)
         {
             if (!ModelState.IsValid)
             {
@@ -90,12 +116,12 @@ namespace Travello.Controllers
 
             // --- Final Save & Notification ---
             updatedUser.user_id = existingUser.user_id;
-            updatedUser.event_id = existingUser.event_id;
-            updatedUser.password_hash = existingUser.password_hash;
+            // updatedUser.event_id = existingUser.event_id;
+            // updatedUser.password_hash = existingUser.password_hash;
 
             try 
             {
-                var filter = Builders<UserViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
+                var filter = Builders<EditProfileViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
                 await _userCollection.ReplaceOneAsync(filter, updatedUser);
 
                 TempData["StatusMessage"] = "Profile updated successfully!";

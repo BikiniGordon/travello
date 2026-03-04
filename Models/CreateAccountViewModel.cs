@@ -1,16 +1,17 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http; // Required for IFormFile
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Travello.Models
 {
-    public class UserViewModel
+    [BsonIgnoreExtraElements]
+    public class CreateAccountViewModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? user_id { get; set; } // MongoDB uses string ObjectIds
+        public string? user_id { get; set; }
         
         [Required(ErrorMessage = "Username can't be empty.")]
         [Display(Name = "Username")]
@@ -35,16 +36,7 @@ namespace Travello.Models
         public DateTime? date_of_birth { get; set; }
         public string? about_me { get; set; }
         public string? profile_img_path { get; set; }
-
-        // Lists are handled easily by the MongoDB Driver
         public List<string> user_tag { get; set; } = new List<string>();
-        
-        // This stores the IDs of events the user has created or joined
-        public List<string> event_id { get; set; } = new List<string>();
-
-        // --- UI SPECIFIC PROPERTIES ---
-        // We use [BsonIgnore] because we don't save the actual file into MongoDB, 
-        // we only save the string path after uploading.
         [BsonIgnore]
         public IFormFile? ProfileImageUpload { get; set; }
     }
