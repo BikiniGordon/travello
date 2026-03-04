@@ -42,19 +42,6 @@ builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 
-// Get the settings from appsettings.json
-var mongoSettings = builder.Configuration.GetSection("MongoDBSettings");
-
-// Register the Client (The connection to Atlas)
-builder.Services.AddSingleton<IMongoClient>(sp => 
-    new MongoClient(mongoSettings.GetValue<string>("ConnectionString")));
-
-// Register the Database (The specific DB inside Atlas)
-builder.Services.AddScoped(sp => {
-    var client = sp.GetRequiredService<IMongoClient>();
-    return client.GetDatabase(mongoSettings.GetValue<string>("DatabaseName"));
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

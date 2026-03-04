@@ -23,7 +23,19 @@
         {
             <div class="text-sm font-regular" style="color: #2e7d32; margin-bottom: 12px;">@successMessage</div>
         }
-        <form id="createEventForm" method="post" asp-controller="Home" asp-action="CreateEvent" enctype="multipart/form-data" novalidate>
+        @if (TempData["CreateEventError"] is string errorMessage)
+        {
+            <div class="text-sm font-regular" style="color: #d55351; margin-bottom: 12px;">@errorMessage</div>
+        }
+        @if (ViewData["CreateEventError"] is string viewErrorMessage)
+        {
+            <div class="text-sm font-regular" style="color: #d55351; margin-bottom: 12px;">@viewErrorMessage</div>
+        }
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="text-sm font-regular" style="color: #d55351; margin-bottom: 12px;" asp-validation-summary="All"></div>
+        }
+        <form id="createEventForm" method="post" asp-controller="CreateEvent" asp-action="Index" enctype="multipart/form-data" novalidate>
             @Html.AntiForgeryToken()
         <div class="layout">
             <!-- Left Column -->
@@ -234,7 +246,7 @@
             <input type="hidden" id="selectedTagsInput" name="TagsCsv" />
             <input type="hidden" id="plannerJsonInput" name="PlannerJson" />
             <input type="hidden" id="packingListJsonInput" name="PackingListJson" />
-            <button type="submit" class="btn-create-event-bottom text-lg font-regular default-font">Create Event</button>
+            <button type="submit" form="createEventForm" class="btn-create-event-bottom text-lg font-regular default-font">Create Event</button>
         </div>
         </form>
     </main>
