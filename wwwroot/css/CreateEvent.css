@@ -702,9 +702,28 @@ textarea[data-font-weight="bold"]::placeholder {
 
 .planner-expense-row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-xs);
+}
+
+.planner-expense-row .planner-expense-name-input,
+.planner-expense-row .price-input,
+.planner-expense-row .planner-expense-input {
+    min-width: 0;
+}
+
+.planner-expense-row .price-input {
+    width: 100%;
+}
+
+.planner-expense-row .planner-expense-input {
+    flex: 1;
+    width: 100%;
+}
+
+.planner-expense-row .price-input span {
+    flex-shrink: 0;
 }
 
 .planner-expense-delete-btn {
@@ -853,6 +872,10 @@ textarea[data-font-weight="bold"]::placeholder {
 }
 
 @media (max-width: 768px) {
+    .planner-expense-row {
+        grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr) auto;
+    }
+
     .place-item {
         grid-template-columns: 20px var(--space-xl) 1fr;
         gap: var(--space-sm);
@@ -880,6 +903,10 @@ textarea[data-font-weight="bold"]::placeholder {
 }
 
 @media (max-width: 480px) {
+    .planner-expense-row {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 0.9fr) auto;
+    }
+
     .place-item {
         grid-template-columns: 16px 24px 1fr;
         gap: var(--space-sm);
