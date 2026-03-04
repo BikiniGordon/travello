@@ -2,5 +2,22 @@ bin/
 obj/
 .vs/
 *.user
-appsettings.json
-*.json
+*.suo
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Development settings (may contain secrets)
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db

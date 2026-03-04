@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System;
 
 namespace Travello.Models
-{
+{   
+    [BsonIgnoreExtraElements]
     public class EventModel
     {
         [BsonId] 

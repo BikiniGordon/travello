@@ -38,7 +38,7 @@
                         }
                         else
                         {
-                            <img class="ProfileImage" src="@Model.profile_img_path?t=@DateTime.Now.Ticks"/> 
+                            <img class="ProfileImage" src="@Model.profile_img_path"/> 
                         }
                     </div>
                     <input class="ProfileImageUpload" type="file" id="fileBrowser" asp-for="ProfileImageUpload" accept=".jpg,.jpeg,.png" style="display:none;" onchange="previewImage(this)"/>

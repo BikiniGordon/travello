@@ -20,7 +20,7 @@ namespace Travello.Controllers
         public async Task<IActionResult> EditProfile()
         {
             // Temporarily hardcode a username that actually EXISTS in your Atlas collection FIX REQUIRED HERE BUDDY
-            var user = await _userCollection.Find(u => u.username == "ThaiTraveler01").FirstOrDefaultAsync();
+            var user = await _userCollection.Find(u => u.username == "ThaiTraveler03").FirstOrDefaultAsync();
             
             if (user == null)
             {
@@ -54,39 +54,28 @@ namespace Travello.Controllers
             var existingUser = await _userCollection.Find(u => u.user_id == updatedUser.user_id).FirstOrDefaultAsync();
             if (existingUser == null) return NotFound();
 
-            // --- Image Handling ---
-            if (updatedUser.ProfileImageUpload != null)
+            // --- NEW CLOUDINARY IMAGE HANDLING ---
+            if (updatedUser.ProfileImageUpload != null && updatedUser.ProfileImageUpload.Length > 0)
             {
-                string folder = "images/profiles/";
-                string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, folder);
-                
-                if (!string.IsNullOrEmpty(existingUser.profile_img_path) && 
-                    !existingUser.profile_img_path.Contains("default.png"))
+                try 
                 {
-                    string oldPath = Path.Combine(_hostEnvironment.WebRootPath, existingUser.profile_img_path.TrimStart('/'));
-                    if (System.IO.File.Exists(oldPath))
-                    {
-                        System.IO.File.Delete(oldPath);
-                    }
+                    // 1. Send the file to Cloudinary and get the URL back
+                    // Note: Use your existing service method. If it's named specifically for events, 
+                    // you might want to rename it to UploadImageAsync later.
+                    string uploadedUrl = await _imageUploadService.UploadEventImageAsync(updatedUser.ProfileImageUpload, HttpContext.RequestAborted);
+                    
+                    // 2. Save the FULL URL string to your database
+                    updatedUser.profile_img_path = uploadedUrl;
                 }
-
-                if (!Directory.Exists(uploadsFolder))
+                catch (Exception)
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    TempData["StatusMessage"] = "Image upload failed.";
+                    return View(updatedUser);
                 }
-
-                string fileName = Guid.NewGuid().ToString() + "_" + updatedUser.ProfileImageUpload.FileName;
-                string serverPath = Path.Combine(uploadsFolder, fileName);
-
-                using (var fileStream = new FileStream(serverPath, FileMode.Create))
-                {
-                    await updatedUser.ProfileImageUpload.CopyToAsync(fileStream);
-                }
-                
-                updatedUser.profile_img_path = "/" + folder + fileName;
             }
             else
             {
+                // 3. Keep the old image URL if no new one was uploaded
                 updatedUser.profile_img_path = existingUser.profile_img_path;
             }
             
@@ -109,13 +98,11 @@ namespace Travello.Controllers
                 var filter = Builders<UserViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
                 await _userCollection.ReplaceOneAsync(filter, updatedUser);
 
-                // SUCCESS MESSAGE
                 TempData["StatusMessage"] = "Profile updated successfully!";
                 TempData["StatusType"] = "success";
             }
             catch (Exception)
             {
-                // ERROR MESSAGE
                 TempData["StatusMessage"] = "Something went wrong. Please try again.";
                 TempData["StatusType"] = "error";
             }
