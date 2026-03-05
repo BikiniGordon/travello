@@ -48,7 +48,7 @@
     display: flex;
     width: 100%;
     /* max-width: 1440px;  */
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-xs) var(--space-md);
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -71,6 +71,20 @@
 
 .Logo {
     font-weight: 600;
+}
+
+.HomePage {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    display: inline-flex;
+    align-items: baseline;
+    outline: none;
 }
 
 .TLogo {
@@ -148,6 +162,59 @@
     object-fit: cover;
 }
 
+.DropdownHeader {
+    padding: 12px 16px;
+    font-weight: bold;
+    font-size: var(--text-xs);
+    color: black;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 0;
+}
+
+.logout-text {
+    color: #d9534f;
+}
+
+.ProfileDropdownContent {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background-color: #ffffff;
+    border: 2px solid black;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+    overflow: hidden;
+}
+
+.ProfileDropdownContent.show {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.DropdownItem {
+    width: 100%;
+    padding: var(--space-xs) var(--space-xs);
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.DropdownItem:first-child, .drop1, .drop2{
+    border-bottom: 1px solid black;
+}
+
+.drop1 {
+    border-top: 1px solid black;
+}
+
 .MenuToggle, .DropdownMenu {
     display: none;
 }
@@ -162,6 +229,84 @@
     display: flex;
     align-items: center;
     gap: var(--space-md);
+}
+
+/* Modal Background (The Blur Part) */
+.ModalContainer {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 20000; /* Higher than Navbar */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Darken background */
+    backdrop-filter: blur(5px); /* Blurs the components behind it */
+    align-items: center;
+    justify-content: center;
+}
+
+/* The Modal Box */
+.ModalContent {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Close Button */
+.CloseModal {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+/* Form Styling */
+.InputGroup {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.InputGroup label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.InputGroup input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+}
+
+.LoginSubmitBtn {
+    width: 100%;
+    padding: 12px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.LoginSubmitBtn:hover {
+    background-color: #000;
 }
 
 @media (max-width: 1025px) {
@@ -236,5 +381,9 @@
         flex-direction: column;
         gap: var(--space-md);
         align-items: center;
+    }
+
+    .ProfileDropdownContent {
+        top: 150px;
     }
 }

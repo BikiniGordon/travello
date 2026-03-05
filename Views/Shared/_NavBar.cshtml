@@ -1,5 +1,13 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 <nav class="NavBar">
-    <div class="font-semibold Logo"><span class="font-regular TLogo">T</span> ravello</div>
+
+    <button class="HomePage" onclick="window.location.href='@Url.Action("Index", "Home")'">
+        <div class="font-semibold Logo">
+            <span class="font-regular TLogo">T</span> ravello
+        </div>
+    </button>
     
     <div class="RightNav">
         <button type="button" class="CreateEvent" onclick="window.location.href='@Url.Action("Index", "CreateEvent")'">
@@ -27,14 +35,36 @@
                     </svg>
                 </button>
 
-                <div class="ProfilePic">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-                        <circle cx="18" cy="18" r="17" stroke="#333333" stroke-width="2"/>
-                        
-                        <circle cx="18" cy="14" r="5" stroke="#333333" stroke-width="2"/>
-                        
-                        <path d="M26 29C26 24.5817 22.4183 21 18 21C13.5817 21 10 24.5817 10 29" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
+                <div class="ProfileContainer">
+                    <div class="ProfilePic" onclick="toggleProfileMenu(event)">
+                        @{
+                            var userImg = HttpContextAccessor.HttpContext?.Session.GetString("UserProfilePic");
+                        }
+
+                        @if (!string.IsNullOrEmpty(userImg))
+                        {
+                            <img src="@userImg" alt="Profile" class="nav-profile-img" />
+                        }
+                        else
+                        {
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                                <circle cx="18" cy="18" r="17" stroke="#333333" stroke-width="2"/>
+                                <circle cx="18" cy="14" r="5" stroke="#333333" stroke-width="2"/>
+                                <path d="M26 29C26 24.5817 22.4183 21 18 21C13.5817 21 10 24.5817 10 29" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        }
+                    </div>
+                    <div class="ProfileDropdownContent">
+                        @if (Context.Session.GetString("Username") == null) {
+                            <a href="@Url.Action("CreateAccount", "User")" class="DropdownItem">Create Account</a>
+                            <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal()">Log In</a>
+                        } else {
+                            <div class="DropdownHeader">Hi, @Context.Session.GetString("Username")</div>
+                            <a class="DropdownItem drop1">My Profile</a>
+                            <a href="@Url.Action("EditProfile", "User")" class="DropdownItem drop2">Edit Profile</a>
+                            <a href="@Url.Action("Logout", "User")" class="DropdownItem">Log out</a>
+                        }
+                    </div>
                 </div>
             </div>
 
@@ -56,14 +86,32 @@
                         </svg>
                     </button>
                     
-                    <div class="ProfilePic">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-                            <circle cx="18" cy="18" r="17" stroke="#333333" stroke-width="2"/>
-                        
-                            <circle cx="18" cy="14" r="5" stroke="#333333" stroke-width="2"/>
-                        
-                            <path d="M26 29C26 24.5817 22.4183 21 18 21C13.5817 21 10 24.5817 10 29" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                    <div class="ProfileContainer">
+                        <div class="ProfilePic" onclick="toggleProfileMenu(event)">
+                            @if (!string.IsNullOrEmpty(userImg))
+                            {
+                                <img src="@userImg" alt="Profile" class="nav-profile-img" />
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                                    <circle cx="18" cy="18" r="17" stroke="#333333" stroke-width="2"/>
+                                    <circle cx="18" cy="14" r="5" stroke="#333333" stroke-width="2"/>
+                                    <path d="M26 29C26 24.5817 22.4183 21 18 21C13.5817 21 10 24.5817 10 29" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            }
+                        </div>
+                        <div class="ProfileDropdownContent">
+                             @if (Context.Session.GetString("Username") == null) {
+                                <a href="@Url.Action("CreateAccount", "User")" class="DropdownItem">Create Account</a>
+                                <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal()">Log In</a>
+                            } else {
+                                <div class="DropdownHeader">Hi, @Context.Session.GetString("Username")</div>
+                                <a class="DropdownItem drop1">My Profile</a>
+                                <a href="@Url.Action("EditProfile", "User")" class="DropdownItem drop2">Edit Profile</a>
+                                <a href="@Url.Action("Logout", "User")" class="DropdownItem">Log out</a>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
