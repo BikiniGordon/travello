@@ -32,7 +32,6 @@ c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\b6ald2r2sh-{0}-3oye11g5u9-3oye11g5u9.gz
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\n9kmwscpca-{0}-dm2btbmrn4-dm2btbmrn4.gz
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\ngdsb875we-{0}-pyo4q7wdxb-pyo4q7wdxb.gz
-c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\h5tbhb1sv6-{0}-jcw6n7577d-jcw6n7577d.gz
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\4crew6kp3a-{0}-75mwlf9qwl-75mwlf9qwl.gz
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\dfe3ol12zd-{0}-61n19gt1b8-61n19gt1b8.gz
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\si3ukil77r-{0}-a1e0jmh37z-a1e0jmh37z.gz
@@ -116,3 +115,4 @@ c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\Travello.pdb
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\Travello.genruntimeconfig.cache
 c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\ref\Travello.dll
+c:\Users\Asus GL552VX-DM212D\Desktop\project web app\travello\obj\Debug\net10.0\compressed\h5tbhb1sv6-{0}-jwqg7mdbp2-jwqg7mdbp2.gz

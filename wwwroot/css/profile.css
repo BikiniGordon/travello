@@ -2,19 +2,126 @@
 @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
 
 :root {
+    /* Desktop font scale / */
+    --text-xs: 12px;
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+
+    /* / Spacing scale / */
     --space-xs: 8px;
     --space-sm: 16px;
     --space-md: 24px;
     --space-lg: 32px;
     --space-xl: 48px;
-}
-.My_proflie { 
+    --space-2xl: 64px;
+    --space-paddingout: 72px;
+    }
+
+    @media (max-width: 1025px) {
+        :root {
+
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 56px;
+
+        --space-xs: 6px;
+        --space-sm: 12px;
+        --space-md: 20px;
+        --space-lg: 28px;
+        --space-xl: 40px;
+        --space-2xl: 56px;
+        --space-paddingout: 32px;
+    }
+
+    }
+
+    @media (max-width: 768px) {
+
+    :root {
+
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 48px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+
+    }
+
+
+
+    /* / =========================
+    
+    TYPOGRAPHY CLASSES
+    ========================= */
+
+    .text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+    .text-md  { font-size: var(--text-md); line-height: 1.2;}
+    .text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+    .text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+    .text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+    .text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+
+    .font-semilight  { font-weight: 350; }
+    .font-regular    { font-weight: 400; }
+    .font-medium     { font-weight: 500; }
+    .font-semibold   { font-weight: 600; }
+    .font-bold       { font-weight: 700; } 
+
+
+    .text-brown {
+    color: #562F06;
+    }
+
+    h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    } 
+
+.My_profile { 
     display: flex;
     flex-wrap: wrap; 
+    flex-direction: column;
+    background-color: #F5F6EE;
+    padding-top: var(--space-lg); /* เว้นที่ว่างให้ Navbar ด้านบน */
+    min-height: 100vh;
     gap: var(--space-xl);
 
 }
+.NavBar {
+    display: flex;
+    width: 100%;
+    /* max-width: 1440px;  */
+    padding: var(--space-sm) var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
 
+    box-shadow: -2px -2px 4px 0 rgba(192, 192, 192, 0.25) inset, 2px 2px 4px 0 rgba(0, 0, 0, 0.25) inset;
+    backdrop-filter: blur(20px);
+
+    z-index: 10;
+
+}
 .frame_1349 {
     padding: var(--space-xl);
     width: 100%; 
@@ -25,7 +132,7 @@
     gap: var(--space-xl);
 }
 
-@media (max-width: 750px) {
+/* @media (max-width: 750px) {
   .frame_1349 {
     flex-direction: column;
     align-items: center;  
@@ -48,7 +155,7 @@
     align-items: baseline;
     gap: 10px;
   }
-}
+} */
 .profile-card {
     background-color: #e2e0d6;
     border-radius: 50px; 
@@ -190,6 +297,46 @@
     background-color: #ffefef;
     color: #ff0000;
     border-color: #ff0000;
+}
+.frame_tag_editer {
+    position: relative; /* สำคัญ: เพื่อให้ปุ่ม absolute อิงตำแหน่งกับกรอบนี้ */
+    display: flex;
+    align-items: flex-end; /* ช่วยจัดให้ของข้างในชิดด้านล่างของกรอบ */
+    width: 100%;
+}
+.btn_edit_tag {
+    position: absolute;
+    right: 0;
+    bottom: 0; /* เปลี่ยนจาก 5px เป็น 0 เพื่อให้ชิดขอบกรอบใหม่ */
+    width: 32px;
+    height: 32px;
+    background: #efede4;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+/* ล้างสไตล์ปุ่มเดิมที่อาจจะมาทับซ้อน */
+.btn_edit_tag button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* ปรับขนาดไอคอนปากกา */
+.edit-icon-img {
+    width: 18px;  /* ขนาดไอคอนข้างใน (ปรับตามใจชอบ) */
+    height: 18px;
+    object-fit: contain; /* ป้องกันรูปเบี้ยว */
 }
 .frame_1388{
     width: 100%; 

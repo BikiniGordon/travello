@@ -1,6 +1,17 @@
 @{
     ViewData["Title"] = "profile";
 }
+<style>
+    .NavBar {
+        background: rgba(255, 255, 255, 0.9) !important; /* ทำให้ทึบขึ้นจนมองเห็นชัด */
+        backdrop-filter: none !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    }
+    
+    .Logo, .TLogo {
+        color: #333 !important;
+    }
+</style>
 <div class="My_profile">
     <div class="frame_1349">
             <div class="profile-card text-center shadow">
@@ -29,29 +40,33 @@
                 </div>
                 <div class="box_tag">
                     <h1 class="tag">TAG</h1>
-                    <div class="box_element_tag">
-                        <div class="tag_item">
-                            <span class="tag_icon">🏕️</span>
-                            <span class="tag_text">CAMPING</span>
-                            <button type="button" class="btn_close_tag">×</button>
-                        </div>
+                    <div class="frame_tag_editer">
+                        <div class="box_element_tag">
+                            <div class="tag_item">
+                                <span class="tag_icon">🏕️</span>
+                                <span class="tag_text">CAMPING</span>
+                                <button type="button" class="btn_close_tag">×</button>
+                            </div>
 
-                        <div class="tag_item">
-                            <span class="tag_icon">📷</span>
-                            <span class="tag_text">PHOTOGRAPHY</span>
-                            <button type="button" class="btn_close_tag">×</button>
-                        </div>
+                            <div class="tag_item">
+                                <span class="tag_icon">📷</span>
+                                <span class="tag_text">PHOTOGRAPHY</span>
+                                <button type="button" class="btn_close_tag">×</button>
+                            </div>
 
-                        <div class="tag_item">
-                            <span class="tag_icon">🎒</span>
-                            <span class="tag_text">BACKPACKER</span>
-                            <button type="button" class="btn_close_tag">×</button>
+                            <div class="tag_item">
+                                <span class="tag_icon">🎒</span>
+                                <span class="tag_text">BACKPACKER</span>
+                                <button type="button" class="btn_close_tag">×</button>
+                            </div>
+                        </div>
+                        <div class="btn_edit_tag">
+                            <button type="button">
+                                <img src="~/images/Icon.png" class="edit-icon-img" alt="edit Icon">
+                            </button>
                         </div>
                     </div>
                 </div>
-                @* <div class="box_edittag">
-                    
-                </div> *@
 
             </div>
         </div>

@@ -1,5 +1,9 @@
 <nav class="NavBar">
-    <div class="font-semibold Logo"><span class="font-regular TLogo">T</span> ravello</div>
+    <a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: inherit;">
+        <div class="font-semibold Logo">
+            <span class="font-regular TLogo">T</span> ravello
+        </div>
+    </a>
     
     <div class="RightNav">
         <button class="CreateEvent">
@@ -27,15 +31,15 @@
                     </svg>
                 </button>
 
-                <div class="ProfilePic">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-                        <circle cx="18" cy="18" r="17" stroke="#333333" stroke-width="2"/>
-                        
-                        <circle cx="18" cy="14" r="5" stroke="#333333" stroke-width="2"/>
-                        
-                        <path d="M26 29C26 24.5817 22.4183 21 18 21C13.5817 21 10 24.5817 10 29" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </div>
+                <a asp-controller="Home" asp-action="Profile" style="text-decoration: none; cursor: pointer;">
+                    <div class="ProfilePic">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                            <circle cx="18" cy="18" r="17" stroke="#333333" stroke-width="2"/>
+                            <circle cx="18" cy="14" r="5" stroke="#333333" stroke-width="2"/>
+                            <path d="M26 29C26 24.5817 22.4183 21 18 21C13.5817 21 10 24.5817 10 29" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </a>
             </div>
 
             <button class="MenuToggle" id="menuBtn">
