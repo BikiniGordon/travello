@@ -43,7 +43,15 @@ builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 
+
+//Chat--------------------------------------------------------
+
+
 builder.Services.AddSignalR();
+builder.Services.AddScoped<ChatService>();
+
+
+//-------------------------------------------------------------
 
 var app = builder.Build();
 
