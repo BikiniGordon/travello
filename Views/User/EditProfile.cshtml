@@ -1,10 +1,17 @@
 @using Travello.Models
-@model Travello.Models.UserViewModel
+@model Travello.Models.EditProfileViewModel
 @{
     ViewData["Title"] = "Edit Profile";
 }
 <link rel="stylesheet" href="~/css/EditProfile.css" />
 <link rel="stylesheet" href="~/css/NavBar.css" />
+
+@if (TempData["StatusMessage"] != null)
+{
+    <div id="statusNotification" class="notification @TempData["StatusType"] font-bold">
+        @TempData["StatusMessage"]
+    </div>
+}
 
 <div class="CenterContainer">
     <form class="EditProfileContainer" asp-controller="User" asp-action="EditProfile" method="post" enctype="multipart/form-data">
@@ -21,7 +28,8 @@
                 <div class="text-sm ProfileSubContainer">
                     PROFILE PICTURE
                     <div class="ProfilePicture">
-                        @if (string.IsNullOrEmpty(Model.profile_img_path) || Model.profile_img_path == "/images/profiles/default.png")
+                        <input type="hidden" asp-for="profile_img_path" />
+                        @if (string.IsNullOrEmpty(Model.profile_img_path))
                         {
                             <svg id="placeholderSvg" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                                 <path d="M40 42V38C40 35.8783 39.1571 33.8434 37.6569 32.3431C36.1566 30.8429 34.1217 30 32 30H16C13.8783 30 11.8434 30.8429 10.3431 32.3431C8.84285 33.8434 8 35.8783 8 38V42" stroke="#3F2E3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -30,7 +38,7 @@
                         }
                         else
                         {
-                            <img class="ProfileImage" src="@Model.profile_img_path?t=@DateTime.Now.Ticks"/> 
+                            <img class="ProfileImage" src="@Model.profile_img_path"/> 
                         }
                     </div>
                     <input class="ProfileImageUpload" type="file" id="fileBrowser" asp-for="ProfileImageUpload" accept=".jpg,.jpeg,.png" style="display:none;" onchange="previewImage(this)"/>
@@ -59,16 +67,20 @@
                     <div class="ChoosingContainer text-sm font-semilight">
                         DATE OF BIRTH
                         <div class="ChoosingInputContainer">
-                            <input type="date" asp-for="date_of_birth" class="InputSelection" />
+                            @{
+                                var maxDate = DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                            }
+                            <input type="date" asp-for="date_of_birth" class="InputSelection" max="@maxDate"/>
                         </div>
                     </div>
                     <div class="ChoosingContainer text-sm font-semilight">
                         GENDER
                         <div class="ChoosingInputContainer">
-                            <select class="InputSelection" asp-for="gender" required>
+                            <select class="InputSelection" asp-for="gender">
                                 <option value="" disabled selected hidden>CHOOSE GENDER</option>
-                                <option value="male">MALE</option>
-                                <option value="female">FEMALE</option>
+                                <option value="Male">MALE</option>
+                                <option value="Female">FEMALE</option>
+                                <option value="Other">OTHER</option>
                             </select>
                         </div>
                     </div>

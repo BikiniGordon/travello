@@ -8,11 +8,6 @@ namespace Travello.Controllers
 {
     public class HomeController : Controller
     {
-        // public IActionResult Index()
-        // {
-        //     return View();
-        // }
-
         public IActionResult Privacy()
         {
             return View();
@@ -28,7 +23,7 @@ namespace Travello.Controllers
         public HomeController(IMongoDatabase database)
         {
             // "Event" is the name of the Collection in your MongoDB Atlas
-            _eventsCollection = database.GetCollection<EventModel>("Event");
+            _eventsCollection = database.GetCollection<EventModel>("events");
         }
 
         public async Task<IActionResult> Index(int page = 1, string? searchLocation = null, DateTime? searchDate = null, string[]? selectedTags = null) 

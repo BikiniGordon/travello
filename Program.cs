@@ -1,22 +1,49 @@
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Travello.Models;
+using Travello.Services;
+
+LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-// Get the settings from appsettings.json
-var mongoSettings = builder.Configuration.GetSection("MongoDBSettings");
-
-// Register the Client (The connection to Atlas)
-builder.Services.AddSingleton<IMongoClient>(sp => 
-    new MongoClient(mongoSettings.GetValue<string>("ConnectionString")));
-
-// Register the Database (The specific DB inside Atlas)
-builder.Services.AddScoped(sp => {
-    var client = sp.GetRequiredService<IMongoClient>();
-    return client.GetDatabase(mongoSettings.GetValue<string>("DatabaseName"));
+var mongoSection = builder.Configuration.GetSection("MongoDBsettings");
+builder.Services.Configure<MongoDbSettings>(options =>
+{
+    mongoSection.Bind(options);
+    options.ConnectionString = builder.Configuration["MONGODB_CONNECTION_STRING"] ?? options.ConnectionString;
+    options.DatabaseName = builder.Configuration["MONGODB_DATABASE_NAME"] ?? options.DatabaseName;
 });
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+    {
+        throw new InvalidOperationException(
+            "MongoDB connection string is missing. Set MongoDBsettings:ConnectionString via user-secrets or MongoDBsettings__ConnectionString / MONGODB_CONNECTION_STRING environment variable.");
+    }
+
+    return new MongoClient(settings.ConnectionString);
+});
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    if (string.IsNullOrWhiteSpace(settings.DatabaseName))
+    {
+        throw new InvalidOperationException(
+            "MongoDB database name is missing. Set MongoDBsettings:DatabaseName via user-secrets or MongoDBsettings__DatabaseName / MONGODB_DATABASE_NAME environment variable.");
+    }
+
+    return serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(settings.DatabaseName);
+});
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
+
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EditProfileViewModel>("User"));
+builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 
 var app = builder.Build();
 
@@ -42,3 +69,43 @@ app.MapControllerRoute(
 
 
 app.Run();
+
+static void LoadDotEnv(string path)
+{
+    if (!File.Exists(path))
+    {
+        return;
+    }
+
+    foreach (var rawLine in File.ReadAllLines(path))
+    {
+        var line = rawLine.Trim();
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith('#'))
+        {
+            continue;
+        }
+
+        var separatorIndex = line.IndexOf('=');
+        if (separatorIndex <= 0)
+        {
+            continue;
+        }
+
+        var key = line[..separatorIndex].Trim();
+        var value = line[(separatorIndex + 1)..].Trim();
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            continue;
+        }
+
+        if ((value.StartsWith('"') && value.EndsWith('"')) || (value.StartsWith('\'') && value.EndsWith('\'')))
+        {
+            value = value[1..^1];
+        }
+
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
+        {
+            Environment.SetEnvironmentVariable(key, value);
+        }
+    }
+}
