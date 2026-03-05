@@ -9,20 +9,92 @@
       "PackagePath": "staticwebassets\\css\\Chat.css"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\CreateEvent.css",
+      "PackagePath": "staticwebassets\\css\\CreateEvent.css"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\EditProfile.css",
+      "PackagePath": "staticwebassets\\css\\EditProfile.css"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\HomePage.css",
+      "PackagePath": "staticwebassets\\css\\HomePage.css"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\NavBar.css",
+      "PackagePath": "staticwebassets\\css\\NavBar.css"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\NotificationPopup.css",
+      "PackagePath": "staticwebassets\\css\\NotificationPopup.css"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\css\\styleDetail.css",
+      "PackagePath": "staticwebassets\\css\\styleDetail.css"
     },
     {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\Check_circle.svg",
+      "PackagePath": "staticwebassets\\images\\Check_circle.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\Dot 2.svg",
+      "PackagePath": "staticwebassets\\images\\Dot 2.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\Edit.svg",
+      "PackagePath": "staticwebassets\\images\\Edit.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\EditProfileBackground.jpg",
+      "PackagePath": "staticwebassets\\images\\EditProfileBackground.jpg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\Ellipse 12.png",
+      "PackagePath": "staticwebassets\\images\\Ellipse 12.png"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\HomePageBackground.jpg",
+      "PackagePath": "staticwebassets\\images\\HomePageBackground.jpg"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\chat_img_background.svg",
       "PackagePath": "staticwebassets\\images\\chat_img_background.svg"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\cover.png",
+      "PackagePath": "staticwebassets\\images\\cover.png"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\date_icon.svg",
       "PackagePath": "staticwebassets\\images\\date_icon.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\expense.svg",
+      "PackagePath": "staticwebassets\\images\\expense.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\icon2pre.png",
+      "PackagePath": "staticwebassets\\images\\icon2pre.png"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\icon3pre.png",
+      "PackagePath": "staticwebassets\\images\\icon3pre.png"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\icon4pre.png",
+      "PackagePath": "staticwebassets\\images\\icon4pre.png"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\iconpre.png",
+      "PackagePath": "staticwebassets\\images\\iconpre.png"
     },
     {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\leave_icon.svg",
@@ -33,8 +105,20 @@
       "PackagePath": "staticwebassets\\images\\locate_icon.svg"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\notification.png",
+      "PackagePath": "staticwebassets\\images\\notification.png"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\path_icon.svg",
       "PackagePath": "staticwebassets\\images\\path_icon.svg"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\pic.png",
+      "PackagePath": "staticwebassets\\images\\pic.png"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\pinpre.png",
+      "PackagePath": "staticwebassets\\images\\pinpre.png"
     },
     {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\search_icon.svg",
@@ -49,8 +133,32 @@
       "PackagePath": "staticwebassets\\images\\setting_icon.svg"
     },
     {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\images\\upload_section.png",
+      "PackagePath": "staticwebassets\\images\\upload_section.png"
+    },
+    {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\Chat.js",
       "PackagePath": "staticwebassets\\js\\Chat.js"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\CreateEvent.js",
+      "PackagePath": "staticwebassets\\js\\CreateEvent.js"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\NavBar.js",
+      "PackagePath": "staticwebassets\\js\\NavBar.js"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\NotificationPopup.js",
+      "PackagePath": "staticwebassets\\js\\NotificationPopup.js"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\actionBar.js",
+      "PackagePath": "staticwebassets\\js\\actionBar.js"
+    },
+    {
+      "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\modal.js",
+      "PackagePath": "staticwebassets\\js\\modal.js"
     },
     {
       "Id": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\wwwroot\\js\\site.js",
