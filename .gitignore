@@ -11,7 +11,7 @@ obj/
 # Logs
 *.log
 
-# Development settings (may contain secrets)
+# Development settings
 appsettings.Development.json
 appsettings.Local.json
 .env

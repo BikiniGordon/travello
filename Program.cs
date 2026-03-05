@@ -41,12 +41,18 @@ builder.Services.AddSingleton(serviceProvider =>
 
     return serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(settings.DatabaseName);
 });
+
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
 
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EditProfileViewModel>("User"));
+
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<NotificationDocument>("notifications"));
+
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 
