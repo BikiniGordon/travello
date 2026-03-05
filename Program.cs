@@ -7,7 +7,10 @@ LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 var mongoSection = builder.Configuration.GetSection("MongoDBsettings");
 builder.Services.Configure<MongoDbSettings>(options =>
@@ -38,10 +41,16 @@ builder.Services.AddSingleton(serviceProvider =>
 
     return serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(settings.DatabaseName);
 });
+
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
+
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EditProfileViewModel>("User"));
+
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<NotificationDocument>("notifications"));
+
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
@@ -57,6 +66,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

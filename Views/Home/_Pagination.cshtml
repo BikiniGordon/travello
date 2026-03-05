@@ -1,0 +1,61 @@
+@using Travello.Models
+@model List<EventModel>
+
+@if (ViewBag.CurrentPage > 1)
+{
+    <button type="button" onclick="changePage(@(ViewBag.CurrentPage - 1))" class="text-sm font-regular WordNav"> &lt Previous </button>
+}
+
+@* 1. Always show Page 1 *@
+<button type="button" onclick="changePage(1)" class="PageNumber @(ViewBag.CurrentPage == 1 ? "active" : "")">1</button>
+
+@* 2. Always show Page 2 (if it exists) *@
+@if (ViewBag.TotalPages >= 2)
+{
+    <button type="button" onclick="changePage(2)" class="PageNumber @(ViewBag.CurrentPage == 2 ? "active" : "")">2</button>
+}
+
+@* 3. THE GAP + CURRENT PAGE *@
+@if (ViewBag.CurrentPage > 2 && ViewBag.CurrentPage < ViewBag.TotalPages)
+{
+    @* The Input field acts as the "..." separator between 2 and Current *@
+    <div class="PageInputContainer">
+        <form onsubmit="event.preventDefault(); changePage(this.elements['page'].value);" style="display: inline;">
+            <input type="number" name="page" class="text-sm font-regular PageInput" placeholder="..." min="1" max="@ViewBag.TotalPages" />
+        </form>
+    </div>
+
+    @* Show the Current Page itself *@
+    <button type="button" onclick="changePage(@ViewBag.CurrentPage)" class="PageNumber active">@ViewBag.CurrentPage</button>
+}
+
+@* 4. THE SECOND GAP (Only if we aren't at the end) *@
+@if (ViewBag.CurrentPage <= 2 || ViewBag.CurrentPage == ViewBag.TotalPages)
+{
+    @* If we are at the start or very end, just show one input gap *@
+    <div class="PageInputContainer">
+        <form onsubmit="event.preventDefault(); changePage(this.elements['page'].value);" style="display: inline;">
+            <input type="number" name="page" class="text-sm font-regular PageInput" placeholder="..." min="1" max="@ViewBag.TotalPages" />
+        </form>
+    </div>
+}
+else if (ViewBag.CurrentPage < ViewBag.TotalPages - 1)
+{
+    @* If there is a gap between Current and Last, show a second input *@
+    <div class="PageInputContainer">
+        <form onsubmit="event.preventDefault(); changePage(this.elements['page'].value);" style="display: inline;">
+            <input type="number" name="page" class="text-sm font-regular PageInput" placeholder="..." min="1" max="@ViewBag.TotalPages" />
+        </form>
+    </div>
+}
+
+@* 5. Always show Last Page (if it's greater than 2) *@
+@if (ViewBag.TotalPages > 2)
+{
+    <button type="button" onclick="changePage(@ViewBag.TotalPages)" class="PageNumber @(ViewBag.CurrentPage == ViewBag.TotalPages ? "active" : "")">@ViewBag.TotalPages</button>
+}
+
+@if (ViewBag.CurrentPage < ViewBag.TotalPages)
+{
+    <button type="button" onclick="changePage(@(ViewBag.CurrentPage + 1))" class="text-sm font-regular WordNav"> Next &gt </button>
+}
