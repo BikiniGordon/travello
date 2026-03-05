@@ -1,40 +1,5 @@
-// using Microsoft.AspNetCore.Mvc;
-// using System.Collections.Generic;
-// using Travello.Models;
-// using System;
-// using MongoDB.Driver;
-
-// namespace Travello.Controllers
-// {
-//     public class ChatController : Controller
-//     {
-//         private readonly IMongoCollection<ChatMessageModel> _messageCollection;
-
-//         public ChatController()
-//         {
-//             var client = new MongoClient("mongodb://localhost:27018");
-//             var database = client.GetDatabase("TravelloDB");
-//             _messageCollection = database.GetCollection<ChatMessageModel>("ChatMessages");
-//         }
-
-//         public IActionResult Index()
-//         {
-//             // เดี๋ยวดึง chat จาก event_id ของ user มาแสดง
-//             var chatList = new List<ChatRoomModel>
-//             {
-//                 new ChatRoomModel { event_id = 1, chat_name = "ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว", last_message_id = 1, user_id = 1},
-//                 new ChatRoomModel { event_id = 2, chat_name = "ทริปดำน้ำเกาะเต่า", last_message_id = 2, user_id = 1},
-//                 new ChatRoomModel { event_id = 3, chat_name = "แคมป์ปิ้งเขาใหญ่", last_message_id = 3,  user_id = 1},
-//                 new ChatRoomModel { event_id = 4, chat_name = "ตะลุยคาเฟ่เชียงใหม่", last_message_id = 4, user_id = 1}
-//             };
-
-//             return View("Index", chatList);
-//         }
-//     }
-// }
-
-
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using Travello.Models;
 using Travello.Services;
 
@@ -43,25 +8,55 @@ namespace Travello.Controllers
     public class ChatController : Controller
     {
         private readonly ChatService _chatService;
+        private readonly IMongoCollection<UserModel> _usersCollection;
+        // 🌟 1. เพิ่มตัวแปรเชื่อมต่อตาราง events
+        private readonly IMongoCollection<EventModel> _eventsCollection;
 
-        // รับ ChatService เข้ามาใช้งาน
-        public ChatController(ChatService chatService)
+        public ChatController(ChatService chatService, IMongoDatabase database)
         {
             _chatService = chatService;
+            _usersCollection = database.GetCollection<UserModel>("User");
+            // 🌟 2. ชี้ไปที่ตาราง events ใน Database
+            _eventsCollection = database.GetCollection<EventModel>("events"); 
         }
 
         public async Task<IActionResult> Index()
         {
-            // 1. จำลองว่าดึง user_id ของคนที่ล็อกอินอยู่ (ของจริงอาจจะดึงจาก Session หรือ Cookie)
-            int currentUserId = 1; 
+            // ดึง User จำลอง
+            string mockUserId = "69a9afc35f16b10cdb2b5079"; // ใช้ ID ของ SameTest
 
-            // 2. จำลองว่าไป Query มาแล้วพบว่า User คนนี้เข้าร่วมทริป (event_id) เบอร์ 101 และ 105
-            List<int> myEventIds = new List<int> { 101, 105 };
+            var currentUser = await _usersCollection
+                .Find(user => user.id == mockUserId)
+                .FirstOrDefaultAsync();
 
-            // 3. สั่งให้ Service ไปดึงห้องแชทของ 2 ทริปนี้มาจาก MongoDB
+            if (currentUser == null || currentUser.event_id == null || !currentUser.event_id.Any())
+            {
+                return View(new List<ChatRoomModel>());
+            }
+
+            // ไปหาห้องแชททั้งหมด
+            List<string> myEventIds = currentUser.event_id;
             List<ChatRoomModel> myChats = await _chatService.GetUserChatsAsync(myEventIds);
 
-            // 4. โยนข้อมูลแชทที่ได้ ไปแสดงผลที่หน้า View (หน้า HTML)
+            // 🌟 3. พระเอกอยู่ตรงนี้: วนลูปเอา event_title มาใส่เป็นชื่อห้องแชท
+            foreach (var chat in myChats)
+            {
+                if (chat.event_id != null)
+                {
+                    // ไปค้นหาทริปที่มี Id ตรงกับ event_id ของห้องแชทนี้
+                    var eventInfo = await _eventsCollection
+                        .Find(event_obj => event_obj.id == chat.event_id)
+                        .FirstOrDefaultAsync();
+
+                    // ถ้าเจอทริป ก็เอาชื่อทริปมาทับ chat_name เลย
+                    if (eventInfo != null && chat.chat_name != eventInfo.event_title)
+                    {
+                        chat.chat_name = eventInfo.event_title;
+                        await _chatService.UpdateChatNameAsync(chat.id!, eventInfo.event_title!);
+                    }
+                }
+            }
+
             return View(myChats); 
         }
     }

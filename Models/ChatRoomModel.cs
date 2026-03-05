@@ -8,11 +8,13 @@ namespace Travello.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id {get; set;}
-        public int event_id { get; set; }
-        public int user_id { get; set; }
+        public string? id {get; set;}
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? event_id { get; set; }
         public string? chat_name { get; set; } //เดี๋ยวปรับเป็นชื่อ event ดึงชื่อมาจาก class event
-        public int? last_message_id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? last_message_id { get; set; }
     }
 }
 

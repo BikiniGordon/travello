@@ -10,9 +10,15 @@ namespace Travello.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        public string? event_id { get; set; } // เอาไว้บอกว่าข้อความนี้อยู่ห้องแชทไหน (ทริปไหน)
-        public string? sender_id { get; set; } // ชื่อคนส่ง
+        // 🌟 เติม ObjectId ให้ตัวเชื่อมทั้งสองตัว
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? event_id { get; set; } 
+        
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? sender_id { get; set; } 
+        
         public string? message_text { get; set; }       // เนื้อหาข้อความ
-        public DateTime timestamp { get; set; } // เวลาที่ส่ง
+        
+        public DateTime timestamp { get; set; } = DateTime.UtcNow; 
     }
 }

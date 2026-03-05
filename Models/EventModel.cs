@@ -16,8 +16,8 @@ public class EventModel
     [BsonElement("detail")]
     public string? detail { get; set; }
 
-    [BsonElement("location")]
-    public List<string> location { get; set; } = new();
+    // [BsonElement("location")]
+    // public List<string> location { get; set; } = new();
 
     [BsonElement("start_date")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
