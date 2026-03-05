@@ -119,6 +119,10 @@ function openPollRoom(event_id) {
     }
 }
 
+function closeChatRoomMobile() {
+    document.getElementById('chat-room').style.display = 'none';
+}
+
 function backSettingRoom(event_id){
     curr_room_id = event_id
 

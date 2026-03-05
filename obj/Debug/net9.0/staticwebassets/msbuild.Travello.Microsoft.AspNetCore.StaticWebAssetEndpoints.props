@@ -1,16 +1,16 @@
 ﻿<Project>
   <ItemGroup>
-    <StaticWebAssetEndpoint Include="_content/Travello/css/Chat.4dmu4astkb.css">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</AssetFile>
-      <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"4dmu4astkb"},{"Name":"integrity","Value":"sha256-uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A="},{"Name":"label","Value":"_content/Travello/css/Chat.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"25601"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=\u0022"},{"Name":"Last-Modified","Value":"Mon, 02 Mar 2026 15:30:00 GMT"}]]]></ResponseHeaders>
-    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/css/Chat.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"25601"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022uLjphjrXbugTeNERqA6cwLIAol9M6L3eiCvEumiPL/A=\u0022"},{"Name":"Last-Modified","Value":"Mon, 02 Mar 2026 15:30:00 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-w\u002BJuegWrVUw7cbACuV\u002B/TakimQILtrxbBHM6sfUajY0="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"32717"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022w\u002BJuegWrVUw7cbACuV\u002B/TakimQILtrxbBHM6sfUajY0=\u0022"},{"Name":"Last-Modified","Value":"Wed, 04 Mar 2026 15:14:34 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Travello/css/Chat.n3kgl5rwpf.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\Chat.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"n3kgl5rwpf"},{"Name":"integrity","Value":"sha256-w\u002BJuegWrVUw7cbACuV\u002B/TakimQILtrxbBHM6sfUajY0="},{"Name":"label","Value":"_content/Travello/css/Chat.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"32717"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022w\u002BJuegWrVUw7cbACuV\u002B/TakimQILtrxbBHM6sfUajY0=\u0022"},{"Name":"Last-Modified","Value":"Wed, 04 Mar 2026 15:14:34 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/css/site.b9sayid5wm.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</AssetFile>
@@ -132,17 +132,17 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-b/5RXxfqOsV1Q4Iy8NLkZWJoTbE39jZMtJxu2l66Tj0="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"40926"},{"Name":"Content-Type","Value":"image/svg\u002Bxml"},{"Name":"ETag","Value":"\u0022b/5RXxfqOsV1Q4Iy8NLkZWJoTbE39jZMtJxu2l66Tj0=\u0022"},{"Name":"Last-Modified","Value":"Sat, 21 Feb 2026 18:42:37 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/Travello/js/Chat.i88jz6vk0q.js">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\Chat.js'))</AssetFile>
-      <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"i88jz6vk0q"},{"Name":"integrity","Value":"sha256-cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk="},{"Name":"label","Value":"_content/Travello/js/Chat.js"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"8948"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=\u0022"},{"Name":"Last-Modified","Value":"Mon, 02 Mar 2026 15:29:35 GMT"}]]]></ResponseHeaders>
-    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/js/Chat.js">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\Chat.js'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"8948"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022cnuGYKEJlcR39XddYBYdhuLfoc2rkxcZ0Zf3wFFAnZk=\u0022"},{"Name":"Last-Modified","Value":"Mon, 02 Mar 2026 15:29:35 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-5iZamct\u002B6jsLEQVLHcfjcIgt1RlxP/60NlC8d0s0BQM="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"10218"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u00225iZamct\u002B6jsLEQVLHcfjcIgt1RlxP/60NlC8d0s0BQM=\u0022"},{"Name":"Last-Modified","Value":"Wed, 04 Mar 2026 15:05:26 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Travello/js/Chat.mkw4hyft65.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\Chat.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"mkw4hyft65"},{"Name":"integrity","Value":"sha256-5iZamct\u002B6jsLEQVLHcfjcIgt1RlxP/60NlC8d0s0BQM="},{"Name":"label","Value":"_content/Travello/js/Chat.js"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"10218"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u00225iZamct\u002B6jsLEQVLHcfjcIgt1RlxP/60NlC8d0s0BQM=\u0022"},{"Name":"Last-Modified","Value":"Wed, 04 Mar 2026 15:05:26 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Travello/js/site.js">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\site.js'))</AssetFile>
