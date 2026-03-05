@@ -67,9 +67,7 @@
 
 
 
-/* =========================
-   3. TYPOGRAPHY CLASSES
-========================= */
+/* TYPOGRAPHY CLASSES */
 
 .text-sm {
     font-size: var(--text-sm);
@@ -242,11 +240,13 @@ body, .details {
 .profile {
     width: 57px;
     height: 57px;
+    border-radius: 50px;
 }
 
 .cover {
     flex: 1;
-    height: 191px;
+    height: 30vh;
+    border-radius: 12px;
 }
 
 .title {
@@ -734,13 +734,78 @@ body, .details {
 
 .modal {
     background: #F5F6EE;
-    padding: var(--space-md);
+    padding: var(--space-sm);
     border-radius: 12px;
     max-width: 480px;
     width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;  /*scroll ได้ถ้าคนเยอะ*/
+    height: 380px;
+    overflow-y: auto;
+    scrollbar-width: none;       
+    -ms-overflow-style: none;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal::-webkit-scrollbar {
+    display: none;
+}
+
+/* .attendee-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.attendee-answer {
+    color: #888;
+    font-size: var(--text-xs);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; */
+
+.attendee-clickable {
+    cursor: pointer;
+    flex-direction: column;  /* stack vertical */
+    align-items: stretch;
+}
+
+.attendee-clickable:hover {
+    flex-direction: column;
+    background: rgba(86, 47, 6, 0.05);
+    border-radius: 8px;
+}
+
+.attendee-main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+}
+
+.attendee-chevron {
+    color: #888;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.attendee-answer-box {
+    padding: var(--space-xs) var(--space-sm);
+    align-self: flex-start;
+    /* margin-top: 4px; */
+    /* background: rgba(86, 47, 6, 0.06); */
+    /* border-radius: 8px; */
+    /* border-left: 3px solid rgba(86, 47, 6, 0.3); */
+}
+
+.attendee-answer-text {
+    font-size: var(--text-xs);
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+    word-break: break-word;   /* ตัดคำถ้ายาว ไม่ overflow */
 }
 
 .modal-header {
@@ -773,7 +838,7 @@ body, .details {
 .attendee-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-md);
 }
 
 .attendee img {
@@ -785,7 +850,7 @@ body, .details {
 
 .attendee {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     gap: var(--space-sm);
 }
@@ -1106,7 +1171,7 @@ body, .details {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 50px;
 }
 
 .detail-map-container {
@@ -1118,4 +1183,11 @@ body, .details {
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     position: relative;   
     z-index: 0;
+}
+.btn-closed {
+    background: #9E9E9E;
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.85;
+    pointer-events: none;
 }

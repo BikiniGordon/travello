@@ -1,123 +1,273 @@
 using Microsoft.AspNetCore.Mvc;
 using Travello.Models;
+using Travello.Services;
 
 namespace Travello.Controllers
 {
     public class EventController : Controller
     {
-        public IActionResult Detail(int id)
+        private readonly EventService _eventService;
+
+        public EventController(EventService eventService)
         {
-            //mock NO database yet
-            var model = new EventDetailViewModel
+            _eventService = eventService;
+        }
+
+        // DETAIL PAGE
+
+        public async Task<IActionResult> Detail(string id)
+        {
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
+
+            // var currentUserId = Request.Cookies["userId"];
+            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+            string userStatus = "none";
+
+            if (ev.IsRegistrationClosed && currentUserId != ev.CreatorId)
             {
-                EventId = id,
-                EventTitle = "ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว",
-                Category = "ADVENTURE",
-                HostName = "Dearja",
-                HostProfileImage = "Ellipse 12.png",
-                CoverImage = "cover.png",
-                Detail = "Lorem ipsum dolor sit amet...",
-                TripRules = "Lorem ipsum dolor sit amet...",
-                ClosingDate = new DateTime(2026, 3, 20),
-                StartDate = new DateTime(2026, 3, 20),
-                EndDate = new DateTime(2026, 3, 26),
-                Location = "Everest mountain",
-                RemainingSlots = 10,
-                AttendeeCount = 21,
-                UserStatus = "approved", // none | pending | owner 
-                TotalExpenses = 4280,
-
-                PackingList = new List<string> { "คนรู้ใจ", "เสื้อกันหนาว", "รองเท้า" },
-
-                Days = new List<DayViewModel>
+                userStatus = "closed";
+            }
+            else
             {
-                new DayViewModel 
+                var allParticipants = await _eventService.GetParticipantsAsync(id);
+
+                if (!string.IsNullOrEmpty(currentUserId))
                 {
-                    DayNumber = 1,
-                    Places = new List<PlaceViewModel>
+                    if (currentUserId == ev.CreatorId)
                     {
-                        new PlaceViewModel
-                        {
-                            Name = "สวนลุม",
-                            Description = "เจอกันเวลา 9 โมงเช้า",
-                            Expenses = new List<ExpenseViewModel>
-                            {
-                                new ExpenseViewModel { Name = "ค่าเดินทาง", Amount = 20 }
-                            }
-                        },
-                        new PlaceViewModel
-                        {
-                            Name = "วัดอรุณ",
-                            Description = "สวดมนต์เอาฤกษ์เอาชัย"
-                        }
+                        userStatus = "owner";
                     }
-                }, 
-                new DayViewModel  
-                {
-                    DayNumber = 2,
-                    Places = new List<PlaceViewModel>
+                    else
                     {
-                        new PlaceViewModel
+                        var participant = await _eventService.GetParticipantAsync(id, currentUserId);
+                        if (participant != null)
                         {
-                            Name = "โรงเรียนอัสสัมชัญบางรัก",
-                            Description = "แวะโรงเรียนเก่า",
-                            Expenses = new List<ExpenseViewModel>
-                            {
-                                new ExpenseViewModel { Name = "ค่าจอดรถ", Amount = 100 }
-                            }
+                            userStatus = participant.Status;
                         }
-                    }
-                }  
-            },
-                Locations = new List<LocationViewModel>
-                {
-                    new LocationViewModel { PlaceName = "สวนลุม",  Latitude = 13.7280, Longitude = 100.5418 },
-                    new LocationViewModel { PlaceName = "วัดอรุณ", Latitude = 13.7436, Longitude = 100.4888 },
-                    new LocationViewModel { PlaceName = "โรงเรียนอัสสัมชัญบางรัก", Latitude = 13.7234, Longitude = 100.516128 },
-                },
-
-                Attendees = new List<AttendeeViewModel>
-                {
-                    new AttendeeViewModel { Id=1, Name="Dearja", ProfileImage="pic.png", IsApproved=true },
-                    new AttendeeViewModel { Id=2, Name="Tom",    ProfileImage="pic.png", IsApproved=true },
-                    new AttendeeViewModel { Id=3, Name="Robin",  ProfileImage="pic.png", IsApproved=true },
-                    new AttendeeViewModel { Id=4, Name="Sam",    ProfileImage="pic.png", IsApproved=false },
-                    new AttendeeViewModel { Id=5, Name="Alex",   ProfileImage="pic.png", IsApproved=false },
-                    new AttendeeViewModel { Id=5, Name="Alex",   ProfileImage="pic.png", IsApproved=false },
-                },
-
-                JoinQuestions = new List<JoinQuestionViewModel>
-                {
-                    new JoinQuestionViewModel { Id=1, QuestionText="ทำไมถึงอยากร่วมทริป?" }
-                },
-
-                Additions = new List<AdditionViewModel>
-                {
-                    new AdditionViewModel
-                    {
-                        Question = "What will we eat the morning of the trip?",
-                        Answer = "Ramen"
                     }
                 }
+            }
+
+            var allParticipantsFull = await _eventService.GetParticipantsAsync(id);
+            var approvedCount = allParticipantsFull.Count(p => p.Status == "approved");
+            var pendingCount  = allParticipantsFull.Count(p => p.Status == "pending");
+            var displayCount  = userStatus == "owner"
+                ? approvedCount + pendingCount
+                : approvedCount;
+
+            var host = await _eventService.GetUserByIdAsync(ev.CreatorId);
+
+            var attendeeViewModels = new List<AttendeeViewModel>();
+            foreach (var p in allParticipantsFull.Where(p => p.Status == "approved" || p.Status == "pending"))
+            {
+                var user = await _eventService.GetUserByIdAsync(p.UserId);
+                attendeeViewModels.Add(new AttendeeViewModel
+                {
+                    Id           = p.UserId,
+                    Name         = user?.Username ?? p.UserId,
+                    ProfileImage = user?.ProfileImgPath ?? "/images/pic.png",
+                    IsApproved   = p.Status == "approved"
+                });
+            }
+
+            var days = ev.Itinerary
+                .GroupBy(i => i.DayIndex)
+                .OrderBy(g => g.Key)
+                .Select(g => new DayViewModel
+                {
+                    DayNumber = g.Key,
+                    Places = g.OrderBy(i => i.PlaceIndex)
+                              .Select(i => new PlaceViewModel
+                              {
+                                  Name        = i.ActivityName,
+                                  Description = i.Note ?? "",
+                                  Expenses    = i.ExpenseItems.Select(e => new ExpenseViewModel
+                                  {
+                                      Name   = e.Name,
+                                      Amount = e.Amount
+                                  }).ToList()
+                              }).ToList()
+                }).ToList();
+
+            var locations = ev.Locations?.Select(l => new LocationViewModel
+            {
+                PlaceName = l.PlaceName,
+                Latitude  = l.Latitude,
+                Longitude = l.Longitude
+            }).ToList() ?? new();
+
+            var joinQuestions = new List<JoinQuestionViewModel>();
+            if (!string.IsNullOrEmpty(ev.RecruitQuestion))
+            {
+                joinQuestions.Add(new JoinQuestionViewModel
+                {
+                    Id           = 1,
+                    QuestionText = ev.RecruitQuestion
+                });
+            }
+
+            var totalExpenses = ev.Itinerary
+            .SelectMany(i => i.ExpenseItems)
+            .Sum(e => e.Amount);
+
+            var model = new EventDetailViewModel
+            {
+                EventId          = id,
+                EventTitle       = ev.EventTitle,
+                Category         = ev.EventTag?.FirstOrDefault() ?? "",
+                HostName         = host?.Username ?? "",
+                HostProfileImage = host?.ProfileImgPath,
+                CoverImage       = ev.EventImgPath ?? "",
+                Detail           = ev.Detail ?? "",
+                TripRules        = ev.TripRules ?? "",
+                ClosingDate      = ev.OpenDate ?? DateTime.Now,
+                StartDate        = ev.StartDate,
+                EndDate          = ev.EndDate,
+                Location         = ev.Location?.FirstOrDefault() ?? "",
+                RemainingSlots   = ev.AttendeesLimit - ev.Attendees,
+                AttendeeCount    = displayCount,
+                UserStatus       = userStatus,
+                TotalExpenses    = totalExpenses,
+                PackingList      = ev.PackingList ?? new(),
+                Days             = days,
+                Locations        = locations,
+                Attendees        = attendeeViewModels,
+                JoinQuestions    = joinQuestions,
+                Additions        = new()
             };
 
             return View(model);
         }
 
-        public JsonResult GetAttendees(int id)
+        // GET ATTENDEES (modal)
+
+        public async Task<JsonResult> GetAttendees(string id)
         {
-            var attendees = new[]
+            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+
+            var ev = await _eventService.GetEventByIdAsync(id);
+            bool isOwner = currentUserId == ev?.CreatorId;
+
+            var allParticipants = await _eventService.GetParticipantsAsync(id);
+            var filtered = isOwner
+                ? allParticipants.Where(p => p.Status == "approved" || p.Status == "pending")
+                : allParticipants.Where(p => p.Status == "approved");
+
+            var attendeesList = new List<object>();
+            foreach (var p in filtered)
             {
-                new { Id=1, Name="Dearja", ProfileImage="/images/pic.png", IsApproved=true  },
-                new { Id=2, Name="Tom",    ProfileImage="/images/pic.png", IsApproved=true  },
-                new { Id=3, Name="Robin",  ProfileImage="/images/pic.png", IsApproved=true  },
-                new { Id=4, Name="Sam",    ProfileImage="/images/pic.png", IsApproved=false },
-                
-            };
+                var user = await _eventService.GetUserByIdAsync(p.UserId);
+                attendeesList.Add(new
+                {
+                    id           = p.Id,          
+                    name         = user?.Username ?? p.UserId,
+                    profileImage = user?.ProfileImgPath ?? "/images/pic.png",
+                    isApproved   = p.Status == "approved",
+                    recruitAnswer = isOwner ? (p.RecruitAnswer ?? "") : ""
+                });
+            }
 
-            bool isOwner = false; // true
-
-            return Json(new { isOwner, attendees });
+            return Json(new { isOwner, attendees = attendeesList });
         }
+
+        // JOIN -> ans q
+
+        [HttpPost]
+        public async Task<IActionResult> Join(string id, [FromBody] JoinRequestDto request)
+        {
+            // var currentUserId = Request.Cookies["userId"];
+            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
+            if (ev.IsRegistrationClosed) return BadRequest("Registration is closed");
+
+            var existing = await _eventService.GetParticipantAsync(id, currentUserId);
+            if (existing != null) return BadRequest("Already joined");
+
+            var recruitAnswer = request.Answers.FirstOrDefault()?.Answer ?? "";
+            await _eventService.AddParticipantAsync(id, currentUserId, "pending", recruitAnswer) ;
+
+            return Ok();
+        }
+
+        // LEAVE 
+
+        [HttpPost]
+        public async Task<IActionResult> Leave(string id)
+        {
+            // var currentUserId = Request.Cookies["userId"];
+            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+
+            await _eventService.RemoveParticipantAsync(id, currentUserId);
+
+            return Ok();
+        }
+
+        // END REGISTRATION 
+
+        [HttpPost]
+        public async Task<IActionResult> EndRegistration(string id, [FromBody] EndRegistrationDto request)
+        {
+            // var currentUserId = Request.Cookies["userId"];
+            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
+            if (currentUserId != ev.CreatorId) return Forbid();
+
+            await _eventService.CloseRegistrationAsync(id, request.Reason);
+
+            return Ok();
+        }
+
+        // APPROVE ATTENDEE 
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveAttendee(string id)
+        {
+            // id = participantId (p.Id จาก GetAttendees)
+            await _eventService.UpdateParticipantStatusAsync(id, "approved");
+            return Ok();
+        }
+
+        // REJECT ATTENDEE 
+
+        [HttpPost]
+        public async Task<IActionResult> RejectAttendee(string id)
+        {
+            await _eventService.UpdateParticipantStatusAsync(id, "rejected");
+            return Ok();
+        }
+
+        // DELETE ATTENDEE 
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAttendee(string id)
+        {
+            await _eventService.UpdateParticipantStatusAsync(id, "rejected");
+            return Ok();
+        }
+    }
+
+    // ================================================================
+    // DTOs
+    // ================================================================
+
+    public class JoinAnswerDto
+    {
+        public string QuestionId { get; set; }
+        public string Answer     { get; set; }
+    }
+
+    public class JoinRequestDto
+    {
+        public List<JoinAnswerDto> Answers { get; set; } = new();
+    }
+
+    public class EndRegistrationDto
+    {
+        public string Reason { get; set; }
     }
 }
