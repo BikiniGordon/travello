@@ -40,6 +40,9 @@ builder.Services.AddSingleton(serviceProvider =>
 });
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
+
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EditProfileViewModel>("User"));
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 
 var app = builder.Build();

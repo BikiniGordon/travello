@@ -14,7 +14,7 @@
 }
 
 <div class="CenterContainer">
-    <form class="EditProfileContainer" asp-controller="User" asp-action="EditProfile" method="post" enctype="multipart/form-data">
+    <form class="EditProfileContainer" asp-controller="User" asp-action="CreateAccount" method="post" enctype="multipart/form-data">
         
         <input type="hidden" asp-for="user_id" />
 
@@ -25,19 +25,12 @@
 
         <div class="EditFormContainer">
 
-            <div class="InputFieldsContainer">
-                <input type="text" asp-for="username" class="EditInput text-sm font-semilight" placeholder="USERNAME" />
-                <span asp-validation-for="username" class="ErrorMessage text-sm"></span>
-                <input type="text" class="EditInput text-sm font-semilight" placeholder="PASSWORD" />
-                <input type="text" asp-for="username" class="EditInput text-sm font-semilight" placeholder="PASSWORD CONFIRMATION" />
-            </div>
-
             <div class="ProfilePartContainer">
                 <div class="text-sm ProfileSubContainer">
                     PROFILE PICTURE
                     <div class="ProfilePicture">
                         <input type="hidden" asp-for="profile_img_path" />
-                        @if (string.IsNullOrEmpty(Model.profile_img_path) || Model.profile_img_path == "/images/profiles/default.png")
+                        @if (string.IsNullOrEmpty(Model.profile_img_path))
                         {
                             <svg id="placeholderSvg" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                                 <path d="M40 42V38C40 35.8783 39.1571 33.8434 37.6569 32.3431C36.1566 30.8429 34.1217 30 32 30H16C13.8783 30 11.8434 30.8429 10.3431 32.3431C8.84285 33.8434 8 35.8783 8 38V42" stroke="#3F2E3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -46,7 +39,7 @@
                         }
                         else
                         {
-                            <img class="ProfileImage" src="@Model.profile_img_path?t=@DateTime.Now.Ticks"/> 
+                            <img class="ProfileImage" src="@Model.profile_img_path"/> 
                         }
                     </div>
                     <input class="ProfileImageUpload" type="file" id="fileBrowser" asp-for="ProfileImageUpload" accept=".jpg,.jpeg,.png" style="display:none;" onchange="previewImage(this)"/>
@@ -64,6 +57,15 @@
             </div>
 
             <div class="InputFieldsContainer">
+
+                <input type="text" asp-for="username" class="EditInput text-sm font-semilight" placeholder="USERNAME" />
+                <span asp-validation-for="username" class="ErrorMessage text-sm"></span>
+                
+                <input type="password" asp-for="password" class="EditInput text-sm font-semilight" placeholder="PASSWORD" />
+                <span asp-validation-for="password" class="ErrorMessage text-sm"></span>
+                <input type="password" asp-for="password_confirmation" class="EditInput text-sm font-semilight" placeholder="PASSWORD CONFIRMATION" />
+                <span asp-validation-for="password_confirmation" class="ErrorMessage text-sm"></span>
+
                 <input type="text" asp-for="first_name" class="EditInput text-sm font-semilight" placeholder="FIRST NAME" />
                 <span asp-validation-for="first_name" class="ErrorMessage text-sm"></span>
                 <input type="text" asp-for="last_name" class="EditInput text-sm font-semilight" placeholder="LAST NAME" />
@@ -76,7 +78,7 @@
                             @{
                                 var maxDate = DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                             }
-                            <input type="date" asp-for="date_of_birth" class="InputSelection" max="@maxDate"/>
+                            <input type="date" asp-for="date_of_birth" class="InputSelection" max="@maxDate" required />
                         </div>
                     </div>
                     <div class="ChoosingContainer text-sm font-semilight">
@@ -120,7 +122,7 @@
             <input type="text" asp-for="about_me" class="EditBio text-sm font-semilight" placeholder="BIO" />
 
             <div class="EditProfileSubmit">
-                <button type="submit" class="UpdateButton text-lg font-semilight">UPDATE</button>
+                <button type="submit" class="UpdateButton text-lg font-semilight">CREATE</button>
             </div>
         </div>
         

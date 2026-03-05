@@ -17,7 +17,16 @@ namespace Travello.Models
         [Display(Name = "Username")]
         [StringLength(16, MinimumLength = 2, ErrorMessage = "Username must be between 2 and 16 characters.")]
         public string username { get; set; } = null!;
-        public string? password_hash { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        [DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
+        public string password { get; set; }
+
+        [BsonIgnore]
+        [DataType(DataType.Password)]
+        [Compare("password", ErrorMessage = "Password do not match.")]
+        public string password_confirmation { get; set; }
 
         [Required(ErrorMessage = "First name can't be empty.")]
         [Display(Name = "First name")]

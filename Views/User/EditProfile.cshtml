@@ -29,7 +29,7 @@
                     PROFILE PICTURE
                     <div class="ProfilePicture">
                         <input type="hidden" asp-for="profile_img_path" />
-                        @if (string.IsNullOrEmpty(Model.profile_img_path) || Model.profile_img_path == "/images/profiles/default.png")
+                        @if (string.IsNullOrEmpty(Model.profile_img_path))
                         {
                             <svg id="placeholderSvg" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                                 <path d="M40 42V38C40 35.8783 39.1571 33.8434 37.6569 32.3431C36.1566 30.8429 34.1217 30 32 30H16C13.8783 30 11.8434 30.8429 10.3431 32.3431C8.84285 33.8434 8 35.8783 8 38V42" stroke="#3F2E3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -76,7 +76,7 @@
                     <div class="ChoosingContainer text-sm font-semilight">
                         GENDER
                         <div class="ChoosingInputContainer">
-                            <select class="InputSelection" asp-for="gender" required>
+                            <select class="InputSelection" asp-for="gender">
                                 <option value="" disabled selected hidden>CHOOSE GENDER</option>
                                 <option value="Male">MALE</option>
                                 <option value="Female">FEMALE</option>

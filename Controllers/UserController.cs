@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;       // Required for Builders and ReplaceOne
 using Travello.Models;
+using Travello.Services;
+using System.Security.Cryptography;
+using System.Text;
 using System.IO;            // Required for File handling
 
 namespace Travello.Controllers
@@ -9,11 +12,13 @@ namespace Travello.Controllers
     {
         private readonly IMongoCollection<EditProfileViewModel> _userCollection;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IImageUploadService _imageUploadService;
 
-        public UserController(IMongoDatabase database, IWebHostEnvironment hostEnvironment)
+        public UserController(IMongoDatabase database, IWebHostEnvironment hostEnvironment, IImageUploadService imageUploadService)
         {
             _userCollection = database.GetCollection<EditProfileViewModel>("User");
             _hostEnvironment = hostEnvironment;
+            _imageUploadService = imageUploadService;
         }
 
         // 1. This shows the empty form when you go to /User/CreateAccount
@@ -29,24 +34,79 @@ namespace Travello.Controllers
 
         // 2. This handles the "UPDATE" (Submit) button click
         [HttpPost]
-        public async Task<IActionResult> CreateAccount(CreateAccountViewModel newUser)
+        public async Task<IActionResult> CreateAccount(CreateAccountViewModel newUser, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
+                TempData["StatusMessage"] = "Create account failed, Check the fields below.";
+                TempData["StatusType"] = "error";
                 return View(newUser);
             }
+            
+            try
+            {
+                // FIX: Get a local reference typed to CreateAccountViewModel
+                // This avoids the conversion error and doesn't break EditProfile
+                var registrationCollection = _userCollection.Database.GetCollection<CreateAccountViewModel>("User");
 
-            // TODO: Add logic to hash password and save to MongoDB
-            // await _userCollection.InsertOneAsync(newUser);
+                // 1. Duplicate check using the local reference
+                var existingUser = await registrationCollection
+                    .Find(u => u.username == newUser.username)
+                    .FirstOrDefaultAsync(cancellationToken);
 
-            return RedirectToAction("Login");
+                if (existingUser != null)
+                {
+                    TempData["StatusMessage"] = "This username is already taken.";
+                    TempData["StatusType"] = "error";
+
+                    ModelState.AddModelError("username", "This username is already taken.");
+                    return View(newUser);
+                }
+
+                // 2. NATIVE HASHING (No libraries)
+                using (SHA256 sha256Hash = SHA256.Create())
+                {
+                    byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(newUser.password));
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        builder.Append(bytes[i].ToString("x2"));
+                    }
+                    newUser.password = builder.ToString();
+                }
+
+                // 3. Image Upload logic stays the same... 
+                if (newUser.ProfileImageUpload != null && newUser.ProfileImageUpload.Length > 0)
+                {
+                    newUser.profile_img_path = await _imageUploadService.UploadProfileImageAsync(newUser.ProfileImageUpload, cancellationToken);
+                }
+
+                // 4. Save to MongoDB using the local reference
+                await registrationCollection.InsertOneAsync(newUser, null, cancellationToken);
+
+                TempData["StatusMessage"] = "Account created successfully!";
+                TempData["StatusType"] = "success";
+
+                ModelState.Clear();
+
+                var emptyModel = new CreateAccountViewModel {
+                    user_tag = new List<string>()  
+                };
+
+                return View("CreateAccount", emptyModel);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Something went wrong.");
+                return View(newUser);
+            }
         }
         
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
             // Temporarily hardcode a username that actually EXISTS in your Atlas collection FIX REQUIRED HERE BUDDY
-            var user = await _userCollection.Find(u => u.username == "ThaiTraveler03").FirstOrDefaultAsync();
+            var user = await _userCollection.Find(u => u.username == "ThaiTraveler01").FirstOrDefaultAsync();
             
             if (user == null)
             {
@@ -85,12 +145,9 @@ namespace Travello.Controllers
             {
                 try 
                 {
-                    // 1. Send the file to Cloudinary and get the URL back
-                    // Note: Use your existing service method. If it's named specifically for events, 
-                    // you might want to rename it to UploadImageAsync later.
-                    string uploadedUrl = await _imageUploadService.UploadEventImageAsync(updatedUser.ProfileImageUpload, HttpContext.RequestAborted);
                     
-                    // 2. Save the FULL URL string to your database
+                    string uploadedUrl = await _imageUploadService.UploadProfileImageAsync(updatedUser.ProfileImageUpload, HttpContext.RequestAborted);
+                    
                     updatedUser.profile_img_path = uploadedUrl;
                 }
                 catch (Exception)
@@ -116,8 +173,6 @@ namespace Travello.Controllers
 
             // --- Final Save & Notification ---
             updatedUser.user_id = existingUser.user_id;
-            // updatedUser.event_id = existingUser.event_id;
-            // updatedUser.password_hash = existingUser.password_hash;
 
             try 
             {
