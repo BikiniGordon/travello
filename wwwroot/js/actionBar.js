@@ -113,10 +113,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body:    JSON.stringify({ answers })
             });
+
+            if (res.status === 401) {
+
+            document.getElementById('pleaseLoginModal').classList.add('open');
+
+            return;
+            }
+
             if (res.ok) {
                 closeJoinModal();
                 userStatus = 'pending';
                 renderActionBar(userStatus);
+
             } else {
                 alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
             }
@@ -147,6 +156,11 @@
     document.getElementById('leaveConfirmBtn').addEventListener('click', async function () {
         try {
             const res = await fetch('/Event/Leave/' + eventId, { method: 'POST' });
+            if (res.status === 401) {
+            document.getElementById('pleaseLoginModal').classList.add('open');
+            return;
+            }
+
             if (res.ok) {
                 document.getElementById('leaveModal').classList.remove('open');
                 userStatus = 'none';

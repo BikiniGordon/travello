@@ -14,7 +14,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/styleDetail.css" />
-    <link rel="stylesheet" href="~/css/navbar.css" />
+    <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
 </head>
 
@@ -241,7 +241,7 @@
 
     <!-- Join Modal -->
     <div id="joinModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal2" role="dialog" aria-modal="true">
             <div class="modal-header">
                 <div class="boxforline">
                     <h3 class="text-md font-semibold">COMPLETE REGISTRATION</h3>
@@ -267,7 +267,7 @@
     </div>
 
     <div id="endRegistrationModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal2" role="dialog" aria-modal="true">
             <div class="modal-header">
                 <div class="boxforline">
                     <h3 class="text-md font-semibold">CONFIRM END REGISTRATION</h3>
@@ -291,7 +291,7 @@
 
     <!-- Leave Confirm Modal -->
     <div id="leaveModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal modal-confirm" role="dialog" aria-modal="true">
+        <div class="modal2 modal-confirm" role="dialog" aria-modal="true">
             <button class="modal-close" id="leaveModalCloseBtn" aria-label="Close">×</button>
             <p class="confirm-title text-sm font-semibold">CONFIRM LEAVE THIS TRIP ?</p>
             <div class="confirm-buttons">
@@ -303,6 +303,41 @@
 
     <input type="hidden" id="eventId" value="@Model.EventId">
 
+    <!-- Login Modal -->
+    <div id="loginModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:99999;">
+        <div style="background:#fff; padding:40px; border-radius:16px; width:90%; max-width:400px; position:relative;">
+            <button onclick="closeLoginModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:1.5rem; cursor:pointer;">×</button>
+            <h2 style="margin-bottom:8px;">Log In</h2>
+            <p style="color:#666; margin-bottom:24px;">Welcome back to Travello</p>
+            <form id="loginForm">
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:8px;">Username</label>
+                    <input type="text" name="username" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
+                </div>
+                <div style="margin-bottom:24px;">
+                    <label style="display:block; margin-bottom:8px;">Password</label>
+                    <input type="password" name="password" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;">
+                </div>
+                <button type="submit" style="width:100%; padding:14px; background:#1a1a1a; color:#fff; border:none; border-radius:8px; font-size:16px; cursor:pointer;">Log In</button>
+            </form>
+        </div>
+    </div>
+
+            <!-- Please Login Modal -->
+    <div id="pleaseLoginModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal2 modal-confirm" role="dialog" aria-modal="true">
+            <button class="modal-close" onclick="document.getElementById('pleaseLoginModal').classList.remove('open')">×</button>
+            <p class="confirm-title text-sm font-semibold">กรุณาเข้าสู่ระบบก่อน</p>
+            <div class="confirm-buttons">
+                <button class="btn-action btn-confirm-leave text-md font-semibold" 
+                    onclick="document.getElementById('pleaseLoginModal').classList.remove('open')">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/NavBar.js" asp-append-version="true"></script>
     <script src="~/js/modal.js"></script>
     <script src="~/js/actionBar.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -336,6 +371,12 @@
 
         try {
             const res  = await fetch('/Event/GetAttendees/' + eventId);
+
+            if (res.status === 401) {
+            renderAttendeePhotos([]);
+            return;
+            }
+
             const data = await res.json();
 
             const displayList = data.isOwner
@@ -350,6 +391,7 @@
         } catch(e) { console.error(e); }
     })();
     </script>
+    
     
 
 </body>

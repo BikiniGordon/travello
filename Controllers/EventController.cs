@@ -20,8 +20,9 @@ namespace Travello.Controllers
             var ev = await _eventService.GetEventByIdAsync(id);
             if (ev == null) return NotFound();
 
-            // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
+            var currentUserId = HttpContext.Session.GetString("UserId") 
+            ?? "69a714e4cbab5148e804d87d";
+            
             string userStatus = "none";
 
             if (ev.IsRegistrationClosed && currentUserId != ev.CreatorId)
@@ -118,7 +119,7 @@ namespace Travello.Controllers
             {
                 EventId          = id,
                 EventTitle       = ev.EventTitle,
-                Category = ev.EventTag ?? new(),
+                Category         = ev.EventTag ?? new(),
                 HostName         = host?.Username ?? "",
                 HostProfileImage = host?.ProfileImgPath,
                 CoverImage       = ev.EventImgPath ?? "",
@@ -145,9 +146,10 @@ namespace Travello.Controllers
 
         // GET ATTENDEES (modal)
 
-        public async Task<JsonResult> GetAttendees(string id)
+        public async Task<IActionResult> GetAttendees(string id)
         {
-            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
+            var currentUserId = HttpContext.Session.GetString("UserId")
+            ?? "69a714e4cbab5148e804d87d";
 
             var ev = await _eventService.GetEventByIdAsync(id);
             bool isOwner = currentUserId == ev?.CreatorId;
@@ -180,7 +182,8 @@ namespace Travello.Controllers
         public async Task<IActionResult> Join(string id, [FromBody] JoinRequestDto request)
         {
             // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized(); // mock
 
             var ev = await _eventService.GetEventByIdAsync(id);
             if (ev == null) return NotFound();
@@ -201,7 +204,8 @@ namespace Travello.Controllers
         public async Task<IActionResult> Leave(string id)
         {
             // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized(); // mock
 
             await _eventService.RemoveParticipantAsync(id, currentUserId);
 
@@ -213,8 +217,9 @@ namespace Travello.Controllers
         [HttpPost]
         public async Task<IActionResult> EndRegistration(string id, [FromBody] EndRegistrationDto request)
         {
-            // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
+            // var currentUserId = "69a714e4cbab5148e804d87d";
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized(); // mock
 
             var ev = await _eventService.GetEventByIdAsync(id);
             if (ev == null) return NotFound();

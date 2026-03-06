@@ -748,6 +748,18 @@ body, .details {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+.modal2{
+    background: #F5F6EE;
+    padding: var(--space-md);
+    border-radius: 12px;
+    max-width: 480px;
+    width: 90%;
+    overflow-y: auto;
+    scrollbar-width: none;       
+    -ms-overflow-style: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
 .modal::-webkit-scrollbar {
     display: none;
 }

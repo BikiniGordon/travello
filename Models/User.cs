@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Travello.Models
 {
+    [BsonIgnoreExtraElements]
     public class User
     {
         [BsonId]
@@ -12,7 +13,7 @@ namespace Travello.Models
         [BsonElement("username")]
         public string Username { get; set; }
 
-        [BsonElement("password_hash")]
+        [BsonElement("password")]
         public string PasswordHash { get; set; }
 
         [BsonElement("first_name")]

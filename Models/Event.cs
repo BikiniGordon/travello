@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Travello.Models
 {
+    [BsonIgnoreExtraElements]
     public class Event
     {
         [BsonId]
@@ -57,7 +58,7 @@ namespace Travello.Models
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; }
 
-        [BsonElement("creator_id")]
+        [BsonElement("created_by")]
         public string CreatorId { get; set; }
 
         [BsonElement("isRegistrationClosed")]
