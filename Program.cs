@@ -12,6 +12,13 @@ builder.Services.AddSession();
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromHours(12);
+});
 var mongoSection = builder.Configuration.GetSection("MongoDBsettings");
 builder.Services.Configure<MongoDbSettings>(options =>
 {
@@ -66,6 +73,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseSession();
 
 app.UseSession();
 
