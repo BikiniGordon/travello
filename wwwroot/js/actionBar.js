@@ -1,12 +1,10 @@
 (function () {
-    // userStatus: 'none' | 'pending' | 'approved' | 'rejected' | 'owner' | 'closed'
     const actionBarButtons = document.querySelector('.action-bar-buttons');
 
     let userStatus = document.getElementById('userStatus').value;
     const eventId  = document.getElementById('eventId').value;
 
     // RENDER ACTION BAR
-
     function renderActionBar(status) {
         actionBarButtons.innerHTML = '';
 
@@ -60,69 +58,26 @@
                 window.location.href = '/Event/Edit/' + eventId;
             });
             actionBarButtons.appendChild(editBtn);
+
+        } else if (status === 'owner_closed') {
+            const endBtn = document.createElement('button');
+            endBtn.className = 'btn-action btn-closed text-md font-semibold';
+            endBtn.textContent = 'REGISTRATION CLOSED';
+            endBtn.disabled = true;
+            actionBarButtons.appendChild(endBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-edit-round';
+            editBtn.setAttribute('aria-label', 'Edit Event');
+            editBtn.innerHTML = `<img src="/images/Edit.svg" width="20" height="20" alt="edit">`;
+            editBtn.addEventListener('click', () => {
+                window.location.href = '/Event/Edit/' + eventId;
+            });
+            actionBarButtons.appendChild(editBtn);
         }
     }
 
-    // ---- Handlers ----
-
-    function handleJoin(btn) {
-        openJoinModal();
-    }
-//     document.getElementById('joinSubmitBtn').addEventListener('click', async function() {
-//     const eventId = document.getElementById('eventId').value;
-
-//     const answers = [...document.querySelectorAll('#joinQuestionList input')]
-//         .map(input => ({
-//             questionId: input.dataset.questionId,
-//             answer: input.value
-//         }));
-
-//     const res = await fetch('/Event/Join/' + eventId, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ answers })
-//     });
-
-//     if (res.ok) {
-//         closeJoinModal();
-//         userStatus = 'pending';
-//         renderActionBar(userStatus);
-//     }
-// });
-
-    function handleEndRegistration() {
-        alert('ปิดรับสมัครแล้ว'); // delete
-    }
-//     function handleEndRegistration() {
-//     alert('ปิดรับสมัครแล้ว');  // แค่ alert ไม่ได้บันทึกจริง
-// }
-//     async function handleEndRegistration() {
-//         const eventId = document.getElementById('eventId').value;
-
-//         const res = await fetch('/Event/EndRegistration/' + eventId, { 
-//             method: 'POST' 
-//         });
-
-//         if (res.ok) {
-//             // อาจ redirect หรือเปลี่ยน UI
-//             alert('ปิดรับสมัครแล้ว');
-//         }
-//     }
-
-    function handleEditEvent() {
-        const eventId = document.getElementById('eventId')?.value;
-        if (!eventId) {
-            return;
-        }
-
-        window.location.href = '/Event/Edit/' + encodeURIComponent(eventId);
-    }
-
-    const joinQuestions = [
-        { id: 1, question: "ทำไมถึงอยากร่วมทริป ?" },
-        // const joinQuestions = await fetch('/Event/Questions/' + eventId).then(r => r.json());
-    ];
-
+    // JOIN MODAL
     function openJoinModal() {
         const joinModal = document.getElementById('joinModal');
         joinModal.querySelectorAll('input[type="text"]').forEach(inp => inp.value = '');
@@ -173,17 +128,14 @@
             });
 
             if (res.status === 401) {
-
-            document.getElementById('pleaseLoginModal').classList.add('open');
-
-            return;
+                document.getElementById('pleaseLoginModal').classList.add('open');
+                return;
             }
 
             if (res.ok) {
                 closeJoinModal();
                 userStatus = 'pending';
                 renderActionBar(userStatus);
-
             } else {
                 alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
             }
@@ -193,8 +145,7 @@
         }
     });
 
-    // LEAVE MODAL 
-
+    // LEAVE MODAL
     function openLeaveModal() {
         const modal = document.getElementById('leaveModal');
         modal.classList.add('open');
@@ -215,8 +166,8 @@
         try {
             const res = await fetch('/Event/Leave/' + eventId, { method: 'POST' });
             if (res.status === 401) {
-            document.getElementById('pleaseLoginModal').classList.add('open');
-            return;
+                document.getElementById('pleaseLoginModal').classList.add('open');
+                return;
             }
 
             if (res.ok) {
@@ -233,8 +184,6 @@
     });
 
     // END REGISTRATION MODAL
-
-
     function openEndRegistrationModal() {
         const modal  = document.getElementById('endRegistrationModal');
         const input  = document.getElementById('endReasonInput');
@@ -249,7 +198,6 @@
         modal.setAttribute('aria-hidden', 'false');
     }
 
-    // validate reason input
     document.getElementById('endReasonInput').addEventListener('input', function () {
         const subBtn = document.getElementById('endRegistrationSubmitBtn');
         const filled = this.value.trim() !== '';
@@ -277,7 +225,7 @@
             });
             if (res.ok) {
                 document.getElementById('endRegistrationModal').classList.remove('open');
-                userStatus = 'closed';
+                userStatus = 'owner_closed';
                 renderActionBar(userStatus);
             } else {
                 alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');

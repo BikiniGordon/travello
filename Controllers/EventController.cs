@@ -13,14 +13,14 @@ namespace Travello.Controllers
     public class EventController : Controller
     {
         private readonly EventService _eventService;
-
-        public EventController(EventService eventService)
         private readonly IMongoCollection<EventDocument> _eventsCollection;
+        private readonly INotificationService _notificationService;
 
-        public EventController(EventService eventService, IMongoDatabase database)
+        public EventController(EventService eventService, IMongoDatabase database,INotificationService notificationService)
         {
             _eventService = eventService;
             _eventsCollection = database.GetCollection<EventDocument>("events");
+            _notificationService = notificationService;
         }
 
         private static readonly JsonSerializerOptions PlannerJsonSerializerOptions = new()
@@ -36,11 +36,6 @@ namespace Travello.Controllers
             "SHOPPING",
             "ADVENTURE"
         };
-
-        public EventController(IMongoDatabase database)
-        {
-            _eventsCollection = database.GetCollection<EventDocument>("events");
-        }
 
         [HttpGet("/Event/Edit/{id}")]
         public async Task<IActionResult> Edit(string id)
@@ -188,14 +183,15 @@ namespace Travello.Controllers
                 Itinerary = itinerary,
                 PackingList = packingList,
                 CreatedAt = existingEvent.CreatedAt,
-                CreatedBy = existingEvent.CreatedBy
+                CreatedBy = existingEvent.CreatedBy,
+                IsRegistrationClosed = existingEvent.IsRegistrationClosed,  
+                ClosingReason = existingEvent.ClosingReason
             };
 
             try
             {
                 await _eventsCollection.ReplaceOneAsync(e => e.Id == id, updatedEvent);
-                TempData["CreateEventSuccess"] = "Event updated successfully.";
-                return RedirectToAction(nameof(Edit), new { id });
+                return RedirectToAction("Detail", "Event", new { id });
             }
             catch
             {
@@ -204,10 +200,6 @@ namespace Travello.Controllers
             }
         }
 
-        public IActionResult Detail(int id)
-        {
-            _eventService = eventService;
-        }
 
         // DETAIL PAGE
 
@@ -221,10 +213,15 @@ namespace Travello.Controllers
             
             string userStatus = "none";
 
-            if (ev.IsRegistrationClosed && currentUserId != ev.CreatorId)
+            if (ev.IsRegistrationClosed && currentUserId == ev.CreatorId)
+            {
+                userStatus = "owner_closed";
+            }
+            else if (ev.IsRegistrationClosed)
             {
                 userStatus = "closed";
             }
+
             else
             {
                 var allParticipants = await _eventService.GetParticipantsAsync(id);
@@ -377,9 +374,8 @@ namespace Travello.Controllers
         [HttpPost]
         public async Task<IActionResult> Join(string id, [FromBody] JoinRequestDto request)
         {
-            // var currentUserId = Request.Cookies["userId"];
             var currentUserId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized(); // mock
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized();
 
             var ev = await _eventService.GetEventByIdAsync(id);
             if (ev == null) return NotFound();
@@ -389,7 +385,44 @@ namespace Travello.Controllers
             if (existing != null) return BadRequest("Already joined");
 
             var recruitAnswer = request.Answers.FirstOrDefault()?.Answer ?? "";
-            await _eventService.AddParticipantAsync(id, currentUserId, "pending", recruitAnswer) ;
+            await _eventService.AddParticipantAsync(id, currentUserId, "pending", recruitAnswer);
+
+            var allParticipants = await _eventService.GetParticipantsAsync(id);
+            var pendingCount = allParticipants.Count(p => p.Status == "pending");
+            var limit = ev.AttendeesLimit;
+
+            var remaining = limit - ev.Attendees;
+            
+            var threshold = (int)Math.Ceiling(limit * 0.5);
+
+            if (limit > 0 && pendingCount == threshold)
+            {
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = ev.CreatorId,
+                    Title     = "Many requests are waiting!",
+                    Message   = $"Event: {ev.EventTitle}",
+                    Read      = false,
+                    Status    = "pending_alert",
+                    ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{id}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            else if (remaining > 0 && pendingCount == remaining)
+            {
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = ev.CreatorId,
+                    Title     = "Slots are fully requested!",
+                    Message   = $"Event: {ev.EventTitle}",
+                    Read      = false,
+                    Status    = "pending_full",
+                    ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{id}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
 
             return Ok();
         }
@@ -431,25 +464,68 @@ namespace Travello.Controllers
         [HttpPost]
         public async Task<IActionResult> ApproveAttendee(string id)
         {
-            // id = participantId (p.Id จาก GetAttendees)
+            var participant = await _eventService.GetParticipantByIdAsync(id);
+            if (participant != null)
+            {
+                var ev = await _eventService.GetEventByIdAsync(participant.EventId);
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = participant.UserId,
+                    Title     = "Your request has been Approved.",
+                    Message = $"Event: {ev?.EventTitle ?? ""}",
+                    Read      = false,
+                    Status    = "approved",
+                    ImageUrl  = ev?.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{participant.EventId}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
             await _eventService.UpdateParticipantStatusAsync(id, "approved");
             return Ok();
         }
 
-        // REJECT ATTENDEE 
-
         [HttpPost]
         public async Task<IActionResult> RejectAttendee(string id)
         {
+            var participant = await _eventService.GetParticipantByIdAsync(id);
+            if (participant != null)
+            {
+                var ev = await _eventService.GetEventByIdAsync(participant.EventId);
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = participant.UserId,
+                    Title     = "Your request has been Rejected.",
+                    Message = $"Event: {ev?.EventTitle ?? ""}",
+                    Read      = false,
+                    Status    = "rejected",
+                    ImageUrl  = ev?.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{participant.EventId}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
             await _eventService.UpdateParticipantStatusAsync(id, "rejected");
             return Ok();
         }
 
-        // DELETE ATTENDEE 
-
         [HttpPost]
         public async Task<IActionResult> DeleteAttendee(string id)
         {
+            var participant = await _eventService.GetParticipantByIdAsync(id);
+            if (participant != null)
+            {
+                var ev = await _eventService.GetEventByIdAsync(participant.EventId);
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = participant.UserId,
+                    Title     = "Your request has been Rejected.",
+                    Message = $"Event: {ev?.EventTitle ?? ""}",
+                    Read      = false,
+                    Status    = "rejected",
+                    ImageUrl  = ev?.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{participant.EventId}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
             await _eventService.UpdateParticipantStatusAsync(id, "rejected");
             return Ok();
         }
