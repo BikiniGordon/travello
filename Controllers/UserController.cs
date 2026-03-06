@@ -178,7 +178,8 @@ namespace Travello.Controllers
             {
                 var filter = Builders<EditProfileViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
                 await _userCollection.ReplaceOneAsync(filter, updatedUser);
-
+                
+                HttpContext.Session.SetString("UserProfilePic", updatedUser.profile_img_path);
                 TempData["StatusMessage"] = "Profile updated successfully!";
                 TempData["StatusType"] = "success";
             }
@@ -189,6 +190,58 @@ namespace Travello.Controllers
             }
 
             return RedirectToAction("EditProfile");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            try
+            {
+                // 1. Get the collection using the model that INCLUDES the password
+                var fullUserCollection = _userCollection.Database.GetCollection<CreateAccountViewModel>("User");
+
+                // 2. Fetch only the fields needed for login (Projection)
+                var user = await fullUserCollection.Find(u => u.username == username)
+                    .Project(u => new { u.username, u.password, u.user_id, u.profile_img_path })
+                    .FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    // 3. Hash the input password to compare with DB
+                    string hashedInputPassword;
+                    using (SHA256 sha256Hash = SHA256.Create())
+                    {
+                        byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+                        StringBuilder builder = new StringBuilder();
+                        foreach (var b in bytes) builder.Append(b.ToString("x2"));
+                        hashedInputPassword = builder.ToString();
+                    }
+
+                    // 4. Compare
+                    if (user.password == hashedInputPassword)
+                    {
+                        HttpContext.Session.SetString("Username", user.username);
+                        if (!string.IsNullOrEmpty(user.user_id))
+                            HttpContext.Session.SetString("UserId", user.user_id);
+                            var imgPath = !string.IsNullOrEmpty(user.profile_img_path) ? user.profile_img_path : "";
+                            HttpContext.Session.SetString("UserProfilePic", imgPath);
+                        
+                        return Json(new { success = true });
+                    }
+                }
+
+                return Json(new { success = false, message = "Invalid username or password." });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "An error occurred." });
+            }
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Removes everything from session
+            return RedirectToAction("Index", "Home");
         }
     }
 }

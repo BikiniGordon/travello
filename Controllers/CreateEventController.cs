@@ -30,7 +30,7 @@ namespace Travello.Controllers
         {
             var attendeesLimitRaw = Request.Form[nameof(input.AttendeesLimit)].ToString();
             int? attendeesLimit = null;
-            const long maxImageSizeBytes = 5 * 1024 * 1024;
+            const long maxImageSizeBytes = 10 * 1024 * 1024;
 
             if (input.UploadPhoto is { Length: > 0 })
             {
@@ -41,7 +41,7 @@ namespace Travello.Controllers
 
                 if (input.UploadPhoto.Length > maxImageSizeBytes)
                 {
-                    ModelState.AddModelError("UploadPhoto", "Upload photo must be 5 MB or smaller.");
+                    ModelState.AddModelError("UploadPhoto", "Upload photo must be 10 MB or smaller.");
                 }
             }
 
@@ -224,43 +224,13 @@ namespace Travello.Controllers
                 })
                 .ToList();
 
-            var locations = itinerary
-                .Where(item => !string.IsNullOrWhiteSpace(item.ActivityName))
-                .Select(item => new LocationDocument
-                {
-                    PlaceName = item.ActivityName,
-                    Latitude = item.Latitude,
-                    Longitude = item.Longitude
-                })
-                .ToList();
-
-            if (locations.Count == 0 && !string.IsNullOrWhiteSpace(input.LocationName))
-            {
-                locations.Add(new LocationDocument
-                {
-                    PlaceName = input.LocationName,
-                    Latitude = null,
-                    Longitude = null
-                });
-            }
-
-            var locationNames = locations
-                .Select(location => location.PlaceName)
-                .Where(name => !string.IsNullOrWhiteSpace(name))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            if (locationNames.Count == 0 && !string.IsNullOrWhiteSpace(input.LocationName))
-            {
-                locationNames.Add(input.LocationName);
-            }
+            var locationName = input.LocationName?.Trim() ?? string.Empty;
 
             var eventDocument = new EventDocument
             {
                 EventTitle = input.EventTitle,
                 Detail = input.Detail,
-                Location = locationNames,
-                Locations = locations,
+                Location = locationName,
                 StartDate = startDate,
                 EndDate = endDate,
                 OpenDate = openDate,

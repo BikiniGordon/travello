@@ -1,131 +1,74 @@
-
 (function () {
-    // userStatus: 'none' | 'pending' | 'approved' | 'rejected' | 'owner'
-    const eventTitleEl = document.getElementById('actionBarTitle');
+    // userStatus: 'none' | 'pending' | 'approved' | 'rejected' | 'owner' | 'closed'
     const actionBarButtons = document.querySelector('.action-bar-buttons');
-  
-    let userStatus = 'approved'; 
-    // const userStatus = document.getElementById('userStatus').value;
+
+    let userStatus = document.getElementById('userStatus').value;
+    const eventId  = document.getElementById('eventId').value;
+
+    // RENDER ACTION BAR
 
     function renderActionBar(status) {
-        actionBarButtons.innerHTML = ''; //clear old botton
+        actionBarButtons.innerHTML = '';
 
         if (status === 'none') {
-            //crate JOIN botton -> append to .action-bar-buttons
-            const btn = document.createElement('button'); 
+            const btn = document.createElement('button');
             btn.className = 'btn-action btn-join text-md font-semibold';
             btn.textContent = 'JOIN';
-            btn.addEventListener('click', function () {
-                handleJoin(btn);
-            });
+            btn.addEventListener('click', openJoinModal);
             actionBarButtons.appendChild(btn);
 
         } else if (status === 'pending') {
-            
             const btn = document.createElement('button');
             btn.className = 'btn-action btn-submit text-md font-semibold';
-            btn.textContent = 'SUBMIT';
-            btn.disabled = true; //disabled
+            btn.textContent = 'AWAITING APPROVAL';
+            btn.disabled = true;
             actionBarButtons.appendChild(btn);
 
         } else if (status === 'approved') {
-
             const btn = document.createElement('button');
             btn.className = 'btn-action btn-leave text-md font-semibold';
             btn.textContent = 'LEAVE TRIP';
-            btn.addEventListener('click', handleLeaveTrip);
+            btn.addEventListener('click', openLeaveModal);
             actionBarButtons.appendChild(btn);
 
         } else if (status === 'rejected') {
-
             const btn = document.createElement('button');
             btn.className = 'btn-action btn-rejected text-sm font-semibold';
-            btn.textContent = 'REQUEST TO JOIN HAS BEEN REJECTED';
+            btn.textContent = 'JOIN REQUEST REJECTED';
+            btn.disabled = true;
+            actionBarButtons.appendChild(btn);
+
+        } else if (status === 'closed') {
+            const btn = document.createElement('button');
+            btn.className = 'btn-action btn-closed text-md font-semibold';
+            btn.textContent = 'REGISTRATION CLOSED';
             btn.disabled = true;
             actionBarButtons.appendChild(btn);
 
         } else if (status === 'owner') {
-
             const endBtn = document.createElement('button');
             endBtn.className = 'btn-action btn-end-registration text-md font-semibold';
             endBtn.textContent = 'END REGISTRATION';
-            endBtn.addEventListener('click', handleEndRegistration);
+            endBtn.addEventListener('click', openEndRegistrationModal);
             actionBarButtons.appendChild(endBtn);
 
             const editBtn = document.createElement('button');
             editBtn.className = 'btn-edit-round';
             editBtn.setAttribute('aria-label', 'Edit Event');
             editBtn.innerHTML = `<img src="/images/Edit.svg" width="20" height="20" alt="edit">`;
-            editBtn.addEventListener('click', handleEditEvent);
+            editBtn.addEventListener('click', () => {
+                window.location.href = '/Event/Edit/' + eventId;
+            });
             actionBarButtons.appendChild(editBtn);
         }
     }
 
-    // ---- Handlers ----
-
-    function handleJoin(btn) {
-        openJoinModal();
-    }
-//     document.getElementById('joinSubmitBtn').addEventListener('click', async function() {
-//     const eventId = document.getElementById('eventId').value;
-
-//     const answers = [...document.querySelectorAll('#joinQuestionList input')]
-//         .map(input => ({
-//             questionId: input.dataset.questionId,
-//             answer: input.value
-//         }));
-
-//     const res = await fetch('/Event/Join/' + eventId, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ answers })
-//     });
-
-//     if (res.ok) {
-//         closeJoinModal();
-//         userStatus = 'pending';
-//         renderActionBar(userStatus);
-//     }
-// });
-
-    function handleEndRegistration() {
-        alert('ปิดรับสมัครแล้ว'); // delete
-    }
-//     function handleEndRegistration() {
-//     alert('ปิดรับสมัครแล้ว');  // แค่ alert ไม่ได้บันทึกจริง
-// }
-//     async function handleEndRegistration() {
-//         const eventId = document.getElementById('eventId').value;
-
-//         const res = await fetch('/Event/EndRegistration/' + eventId, { 
-//             method: 'POST' 
-//         });
-
-//         if (res.ok) {
-//             // อาจ redirect หรือเปลี่ยน UI
-//             alert('ปิดรับสมัครแล้ว');
-//         }
-//     }
-
-    function handleEditEvent() {
-        // window.location.href = '/Event/Edit/' + eventId;
-        alert('ไปหน้าแก้ไข Event'); // delete
-    }
-
-    const joinQuestions = [
-        { id: 1, question: "ทำไมถึงอยากร่วมทริป ?" },
-        // const joinQuestions = await fetch('/Event/Questions/' + eventId).then(r => r.json());
-    ];
+    // JOIN MODAL 
 
     function openJoinModal() {
         const joinModal = document.getElementById('joinModal');
-        const questionList = document.getElementById('joinQuestionList');
-        questionList.innerHTML = joinQuestions.map((q, i) => `
-            <div class="join-question-item">
-                <label for="joinQ${i}">${q.question}</label>
-                <input type="text" id="joinQ${i}" data-question-id="${q.id}" >
-            </div>
-        `).join('');
+        joinModal.querySelectorAll('input[type="text"]').forEach(inp => inp.value = '');
+        validateJoinForm();
         joinModal.classList.add('open');
         joinModal.setAttribute('aria-hidden', 'false');
     }
@@ -136,51 +79,157 @@
         joinModal.setAttribute('aria-hidden', 'true');
     }
 
+    function validateJoinForm() {
+        const inputs    = document.querySelectorAll('#joinQuestionList input[type="text"]');
+        const submitBtn = document.getElementById('joinSubmitBtn');
+        const allFilled = [...inputs].every(inp => inp.value.trim() !== '');
+        submitBtn.disabled       = !allFilled;
+        submitBtn.style.opacity  = allFilled ? '1' : '0.5';
+        submitBtn.style.cursor   = allFilled ? 'pointer' : 'not-allowed';
+    }
+
+    document.getElementById('joinQuestionList').addEventListener('input', function (e) {
+        if (e.target.tagName === 'INPUT') validateJoinForm();
+    });
+
     document.getElementById('joinModalCloseBtn').addEventListener('click', closeJoinModal);
-    document.getElementById('joinModal').addEventListener('click', function(e) {
+    document.getElementById('joinModal').addEventListener('click', function (e) {
         if (e.target === this) closeJoinModal();
     });
-    document.getElementById('joinSubmitBtn').addEventListener('click', function() {
-        const answers = joinQuestions.map((q, i) => ({
-            questionId: q.id,
-            answer: document.getElementById('joinQ' + i).value
+
+    document.getElementById('joinSubmitBtn').addEventListener('click', async function () {
+        const inputs    = document.querySelectorAll('#joinQuestionList input[type="text"]');
+        const allFilled = [...inputs].every(inp => inp.value.trim() !== '');
+        if (!allFilled) return;
+
+        const answers = [...inputs].map(inp => ({
+            questionId: inp.dataset.questionId,
+            answer:     inp.value.trim()
         }));
-    //    await fetch('/Event/Join/' + eventId, {
-    //     method: 'POST',
-    //     body: JSON.stringify({ answers }),
-    //     headers: { 'Content-Type': 'application/json' }
-    // });
-        closeJoinModal();
-        userStatus = 'pending';
-        renderActionBar(userStatus);
+
+        try {
+            const res = await fetch('/Event/Join/' + eventId, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ answers })
+            });
+
+            if (res.status === 401) {
+
+            document.getElementById('pleaseLoginModal').classList.add('open');
+
+            return;
+            }
+
+            if (res.ok) {
+                closeJoinModal();
+                userStatus = 'pending';
+                renderActionBar(userStatus);
+
+            } else {
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        }
     });
 
-    function handleLeaveTrip() {
-    const leaveModal = document.getElementById('leaveModal');
-    leaveModal.classList.add('open');
-    leaveModal.setAttribute('aria-hidden', 'false');
-}
+    // LEAVE MODAL 
 
-    document.getElementById('leaveModalCloseBtn').addEventListener('click', function() {
+    function openLeaveModal() {
+        const modal = document.getElementById('leaveModal');
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    document.getElementById('leaveModalCloseBtn').addEventListener('click', function () {
         document.getElementById('leaveModal').classList.remove('open');
     });
-
-    document.getElementById('leaveCancelBtn').addEventListener('click', function() {
+    document.getElementById('leaveCancelBtn').addEventListener('click', function () {
         document.getElementById('leaveModal').classList.remove('open');
     });
-
-    document.getElementById('leaveConfirmBtn').addEventListener('click', function() {
-        document.getElementById('leaveModal').classList.remove('open');
-        // await fetch('/Event/Leave/' + eventId, { method: 'POST' });
-        userStatus = 'none';
-        renderActionBar(userStatus);
-    });
-
-    document.getElementById('leaveModal').addEventListener('click', function(e) {
+    document.getElementById('leaveModal').addEventListener('click', function (e) {
         if (e.target === this) this.classList.remove('open');
     });
 
-    // ---- Init ----
+    document.getElementById('leaveConfirmBtn').addEventListener('click', async function () {
+        try {
+            const res = await fetch('/Event/Leave/' + eventId, { method: 'POST' });
+            if (res.status === 401) {
+            document.getElementById('pleaseLoginModal').classList.add('open');
+            return;
+            }
+
+            if (res.ok) {
+                document.getElementById('leaveModal').classList.remove('open');
+                userStatus = 'none';
+                renderActionBar(userStatus);
+            } else {
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        }
+    });
+
+    // END REGISTRATION MODAL
+
+
+    function openEndRegistrationModal() {
+        const modal  = document.getElementById('endRegistrationModal');
+        const input  = document.getElementById('endReasonInput');
+        const subBtn = document.getElementById('endRegistrationSubmitBtn');
+
+        input.value          = '';
+        subBtn.disabled      = true;
+        subBtn.style.opacity = '0.5';
+        subBtn.style.cursor  = 'not-allowed';
+
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    // validate reason input
+    document.getElementById('endReasonInput').addEventListener('input', function () {
+        const subBtn = document.getElementById('endRegistrationSubmitBtn');
+        const filled = this.value.trim() !== '';
+        subBtn.disabled      = !filled;
+        subBtn.style.opacity = filled ? '1' : '0.5';
+        subBtn.style.cursor  = filled ? 'pointer' : 'not-allowed';
+    });
+
+    document.getElementById('endRegistrationModalCloseBtn').addEventListener('click', function () {
+        document.getElementById('endRegistrationModal').classList.remove('open');
+    });
+    document.getElementById('endRegistrationModal').addEventListener('click', function (e) {
+        if (e.target === this) this.classList.remove('open');
+    });
+
+    document.getElementById('endRegistrationSubmitBtn').addEventListener('click', async function () {
+        const reason = document.getElementById('endReasonInput').value.trim();
+        if (!reason) return;
+
+        try {
+            const res = await fetch('/Event/EndRegistration/' + eventId, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ reason })
+            });
+            if (res.ok) {
+                document.getElementById('endRegistrationModal').classList.remove('open');
+                userStatus = 'closed';
+                renderActionBar(userStatus);
+            } else {
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        }
+    });
+
     renderActionBar(userStatus);
 
 })();
