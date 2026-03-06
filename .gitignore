@@ -1,11 +1,5 @@
-# Build outputs
 bin/
 obj/
-*.dll
-*.exe
-*.pdb
-
-# Visual Studio
 .vs/
 *.user
 *.suo
@@ -17,7 +11,7 @@ obj/
 # Logs
 *.log
 
-# Development settings (may contain secrets)
+# Development settings
 appsettings.Development.json
 appsettings.Local.json
 .env

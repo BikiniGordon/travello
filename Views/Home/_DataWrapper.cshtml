@@ -1,0 +1,11 @@
+@model List<EventModel>
+
+@* This sends the cards *@
+<div id="EventTarget">
+    @await Html.PartialAsync("_EventList", Model)
+</div>
+
+@* This sends the updated buttons *@
+<div id="PaginationTarget">
+    @await Html.PartialAsync("_Pagination", Model)
+</div>

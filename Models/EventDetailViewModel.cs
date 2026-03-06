@@ -7,6 +7,9 @@ namespace Travello.Models
         public string Name { get; set; }
         public string ProfileImage { get; set; }
         public bool IsApproved { get; set; }
+
+
+        public string Status { get; set; }
     }
 
 

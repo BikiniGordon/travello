@@ -24,6 +24,11 @@ LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+// Add services to the container.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllersWithViews();
 var mongoSection = builder.Configuration.GetSection("MongoDBsettings");
 builder.Services.Configure<MongoDbSettings>(options =>
 {
@@ -55,11 +60,24 @@ builder.Services.AddSingleton<EventService>();
 
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EditProfileViewModel>("User"));
+
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<NotificationDocument>("notifications"));
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseSession();
+
+app.UseAuthorization();
+
+app.MapStaticAssets();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
