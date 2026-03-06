@@ -16,10 +16,10 @@ namespace Travello.Models
         public string Detail { get; set; }
 
         [BsonElement("location")]
-        public List<string> Location { get; set; }
+        public string Location { get; set; }
 
         [BsonElement("locations")]
-        public List<LocationData> Locations { get; set; }
+        public List<LocationData>? Locations { get; set; }
 
         [BsonElement("start_date")]
         public DateTime StartDate { get; set; }

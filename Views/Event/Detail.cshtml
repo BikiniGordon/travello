@@ -14,10 +14,13 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/styleDetail.css" />
+    <link rel="stylesheet" href="~/css/navbar.css" />
+    <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
 </head>
 
 <body>
     @Html.Partial("_NavBar") 
+
     <div class="all">
         <!-- <header class="nav">
         </header> -->
@@ -29,8 +32,10 @@
                         <h1 class="text-2xl font-bold">@Model.EventTitle</h1> 
                         <!-- <h1 class="text-2xl font-bold">ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว</h1> -->
                         <div class="tag">
-                            <p class="text-xs font-regular">@Model.Category</p> 
-                            <!-- <p class="text-xs font-regular">ADVENTURE</p> -->
+                            @foreach (var tag in Model.Category)
+                            {
+                                <p class="text-xs font-regular">@tag</p>
+                            }
                         </div>
                     </div>
                     <div class="owner">
@@ -302,6 +307,7 @@
     <script src="~/js/actionBar.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="~/js/detailMap.js"></script>
+    <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
 
     <script>
         const attendeesData = @Html.Raw(
@@ -344,6 +350,7 @@
         } catch(e) { console.error(e); }
     })();
     </script>
+    
 
 </body>
 

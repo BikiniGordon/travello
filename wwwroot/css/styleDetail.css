@@ -175,7 +175,7 @@ body, .details {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
-    padding: 0 var(--space-paddingout);
+    padding: var(--space-lg) var(--space-paddingout);
 }
 
 .frist {
@@ -219,13 +219,16 @@ body, .details {
 
 .tag {
     display: flex;
-    /* display: inline-flex; */
-    align-self: flex-start;
     flex-direction: row;
-    padding: var(--space-xs);
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
 
+.tag p {
+    padding: var(--space-xs) var(--space-sm);
     border-radius: 50px;
-    background: #ffff;
+    background: #fff;
+    margin: 0;
 }
 
 .owner {

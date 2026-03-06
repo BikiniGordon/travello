@@ -57,7 +57,7 @@ namespace Travello.Models
     {
         public string EventId { get; set; }
         public string EventTitle { get; set; }
-        public string Category { get; set; }
+        public List<string> Category { get; set; }
         public string HostName { get; set; }
         public string HostProfileImage { get; set; }
         public string CoverImage { get; set; }

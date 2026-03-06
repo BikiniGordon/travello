@@ -21,7 +21,7 @@ namespace Travello.Controllers
             if (ev == null) return NotFound();
 
             // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
             string userStatus = "none";
 
             if (ev.IsRegistrationClosed && currentUserId != ev.CreatorId)
@@ -90,11 +90,14 @@ namespace Travello.Controllers
                               }).ToList()
                 }).ToList();
 
-            var locations = ev.Locations?.Select(l => new LocationViewModel
+            var locations = ev.Itinerary?
+            .OrderBy(i => i.DayIndex).ThenBy(i => i.PlaceIndex)
+            .Where(i => i.Latitude != 0 && i.Longitude != 0)
+            .Select(i => new LocationViewModel
             {
-                PlaceName = l.PlaceName,
-                Latitude  = l.Latitude,
-                Longitude = l.Longitude
+                PlaceName = i.ActivityName,
+                Latitude  = i.Latitude,
+                Longitude = i.Longitude
             }).ToList() ?? new();
 
             var joinQuestions = new List<JoinQuestionViewModel>();
@@ -115,7 +118,7 @@ namespace Travello.Controllers
             {
                 EventId          = id,
                 EventTitle       = ev.EventTitle,
-                Category         = ev.EventTag?.FirstOrDefault() ?? "",
+                Category = ev.EventTag ?? new(),
                 HostName         = host?.Username ?? "",
                 HostProfileImage = host?.ProfileImgPath,
                 CoverImage       = ev.EventImgPath ?? "",
@@ -124,7 +127,7 @@ namespace Travello.Controllers
                 ClosingDate      = ev.OpenDate ?? DateTime.Now,
                 StartDate        = ev.StartDate,
                 EndDate          = ev.EndDate,
-                Location         = ev.Location?.FirstOrDefault() ?? "",
+                Location         = ev.Location ?? "",
                 RemainingSlots   = ev.AttendeesLimit - ev.Attendees,
                 AttendeeCount    = displayCount,
                 UserStatus       = userStatus,
@@ -144,7 +147,7 @@ namespace Travello.Controllers
 
         public async Task<JsonResult> GetAttendees(string id)
         {
-            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
 
             var ev = await _eventService.GetEventByIdAsync(id);
             bool isOwner = currentUserId == ev?.CreatorId;
@@ -177,7 +180,7 @@ namespace Travello.Controllers
         public async Task<IActionResult> Join(string id, [FromBody] JoinRequestDto request)
         {
             // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
 
             var ev = await _eventService.GetEventByIdAsync(id);
             if (ev == null) return NotFound();
@@ -198,7 +201,7 @@ namespace Travello.Controllers
         public async Task<IActionResult> Leave(string id)
         {
             // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
 
             await _eventService.RemoveParticipantAsync(id, currentUserId);
 
@@ -211,7 +214,7 @@ namespace Travello.Controllers
         public async Task<IActionResult> EndRegistration(string id, [FromBody] EndRegistrationDto request)
         {
             // var currentUserId = Request.Cookies["userId"];
-            var currentUserId = "69a9052b7f66c15908ba56a2"; // mock
+            var currentUserId = "69a714e4cbab5148e804d87d"; // mock
 
             var ev = await _eventService.GetEventByIdAsync(id);
             if (ev == null) return NotFound();
