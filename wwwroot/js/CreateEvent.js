@@ -147,11 +147,38 @@ function initializeTagButtons() {
 
 // Connects the photo upload trigger and preview behavior.
 function initializePhotoUpload() {
+    const form = document.getElementById('createEventForm');
+    const isLimitedEditMode = form?.dataset?.editMode === 'limited';
     const uploadButton = document.getElementById('uploadPhotoButton');
     const uploadInput = document.getElementById('uploadPhotoInput');
     const photoPlaceholder = document.querySelector('.photo-placeholder');
+    const photoLinkToggleButton = document.getElementById('photoLinkToggleButton');
+    const photoLinkSection = document.getElementById('photoLinkSection');
+    const photoLinkInput = document.getElementById('photoLinkInput');
+    const initialPhotoUrlSeed = document.getElementById('initialPhotoUrlSeed');
 
     if (!uploadButton || !uploadInput || !photoPlaceholder) {
+        return;
+    }
+
+    const showPreview = (imageUrl) => {
+        photoPlaceholder.style.backgroundImage = `url('${imageUrl}')`;
+        photoPlaceholder.style.backgroundSize = 'cover';
+        photoPlaceholder.style.backgroundPosition = 'center';
+        photoPlaceholder.classList.add('has-preview');
+
+        if (uploadButton) {
+            uploadButton.style.display = isLimitedEditMode ? 'flex' : 'none';
+        }
+        
+    };
+
+    const initialPhotoUrl = initialPhotoUrlSeed?.value?.trim();
+    if (initialPhotoUrl) {
+        showPreview(initialPhotoUrl);
+    }
+
+    if (isLimitedEditMode) {
         return;
     }
 
@@ -173,9 +200,239 @@ function initializePhotoUpload() {
             return;
         }
 
+        if (photoLinkInput) {
+            photoLinkInput.value = '';
+        }
+
         const objectUrl = URL.createObjectURL(selectedFile);
-        photoPlaceholder.style.backgroundImage = `url('${objectUrl}')`;
+        showPreview(objectUrl);
     });
+
+    if (photoLinkToggleButton && photoLinkSection) {
+        photoLinkToggleButton.addEventListener('click', () => {
+            photoLinkSection.classList.toggle('hidden');
+            if (!photoLinkSection.classList.contains('hidden') && photoLinkInput) {
+                photoLinkInput.focus();
+            }
+        });
+    }
+
+    if (photoLinkInput) {
+        photoLinkInput.addEventListener('input', () => {
+            const rawValue = photoLinkInput.value.trim();
+            if (!rawValue) {
+                return;
+            }
+
+            try {
+                const parsedUrl = new URL(rawValue);
+                if (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') {
+                    if (uploadInput.value) {
+                        uploadInput.value = '';
+                    }
+
+                    showPreview(parsedUrl.href);
+                }
+            } catch {
+                // Ignore invalid URL while typing.
+            }
+        });
+    }
+}
+
+// Parses JSON seed data rendered into a script tag.
+function readJsonSeed(scriptElementId, fallbackValue) {
+    const scriptElement = document.getElementById(scriptElementId);
+    if (!scriptElement) {
+        return fallbackValue;
+    }
+
+    const rawJson = scriptElement.textContent?.trim();
+    if (!rawJson) {
+        return fallbackValue;
+    }
+
+    try {
+        return JSON.parse(rawJson);
+    } catch {
+        return fallbackValue;
+    }
+}
+
+// Applies preselected category and custom tags when editing.
+function applyInitialCategoryAndTags() {
+    const categorySeed = document.getElementById('initialCategorySeed')?.value?.trim();
+    const tagsSeed = document.getElementById('initialTagsSeed')?.value?.trim();
+
+    if (categorySeed) {
+        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+        const normalizedCategory = categorySeed.toLowerCase();
+
+        Array.from(categoryButtons).forEach((button) => {
+            if (getTagButtonValue(button) === normalizedCategory) {
+                button.classList.add('is-selected');
+            }
+        });
+    }
+
+    if (tagsSeed) {
+        const customTags = tagsSeed
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0);
+
+        const customTagContainer = document.querySelector('.catagory-section .tags-container:last-of-type');
+        const addButton = customTagContainer?.querySelector('.tag-btn.add-btn');
+
+        if (!customTagContainer || !addButton) {
+            return;
+        }
+
+        customTags.forEach((tag) => {
+            const duplicatedTag = Array.from(customTagContainer.querySelectorAll('.tag-btn:not(.add-btn)')).some((button) => {
+                return getTagButtonValue(button) === tag.toLowerCase();
+            });
+
+            if (!duplicatedTag) {
+                const customTagButton = createCustomTagButton(tag);
+                customTagButton.classList.add('is-selected');
+                customTagContainer.insertBefore(customTagButton, addButton);
+            }
+        });
+    }
+}
+
+// Applies initial packing list rows in edit mode.
+function applyInitialPackingList() {
+    if (!importantPackRows) {
+        return;
+    }
+
+    const initialPackingItems = readJsonSeed('initialPackingListJsonSeed', []);
+    if (!Array.isArray(initialPackingItems) || initialPackingItems.length === 0) {
+        ensureTrailingEmptyPackRow();
+        return;
+    }
+
+    importantPackRows.innerHTML = '';
+
+    initialPackingItems.forEach((item) => {
+        const packRow = createPackRow();
+        const packInput = packRow.querySelector('.pack-input');
+        if (packInput) {
+            packInput.value = String(item ?? '').trim();
+        }
+        importantPackRows.appendChild(packRow);
+    });
+
+    ensureTrailingEmptyPackRow();
+}
+
+// Applies initial planner rows in edit mode.
+function applyInitialPlannerRows() {
+    if (!plannerDaysContainer) {
+        return;
+    }
+
+    const initialPlannerRows = readJsonSeed('initialPlannerJsonSeed', []);
+    if (!Array.isArray(initialPlannerRows) || initialPlannerRows.length === 0) {
+        createDay(1);
+        return;
+    }
+
+    plannerDaysContainer.innerHTML = '';
+
+    const dayMap = new Map();
+    initialPlannerRows.forEach((row) => {
+        const dayIndex = Number.isFinite(Number.parseInt(String(row?.dayIndex), 10))
+            ? Number.parseInt(String(row.dayIndex), 10)
+            : 1;
+
+        if (!dayMap.has(dayIndex)) {
+            dayMap.set(dayIndex, []);
+        }
+
+        dayMap.get(dayIndex).push(row);
+    });
+
+    const sortedDays = Array.from(dayMap.keys()).sort((left, right) => left - right);
+    sortedDays.forEach((dayNumber) => {
+        const dayElement = createDay(dayNumber);
+        const dayDateInput = dayElement.querySelector('.day-date-input');
+        const dayRows = dayMap.get(dayNumber) || [];
+        const rowsContainer = dayElement.querySelector('.planner-day-rows');
+        rowsContainer.innerHTML = '';
+
+        dayRows
+            .sort((left, right) => {
+                const leftPlace = Number.parseInt(String(left?.placeIndex ?? Number.MAX_SAFE_INTEGER), 10);
+                const rightPlace = Number.parseInt(String(right?.placeIndex ?? Number.MAX_SAFE_INTEGER), 10);
+                return leftPlace - rightPlace;
+            })
+            .forEach((row) => {
+                const planRow = createPlanRow();
+                const placeInput = planRow.querySelector('.planner-place-input');
+                const noteInput = planRow.querySelector('.planner-note-input');
+                const expenseWrap = planRow.querySelector('.planner-expense-wrap');
+
+                if (dayDateInput && row?.dayDate) {
+                    dayDateInput.value = row.dayDate;
+                }
+
+                if (placeInput) {
+                    placeInput.value = String(row?.placeName ?? '').trim();
+                }
+
+                if (row?.googleMapUrl) {
+                    planRow.dataset.googleMapUrl = String(row.googleMapUrl);
+                }
+
+                if (row?.latitude !== null && row?.latitude !== undefined && row?.longitude !== null && row?.longitude !== undefined) {
+                    planRow.dataset.markerLat = String(row.latitude);
+                    planRow.dataset.markerLng = String(row.longitude);
+                    planRow.dataset.markerName = String(row?.placeName ?? 'Location').trim();
+                }
+
+                const noteValue = String(row?.note ?? '').trim();
+                if (noteInput && noteValue) {
+                    noteInput.classList.remove('hidden');
+                    noteInput.value = noteValue;
+                    autoResize(noteInput);
+                }
+
+                const expenses = Array.isArray(row?.expenses) ? row.expenses : [];
+                if (expenseWrap && expenses.length > 0) {
+                    expenseWrap.classList.remove('hidden');
+                    expenses.forEach((expense) => {
+                        const expenseRow = createExpenseRow();
+                        const expenseNameInput = expenseRow.querySelector('.planner-expense-name-input');
+                        const expenseAmountInput = expenseRow.querySelector('.planner-expense-input');
+
+                        if (expenseNameInput) {
+                            expenseNameInput.value = String(expense?.name ?? '').trim();
+                        }
+
+                        if (expenseAmountInput && expense?.amount !== null && expense?.amount !== undefined) {
+                            expenseAmountInput.value = String(expense.amount);
+                        }
+
+                        expenseWrap.appendChild(expenseRow);
+                    });
+                }
+
+                rowsContainer.appendChild(planRow);
+            });
+
+        ensureTrailingEmptyRow(dayElement);
+    });
+
+    const lastDay = plannerDaysContainer.querySelector('.event-plan-day:last-of-type');
+    if (lastDay) {
+        ensureNextDay(lastDay);
+    }
+
+    recalculatePlaceNumbers();
+    updateTotalExpenses();
 }
 
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
@@ -221,13 +478,14 @@ function recalculatePlaceNumbers() {
 }
 
 // Rebuilds map markers so they match planner rows and order.
-function syncMapMarkers() {
+function syncMapMarkers(zoomToFirst = false) {
     if (!map || !placeMarkersLayer) {
         return;
     }
 
     placeMarkersLayer.clearLayers();
     let placeMarkerCount = 0;
+    let firstMarkerCoords = null;
 
     const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
     allRows.forEach((row) => {
@@ -241,6 +499,11 @@ function syncMapMarkers() {
 
         if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(placeNumber) || placeNumber <= 0) {
             return;
+        }
+
+        // Store first marker coordinates
+        if (placeMarkerCount === 0) {
+            firstMarkerCoords = { lat, lng };
         }
 
         const markerLabel = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
@@ -265,6 +528,11 @@ function syncMapMarkers() {
         } else if (!map.hasLayer(defaultMapMarker)) {
             defaultMapMarker.addTo(map);
         }
+    }
+
+    // Zoom to first marker if requested and exists
+    if (zoomToFirst && firstMarkerCoords) {
+        map.setView([firstMarkerCoords.lat, firstMarkerCoords.lng], 16);
     }
 }
 
@@ -360,12 +628,14 @@ function bindCreateEventFormSubmit() {
     if (!form) {
         return;
     }
+    const isLimitedEditMode = form.dataset.editMode === 'limited';
 
     const categoryInput = document.getElementById('selectedCategoryInput');
     const tagsInput = document.getElementById('selectedTagsInput');
     const plannerInput = document.getElementById('plannerJsonInput');
     const packingListInput = document.getElementById('packingListJsonInput');
     const uploadPhotoButton = document.getElementById('uploadPhotoButton');
+    const photoLinkInput = form.querySelector('input[name="PhotoLink"]');
     const attendeesLimitInput = form.querySelector('input[name="AttendeesLimit"]');
     const startDateInput = form.querySelector('input[name="StartDate"]');
     const startTimeInput = form.querySelector('input[name="StartTime"]');
@@ -373,18 +643,23 @@ function bindCreateEventFormSubmit() {
     const endTimeInput = form.querySelector('input[name="EndTime"]');
     const openDateInput = form.querySelector('input[name="OpenDate"]');
 
-    const requiredFieldConfigs = [
-        { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
-        { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
-        { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
-        { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
-        { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
-        { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
-        { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
-        { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
-        { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
-        { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
-    ]
+    const requiredFieldConfigs = (isLimitedEditMode
+        ? [
+            { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+            { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+        ]
+        : [
+            { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
+            { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+            { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
+            { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
+            { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
+            { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
+            { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
+            { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
+            { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
+            { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+        ])
         .map((config) => ({
             ...config,
             input: form.querySelector(config.selector)
@@ -469,6 +744,10 @@ function bindCreateEventFormSubmit() {
     }
 
     function validateAttendeesLimitFormat() {
+        if (isLimitedEditMode) {
+            return true;
+        }
+
         if (!attendeesLimitInput) {
             return true;
         }
@@ -488,6 +767,10 @@ function bindCreateEventFormSubmit() {
     }
 
     function validateDateOrdering() {
+        if (isLimitedEditMode) {
+            return true;
+        }
+
         let isValid = true;
 
         if (startDateInput && startTimeInput && endDateInput && endTimeInput) {
@@ -515,6 +798,38 @@ function bindCreateEventFormSubmit() {
         }
 
         return isValid;
+    }
+
+    function validatePhotoLinkFormat() {
+        if (isLimitedEditMode) {
+            return true;
+        }
+
+        if (!photoLinkInput) {
+            return true;
+        }
+
+        const rawValue = photoLinkInput.value.trim();
+        if (rawValue === '') {
+            setValidationMessage('PhotoLink', '');
+            return true;
+        }
+
+        try {
+            const parsedUrl = new URL(rawValue);
+            const isHttp = parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+
+            if (!isHttp) {
+                setValidationMessage('PhotoLink', 'Photo link must start with http:// or https://.');
+                return false;
+            }
+
+            setValidationMessage('PhotoLink', '');
+            return true;
+        } catch {
+            setValidationMessage('PhotoLink', 'Photo link must be a valid URL.');
+            return false;
+        }
     }
 
     requiredFieldConfigs.forEach((config) => {
@@ -551,7 +866,8 @@ function bindCreateEventFormSubmit() {
         const requiredValid = validateAllRequiredFields();
         const attendeesValid = validateAttendeesLimitFormat();
         const dateOrderingValid = validateDateOrdering();
-        const isValid = requiredValid && attendeesValid && dateOrderingValid;
+        const photoLinkValid = validatePhotoLinkFormat();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid;
 
         if (!isValid) {
             event.preventDefault();
@@ -576,22 +892,28 @@ function bindCreateEventFormSubmit() {
                 }
             }
 
+            if (!photoLinkValid && photoLinkInput) {
+                photoLinkInput.focus();
+            }
+
             return;
         }
 
-        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
-        const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
-        if (categoryInput) {
-            categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
-        }
+        if (!isLimitedEditMode) {
+            const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+            const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
+            if (categoryInput) {
+                categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
+            }
 
-        const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
-        const tags = Array.from(customTagButtons)
-            .map((button) => getTagButtonValue(button))
-            .filter((tagValue, index, array) => tagValue && array.indexOf(tagValue) === index);
+            const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
+            const tags = Array.from(customTagButtons)
+                .map((button) => getTagButtonValue(button))
+                .filter((tagValue, index, array) => tagValue && array.indexOf(tagValue) === index);
 
-        if (tagsInput) {
-            tagsInput.value = tags.join(',');
+            if (tagsInput) {
+                tagsInput.value = tags.join(',');
+            }
         }
 
         const plannerRows = [];
@@ -662,17 +984,24 @@ function bindCreateEventFormSubmit() {
         }
     });
 
-    if (attendeesLimitInput) {
+    if (!isLimitedEditMode && attendeesLimitInput) {
         attendeesLimitInput.addEventListener('input', validateAttendeesLimitFormat);
         attendeesLimitInput.addEventListener('blur', validateAttendeesLimitFormat);
     }
 
-    [startDateInput, startTimeInput, endDateInput, endTimeInput, openDateInput]
-        .filter((input) => Boolean(input))
-        .forEach((input) => {
-            input.addEventListener('change', validateDateOrdering);
-            input.addEventListener('blur', validateDateOrdering);
-        });
+    if (!isLimitedEditMode) {
+        [startDateInput, startTimeInput, endDateInput, endTimeInput, openDateInput]
+            .filter((input) => Boolean(input))
+            .forEach((input) => {
+                input.addEventListener('change', validateDateOrdering);
+                input.addEventListener('blur', validateDateOrdering);
+            });
+    }
+
+    if (!isLimitedEditMode && photoLinkInput) {
+        photoLinkInput.addEventListener('input', validatePhotoLinkFormat);
+        photoLinkInput.addEventListener('blur', validatePhotoLinkFormat);
+    }
 }
 
 // Initializes the Leaflet map, tile layer, and default marker.
@@ -1244,8 +1573,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePhotoUpload();
     initializeTagButtons();
     bindCreateEventFormSubmit();
+    applyInitialCategoryAndTags();
+    applyInitialPackingList();
 
     if (plannerDaysContainer) {
-        createDay(1);
+        applyInitialPlannerRows();
     }
 });

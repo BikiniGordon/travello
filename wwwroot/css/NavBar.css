@@ -47,7 +47,6 @@
 .NavBar {
     display: flex;
     width: 100%;
-    /* max-width: 1440px;  */
     padding: var(--space-xs) var(--space-md);
     align-items: center;
     justify-content: space-between;
@@ -105,6 +104,7 @@
     justify-content: center;
     align-items: center;
     align-self: stretch;
+    font-family: inherit;
 
     border-radius: 50px;
     background: rgba(255, 255, 255, 0.20);
@@ -223,6 +223,7 @@ hr {
     color: #000;
     font-size: 24px;
     font-weight: 600;
+    font-family: inherit;
 }
 
 .InsiderNavLink {
@@ -231,22 +232,20 @@ hr {
     gap: var(--space-md);
 }
 
-/* Modal Background (The Blur Part) */
 .ModalContainer {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
-    z-index: 20000; /* Higher than Navbar */
+    z-index: 20000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Darken background */
-    backdrop-filter: blur(5px); /* Blurs the components behind it */
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
     align-items: center;
     justify-content: center;
 }
 
-/* The Modal Box */
 .ModalContent {
     background-color: #fff;
     padding: 30px;
@@ -263,7 +262,6 @@ hr {
     to { transform: translateY(0); opacity: 1; }
 }
 
-/* Close Button */
 .CloseModal {
     position: absolute;
     right: 20px;
@@ -273,7 +271,6 @@ hr {
     color: #666;
 }
 
-/* Form Styling */
 .InputGroup {
     margin-bottom: 20px;
     display: flex;
@@ -307,6 +304,13 @@ hr {
 
 .LoginSubmitBtn:hover {
     background-color: #000;
+}
+
+* {
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 @media (max-width: 1025px) {

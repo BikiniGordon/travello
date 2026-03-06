@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http; // Required for IFormFile
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Travello.Models
@@ -17,6 +17,8 @@ namespace Travello.Models
         [Display(Name = "Username")]
         [StringLength(16, MinimumLength = 2, ErrorMessage = "Username must be between 2 and 16 characters.")]
         public string username { get; set; } = null!;
+
+        public string? password { get; set; }
 
         [Required(ErrorMessage = "First name can't be empty.")]
         [Display(Name = "First name")]
@@ -34,8 +36,10 @@ namespace Travello.Models
         [BsonElement("date_of_birth")]
         public DateTime? date_of_birth { get; set; }
         public string? about_me { get; set; }
+        public List<string>? event_id { get; set; } = new List<string>();
         public string? profile_img_path { get; set; }
         public List<string> user_tag { get; set; } = new List<string>();
+
         [BsonIgnore]
         public IFormFile? ProfileImageUpload { get; set; }
     }

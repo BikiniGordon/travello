@@ -36,7 +36,6 @@
 
 .CenterContainer {
     width: 100%;
-    /* max-width: 1440px; */
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -119,6 +118,7 @@
 .SearchBar {
     display: flex;
     height: 40px;
+    width: 100%;
     padding: 10px 12px;
     align-items: center;
     gap: 10px;
@@ -138,6 +138,7 @@
     border: none;
     outline: none;
     background: transparent;
+    font-family: inherit;
 }
 
 .DateSearchInput {
@@ -146,6 +147,7 @@
     outline: none;
     background: transparent;
     color: rgba(29, 27, 32, 0.5);
+    font-family: inherit;
 }
 
 .EventRow {
@@ -189,12 +191,8 @@
     margin-top: -53px;
 
     border-radius: 18px;
-    background: #CCD6D5; /* Set this to 3 different bg */
+    background: #CCD6D5;
 }
-
-/* .event_title {
-    font-family: "Segoe UI", sans-serif;
-} */
 
 .EventDetails {
     display: flex;
@@ -348,6 +346,7 @@
     justify-content: center;
     align-items: center;
     background: transparent;
+    font-family: inherit;
 
     border-radius: 50px;
     color: black;
@@ -361,6 +360,7 @@
     align-items: center;
     min-width: 31px;
     height: 31px;
+    font-family: inherit;
 
     background: none;
     border: none;
@@ -374,6 +374,7 @@
 .PageNumber.active {
     background-color: #CEE7E6;
     border-radius: 20px;
+    font-family: inherit;
 }
 
 .PageInputContainer {
@@ -393,6 +394,7 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    font-family: inherit;
     
     background: none;
     border: none;
@@ -423,6 +425,9 @@ html {
 
 body {
     font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 @media (min-width: 1440px) {
@@ -471,7 +476,7 @@ body {
     }
 
     .SearchBar {
-        order: 1; /* First: Search Bar */
+        order: 1;
         width: 100%;
     }
 
@@ -507,7 +512,6 @@ body {
     .Tag {
         justify-content: center;
     }
-    /* Change might needs */
 }
 
 @media (max-width: 768px) {
@@ -537,28 +541,4 @@ body {
         width: 40%;
     }
 
-    /* Change might needs */
 }
-
-/* @media (max-width: 391px) {
-
-  :root {
-
-    --text-sm: 16px;
-    --text-md: 18px;
-    --text-lg: 20px;
-    --text-xl: 24px;
-    --text-2xl: 32px;
-    --text-3xl: 40px;
-    --text-4xl: 32px;
-
-    --space-xs: 4px;
-    --space-sm: 8px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 32px;
-    --space-2xl: 48px;
-    --space-paddingout: 16px;
-  }
-
-} */

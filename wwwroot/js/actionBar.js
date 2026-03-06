@@ -63,7 +63,65 @@
         }
     }
 
-    // JOIN MODAL 
+    // ---- Handlers ----
+
+    function handleJoin(btn) {
+        openJoinModal();
+    }
+//     document.getElementById('joinSubmitBtn').addEventListener('click', async function() {
+//     const eventId = document.getElementById('eventId').value;
+
+//     const answers = [...document.querySelectorAll('#joinQuestionList input')]
+//         .map(input => ({
+//             questionId: input.dataset.questionId,
+//             answer: input.value
+//         }));
+
+//     const res = await fetch('/Event/Join/' + eventId, {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ answers })
+//     });
+
+//     if (res.ok) {
+//         closeJoinModal();
+//         userStatus = 'pending';
+//         renderActionBar(userStatus);
+//     }
+// });
+
+    function handleEndRegistration() {
+        alert('ปิดรับสมัครแล้ว'); // delete
+    }
+//     function handleEndRegistration() {
+//     alert('ปิดรับสมัครแล้ว');  // แค่ alert ไม่ได้บันทึกจริง
+// }
+//     async function handleEndRegistration() {
+//         const eventId = document.getElementById('eventId').value;
+
+//         const res = await fetch('/Event/EndRegistration/' + eventId, { 
+//             method: 'POST' 
+//         });
+
+//         if (res.ok) {
+//             // อาจ redirect หรือเปลี่ยน UI
+//             alert('ปิดรับสมัครแล้ว');
+//         }
+//     }
+
+    function handleEditEvent() {
+        const eventId = document.getElementById('eventId')?.value;
+        if (!eventId) {
+            return;
+        }
+
+        window.location.href = '/Event/Edit/' + encodeURIComponent(eventId);
+    }
+
+    const joinQuestions = [
+        { id: 1, question: "ทำไมถึงอยากร่วมทริป ?" },
+        // const joinQuestions = await fetch('/Event/Questions/' + eventId).then(r => r.json());
+    ];
 
     function openJoinModal() {
         const joinModal = document.getElementById('joinModal');

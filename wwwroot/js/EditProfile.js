@@ -2,16 +2,13 @@ function previewImage(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function (e) {
-            // Find the profile picture container
             var container = document.querySelector('.ProfilePicture');
             var existingImg = container.querySelector('.ProfileImage');
             var svg = container.querySelector('svg');
 
             if (existingImg) {
-                // UPDATE the existing image source
                 existingImg.src = e.target.result;
             } else {
-                // If it was an SVG before, replace it with an IMG tag
                 container.innerHTML = '<img class="ProfileImage" src="' + e.target.result + '"/>';
             }
         };
@@ -29,13 +26,10 @@ function showTagInput() {
     input.type = 'text';
     input.className = 'TagInput';
     input.placeholder = 'TAG...';
-    input.maxLength = 15; // Set your MAX INPUT here
+    input.maxLength = 15;
 
-    // This logic ensures the box is always slightly wider than the text
     input.oninput = function() {
-        // Reset width to small so it can shrink if you delete text
         this.style.width = '20px'; 
-        // Set width to the actual content size + some extra padding space
         this.style.width = (this.scrollWidth + 10) + 'px'; 
     };
 
@@ -62,16 +56,13 @@ function finalizeTag(text) {
     const tagList = document.getElementById('tagList');
     const btn = document.getElementById('addTagBtn');
 
-    // --- DUPLICATE CHECK ---
-    // Check all existing hidden inputs to see if the tag is already there
     const existingTags = Array.from(tagList.querySelectorAll('input[name="user_tag"]'))
                               .map(input => input.value.toUpperCase());
 
     if (existingTags.includes(uppercaseTag)) {
         alert("This tag already exists!");
-        return; // Stop here and don't add the tag
+        return;
     }
-    // -----------------------
 
     const newTag = document.createElement('div');
     newTag.className = 'Tag';
@@ -92,12 +83,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const notification = document.getElementById("statusNotification");
     
     if (notification) {
-        // 1. Slide down
         setTimeout(() => {
             notification.classList.add("show");
         }, 100);
 
-        // 2. Wait 3 seconds, then slide back up
         setTimeout(() => {
             notification.classList.remove("show");
         }, 3000);

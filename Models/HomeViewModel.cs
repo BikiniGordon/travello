@@ -14,7 +14,7 @@ namespace Travello.Models
 
         public string event_title { get; set; } = null!; 
         
-        public string location { get; set; } 
+        public string location { get; set; } = null!;
         
         public DateTime? start_date { get; set; } = null!; 
         public DateTime? end_date { get; set; } = null!; 
