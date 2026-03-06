@@ -1,38 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;       // Required for Builders and ReplaceOne
+using MongoDB.Driver;
 using Travello.Models;
 using Travello.Services;
 using System.Security.Cryptography;
 using System.Text;
-using System.IO;            // Required for File handling
 
 namespace Travello.Controllers
 {
     public class UserController : Controller
     {
         private readonly IMongoCollection<EditProfileViewModel> _userCollection;
-        private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IImageUploadService _imageUploadService;
 
-        public UserController(IMongoDatabase database, IWebHostEnvironment hostEnvironment, IImageUploadService imageUploadService)
+        public UserController(IMongoDatabase database, IImageUploadService imageUploadService)
         {
             _userCollection = database.GetCollection<EditProfileViewModel>("User");
-            _hostEnvironment = hostEnvironment;
             _imageUploadService = imageUploadService;
         }
 
-        // 1. This shows the empty form when you go to /User/CreateAccount
         [HttpGet]
         public IActionResult CreateAccount()
         {
-            // Initialize the model with a default tag list so the View doesn't crash
             var model = new CreateAccountViewModel {
                 user_tag = new List<string>()
             };
             return View(model);
         }
 
-        // 2. This handles the "UPDATE" (Submit) button click
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel newUser, CancellationToken cancellationToken)
         {
@@ -45,11 +39,8 @@ namespace Travello.Controllers
             
             try
             {
-                // FIX: Get a local reference typed to CreateAccountViewModel
-                // This avoids the conversion error and doesn't break EditProfile
                 var registrationCollection = _userCollection.Database.GetCollection<CreateAccountViewModel>("User");
 
-                // 1. Duplicate check using the local reference
                 var existingUser = await registrationCollection
                     .Find(u => u.username == newUser.username)
                     .FirstOrDefaultAsync(cancellationToken);
@@ -63,7 +54,6 @@ namespace Travello.Controllers
                     return View(newUser);
                 }
 
-                // 2. NATIVE HASHING (No libraries)
                 using (SHA256 sha256Hash = SHA256.Create())
                 {
                     byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(newUser.password));
@@ -75,25 +65,18 @@ namespace Travello.Controllers
                     newUser.password = builder.ToString();
                 }
 
-                // 3. Image Upload logic stays the same... 
                 if (newUser.ProfileImageUpload != null && newUser.ProfileImageUpload.Length > 0)
                 {
                     newUser.profile_img_path = await _imageUploadService.UploadProfileImageAsync(newUser.ProfileImageUpload, cancellationToken);
                 }
 
-                // 4. Save to MongoDB using the local reference
+                newUser.event_id = new List<string>();
+
                 await registrationCollection.InsertOneAsync(newUser, null, cancellationToken);
 
                 TempData["StatusMessage"] = "Account created successfully!";
                 TempData["StatusType"] = "success";
-
-                ModelState.Clear();
-
-                var emptyModel = new CreateAccountViewModel {
-                    user_tag = new List<string>()  
-                };
-
-                return View("CreateAccount", emptyModel);
+                return RedirectToAction("CreateAccount");
             }
             catch (Exception)
             {
@@ -105,17 +88,13 @@ namespace Travello.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
-            // 1. Get the logged-in User's ID from the session
             var loggedInUserId = HttpContext.Session.GetString("UserId");
 
-            // 2. Security Check: If no ID is found, they aren't logged in
             if (string.IsNullOrEmpty(loggedInUserId))
             {
-                // Redirect to Home or show a message
                 return RedirectToAction("Index", "Home");
             }
 
-            // 3. Find the actual user in MongoDB using their unique ID
             var user = await _userCollection.Find(u => u.user_id == loggedInUserId).FirstOrDefaultAsync();
             
             if (user == null)
@@ -132,7 +111,6 @@ namespace Travello.Controllers
 
             var loggedInUserId = HttpContext.Session.GetString("UserId");
     
-            // Safety check: Ensure the user is editing their OWN profile
             if (string.IsNullOrEmpty(loggedInUserId) || updatedUser.user_id != loggedInUserId)
             {
                 return Unauthorized();
@@ -158,7 +136,6 @@ namespace Travello.Controllers
             var existingUser = await _userCollection.Find(u => u.user_id == updatedUser.user_id).FirstOrDefaultAsync();
             if (existingUser == null) return NotFound();
 
-            // --- NEW CLOUDINARY IMAGE HANDLING ---
             if (updatedUser.ProfileImageUpload != null && updatedUser.ProfileImageUpload.Length > 0)
             {
                 try 
@@ -176,11 +153,9 @@ namespace Travello.Controllers
             }
             else
             {
-                // 3. Keep the old image URL if no new one was uploaded
                 updatedUser.profile_img_path = existingUser.profile_img_path;
             }
             
-            // --- Tag Handling ---
             if (updatedUser.user_tag != null)
             {
                 updatedUser.user_tag = updatedUser.user_tag
@@ -189,8 +164,9 @@ namespace Travello.Controllers
                     .ToList();
             }
 
-            // --- Final Save & Notification ---
             updatedUser.user_id = existingUser.user_id;
+            updatedUser.password = existingUser.password; 
+            updatedUser.event_id = existingUser.event_id;
 
             try 
             {
@@ -215,17 +191,14 @@ namespace Travello.Controllers
         {
             try
             {
-                // 1. Get the collection using the model that INCLUDES the password
                 var fullUserCollection = _userCollection.Database.GetCollection<CreateAccountViewModel>("User");
 
-                // 2. Fetch only the fields needed for login (Projection)
                 var user = await fullUserCollection.Find(u => u.username == username)
                     .Project(u => new { u.username, u.password, u.user_id, u.profile_img_path })
                     .FirstOrDefaultAsync();
 
                 if (user != null)
                 {
-                    // 3. Hash the input password to compare with DB
                     string hashedInputPassword;
                     using (SHA256 sha256Hash = SHA256.Create())
                     {
@@ -235,7 +208,6 @@ namespace Travello.Controllers
                         hashedInputPassword = builder.ToString();
                     }
 
-                    // 4. Compare
                     if (user.password == hashedInputPassword)
                     {
                         HttpContext.Session.SetString("Username", user.username);
@@ -258,7 +230,7 @@ namespace Travello.Controllers
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Removes everything from session
+            HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
     }
