@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Travello.Models;
 using Travello.Services;
 
@@ -16,7 +17,7 @@ public class NotificationController : Controller
     [HttpGet]
     public async Task<IActionResult> MyNotifications()
     {
-        var userId = ResolveCurrentUserId(Request.Query["demoUserId"].ToString());
+        var userId = ResolveCurrentUserId();
         if (string.IsNullOrWhiteSpace(userId))
         {
             return Json(Array.Empty<NotificationViewModel>());
@@ -47,19 +48,20 @@ public class NotificationController : Controller
             return BadRequest();
         }
 
-        var userId = ResolveCurrentUserId(request.DemoUserId);
+        var userId = ResolveCurrentUserId();
         if (string.IsNullOrWhiteSpace(userId))
         {
-            return BadRequest("demoUserId is required.");
+            return Unauthorized();
         }
 
         await _notificationService.MarkAsReadAsync(request.NotificationId, userId, HttpContext.RequestAborted);
         return Ok();
     }
 
-    private string? ResolveCurrentUserId(string? demoUserId = null)
+    private string? ResolveCurrentUserId()
     {
-        return string.IsNullOrWhiteSpace(demoUserId) ? null : demoUserId.Trim();
+        var sessionUserId = HttpContext.Session.GetString("UserId");
+        return string.IsNullOrWhiteSpace(sessionUserId) ? null : sessionUserId.Trim();
     }
 
     private static string ToRelativeTime(DateTime createdAtUtc)
@@ -112,5 +114,4 @@ public class NotificationController : Controller
 public class MarkNotificationAsReadRequest
 {
     public string NotificationId { get; set; } = string.Empty;
-    public string? DemoUserId { get; set; }
 }
