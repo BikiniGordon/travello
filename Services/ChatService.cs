@@ -52,12 +52,12 @@ namespace Travello.Services
             var senderIds = messages.Select(m => m.sender_id).Distinct().ToList();
             var users = await _users.Find(u => senderIds.Contains(u.id)).ToListAsync();
 
-            // 3. ประกอบร่างใส่ลงใน DTO (ไม่ใช้ object เปล่าๆ แล้ว)
             var chatHistory = messages.Select(msg => {
                 var sender = users.FirstOrDefault(u => u.id == msg.sender_id);
 
                 return new ChatHistoryResponse {
                     message_text = msg.message_text,
+                    image_url = msg.image_url,
                     timestamp = msg.timestamp,
                     sender_id = msg.sender_id,
                     sender_name = sender != null ? sender.username : "Unknown", 

@@ -207,6 +207,7 @@ body {
     height: 830px;
     width: 100%;
     overflow: hidden; 
+    transition: all 0.3s ease;
 }
 
 .chat-list {
@@ -219,6 +220,7 @@ body {
     gap: 16px;              
     z-index: 3;          
     padding-bottom: 350px;
+    transition: all 0.3s ease;
 }
 
 .chat-list::-webkit-scrollbar {
@@ -256,6 +258,7 @@ body {
     cursor: pointer;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     flex-shrink: 0;
+    transition: all 0.3s ease;
 }
 
 .event-image{

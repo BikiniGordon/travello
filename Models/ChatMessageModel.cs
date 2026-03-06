@@ -9,16 +9,12 @@ namespace Travello.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-
-        // 🌟 เติม ObjectId ให้ตัวเชื่อมทั้งสองตัว
         [BsonRepresentation(BsonType.ObjectId)]
         public string? chat_room_id { get; set; } 
-        
         [BsonRepresentation(BsonType.ObjectId)]
         public string? sender_id { get; set; } 
-        
-        public string? message_text { get; set; }       // เนื้อหาข้อความ
-        
+        public string? message_text { get; set; } 
+        public string? image_url { get; set; }
         public DateTime timestamp { get; set; } = DateTime.UtcNow; 
     }
 }
