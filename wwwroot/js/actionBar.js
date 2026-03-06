@@ -4,8 +4,7 @@
     const eventTitleEl = document.getElementById('actionBarTitle');
     const actionBarButtons = document.querySelector('.action-bar-buttons');
   
-    let userStatus = 'approved'; 
-    // const userStatus = document.getElementById('userStatus').value;
+    let userStatus = document.getElementById('userStatus')?.value || 'approved';
 
     function renderActionBar(status) {
         actionBarButtons.innerHTML = ''; //clear old botton
@@ -108,8 +107,12 @@
 //     }
 
     function handleEditEvent() {
-        // window.location.href = '/Event/Edit/' + eventId;
-        alert('ไปหน้าแก้ไข Event'); // delete
+        const eventId = document.getElementById('eventId')?.value;
+        if (!eventId) {
+            return;
+        }
+
+        window.location.href = '/Event/Edit/' + encodeURIComponent(eventId);
     }
 
     const joinQuestions = [

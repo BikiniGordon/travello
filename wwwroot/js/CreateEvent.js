@@ -153,6 +153,7 @@ function initializePhotoUpload() {
     const photoLinkToggleButton = document.getElementById('photoLinkToggleButton');
     const photoLinkSection = document.getElementById('photoLinkSection');
     const photoLinkInput = document.getElementById('photoLinkInput');
+    const initialPhotoUrlSeed = document.getElementById('initialPhotoUrlSeed');
 
     if (!uploadButton || !uploadInput || !photoPlaceholder) {
         return;
@@ -161,6 +162,11 @@ function initializePhotoUpload() {
     const showPreview = (imageUrl) => {
         photoPlaceholder.style.backgroundImage = `url('${imageUrl}')`;
     };
+
+    const initialPhotoUrl = initialPhotoUrlSeed?.value?.trim();
+    if (initialPhotoUrl) {
+        showPreview(initialPhotoUrl);
+    }
 
     uploadButton.addEventListener('click', () => {
         uploadInput.click();
@@ -218,6 +224,201 @@ function initializePhotoUpload() {
             }
         });
     }
+}
+
+// Parses JSON seed data rendered into a script tag.
+function readJsonSeed(scriptElementId, fallbackValue) {
+    const scriptElement = document.getElementById(scriptElementId);
+    if (!scriptElement) {
+        return fallbackValue;
+    }
+
+    const rawJson = scriptElement.textContent?.trim();
+    if (!rawJson) {
+        return fallbackValue;
+    }
+
+    try {
+        return JSON.parse(rawJson);
+    } catch {
+        return fallbackValue;
+    }
+}
+
+// Applies preselected category and custom tags when editing.
+function applyInitialCategoryAndTags() {
+    const categorySeed = document.getElementById('initialCategorySeed')?.value?.trim();
+    const tagsSeed = document.getElementById('initialTagsSeed')?.value?.trim();
+
+    if (categorySeed) {
+        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+        const normalizedCategory = categorySeed.toLowerCase();
+
+        Array.from(categoryButtons).forEach((button) => {
+            if (getTagButtonValue(button) === normalizedCategory) {
+                button.classList.add('is-selected');
+            }
+        });
+    }
+
+    if (tagsSeed) {
+        const customTags = tagsSeed
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0);
+
+        const customTagContainer = document.querySelector('.catagory-section .tags-container:last-of-type');
+        const addButton = customTagContainer?.querySelector('.tag-btn.add-btn');
+
+        if (!customTagContainer || !addButton) {
+            return;
+        }
+
+        customTags.forEach((tag) => {
+            const duplicatedTag = Array.from(customTagContainer.querySelectorAll('.tag-btn:not(.add-btn)')).some((button) => {
+                return getTagButtonValue(button) === tag.toLowerCase();
+            });
+
+            if (!duplicatedTag) {
+                const customTagButton = createCustomTagButton(tag);
+                customTagButton.classList.add('is-selected');
+                customTagContainer.insertBefore(customTagButton, addButton);
+            }
+        });
+    }
+}
+
+// Applies initial packing list rows in edit mode.
+function applyInitialPackingList() {
+    if (!importantPackRows) {
+        return;
+    }
+
+    const initialPackingItems = readJsonSeed('initialPackingListJsonSeed', []);
+    if (!Array.isArray(initialPackingItems) || initialPackingItems.length === 0) {
+        ensureTrailingEmptyPackRow();
+        return;
+    }
+
+    importantPackRows.innerHTML = '';
+
+    initialPackingItems.forEach((item) => {
+        const packRow = createPackRow();
+        const packInput = packRow.querySelector('.pack-input');
+        if (packInput) {
+            packInput.value = String(item ?? '').trim();
+        }
+        importantPackRows.appendChild(packRow);
+    });
+
+    ensureTrailingEmptyPackRow();
+}
+
+// Applies initial planner rows in edit mode.
+function applyInitialPlannerRows() {
+    if (!plannerDaysContainer) {
+        return;
+    }
+
+    const initialPlannerRows = readJsonSeed('initialPlannerJsonSeed', []);
+    if (!Array.isArray(initialPlannerRows) || initialPlannerRows.length === 0) {
+        createDay(1);
+        return;
+    }
+
+    plannerDaysContainer.innerHTML = '';
+
+    const dayMap = new Map();
+    initialPlannerRows.forEach((row) => {
+        const dayIndex = Number.isFinite(Number.parseInt(String(row?.dayIndex), 10))
+            ? Number.parseInt(String(row.dayIndex), 10)
+            : 1;
+
+        if (!dayMap.has(dayIndex)) {
+            dayMap.set(dayIndex, []);
+        }
+
+        dayMap.get(dayIndex).push(row);
+    });
+
+    const sortedDays = Array.from(dayMap.keys()).sort((left, right) => left - right);
+    sortedDays.forEach((dayNumber) => {
+        const dayElement = createDay(dayNumber);
+        const dayDateInput = dayElement.querySelector('.day-date-input');
+        const dayRows = dayMap.get(dayNumber) || [];
+        const rowsContainer = dayElement.querySelector('.planner-day-rows');
+        rowsContainer.innerHTML = '';
+
+        dayRows
+            .sort((left, right) => {
+                const leftPlace = Number.parseInt(String(left?.placeIndex ?? Number.MAX_SAFE_INTEGER), 10);
+                const rightPlace = Number.parseInt(String(right?.placeIndex ?? Number.MAX_SAFE_INTEGER), 10);
+                return leftPlace - rightPlace;
+            })
+            .forEach((row) => {
+                const planRow = createPlanRow();
+                const placeInput = planRow.querySelector('.planner-place-input');
+                const noteInput = planRow.querySelector('.planner-note-input');
+                const expenseWrap = planRow.querySelector('.planner-expense-wrap');
+
+                if (dayDateInput && row?.dayDate) {
+                    dayDateInput.value = row.dayDate;
+                }
+
+                if (placeInput) {
+                    placeInput.value = String(row?.placeName ?? '').trim();
+                }
+
+                if (row?.googleMapUrl) {
+                    planRow.dataset.googleMapUrl = String(row.googleMapUrl);
+                }
+
+                if (row?.latitude !== null && row?.latitude !== undefined && row?.longitude !== null && row?.longitude !== undefined) {
+                    planRow.dataset.markerLat = String(row.latitude);
+                    planRow.dataset.markerLng = String(row.longitude);
+                    planRow.dataset.markerName = String(row?.placeName ?? 'Location').trim();
+                }
+
+                const noteValue = String(row?.note ?? '').trim();
+                if (noteInput && noteValue) {
+                    noteInput.classList.remove('hidden');
+                    noteInput.value = noteValue;
+                    autoResize(noteInput);
+                }
+
+                const expenses = Array.isArray(row?.expenses) ? row.expenses : [];
+                if (expenseWrap && expenses.length > 0) {
+                    expenseWrap.classList.remove('hidden');
+                    expenses.forEach((expense) => {
+                        const expenseRow = createExpenseRow();
+                        const expenseNameInput = expenseRow.querySelector('.planner-expense-name-input');
+                        const expenseAmountInput = expenseRow.querySelector('.planner-expense-input');
+
+                        if (expenseNameInput) {
+                            expenseNameInput.value = String(expense?.name ?? '').trim();
+                        }
+
+                        if (expenseAmountInput && expense?.amount !== null && expense?.amount !== undefined) {
+                            expenseAmountInput.value = String(expense.amount);
+                        }
+
+                        expenseWrap.appendChild(expenseRow);
+                    });
+                }
+
+                rowsContainer.appendChild(planRow);
+            });
+
+        ensureTrailingEmptyRow(dayElement);
+    });
+
+    const lastDay = plannerDaysContainer.querySelector('.event-plan-day:last-of-type');
+    if (lastDay) {
+        ensureNextDay(lastDay);
+    }
+
+    recalculatePlaceNumbers();
+    updateTotalExpenses();
 }
 
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
@@ -1325,8 +1526,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePhotoUpload();
     initializeTagButtons();
     bindCreateEventFormSubmit();
+    applyInitialCategoryAndTags();
+    applyInitialPackingList();
 
     if (plannerDaysContainer) {
-        createDay(1);
+        applyInitialPlannerRows();
     }
 });
