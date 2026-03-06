@@ -38,10 +38,7 @@ public class EventDocument
     public string? Detail { get; set; }
 
     [BsonElement("location")]
-    public List<string> Location { get; set; } = new();
-
-    [BsonElement("locations")]
-    public List<LocationDocument> Locations { get; set; } = new();
+    public string Location { get; set; } = string.Empty;
 
     [BsonElement("start_date")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]

@@ -10,32 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const fallbackImage = '/images/notification.png';
-    const readStateStorageKey = 'travello.readNotifications';
-    const readNotificationIds = new Set();
+    const getNotificationsUrl = '/Notification/MyNotifications';
+    const markAsReadUrl = '/Notification/MarkAsRead';
     let notifications = [];
 
-    const loadReadState = () => {
-        try {
-            const stored = JSON.parse(localStorage.getItem(readStateStorageKey) || '[]');
-
-            if (!Array.isArray(stored)) {
-                return;
-            }
-
-            stored.forEach((id) => {
-                if (id) {
-                    readNotificationIds.add(String(id));
-                }
-            });
-        } catch {
-        }
+    const getDemoUserId = () => {
+        const queryValue = new URLSearchParams(window.location.search).get('demoUserId');
+        return queryValue && queryValue.trim() ? queryValue.trim() : '';
     };
 
-    const persistReadState = () => {
-        try {
-            localStorage.setItem(readStateStorageKey, JSON.stringify(Array.from(readNotificationIds)));
-        } catch {
+    const appendDemoUserId = (url, demoUserId) => {
+        if (!demoUserId) {
+            return url;
         }
+
+        const queryPrefix = url.includes('?') ? '&' : '?';
+        return `${url}${queryPrefix}demoUserId=${encodeURIComponent(demoUserId)}`;
     };
 
     const hashString = (value) => {
@@ -86,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrl: normalized.imageUrl || fallbackImage,
             status: normalizeStatus(normalized.status),
             url: normalized.url || '',
-            read: Boolean(normalized.read) || readNotificationIds.has(String(id))
+            read: Boolean(normalized.read)
         };
     };
 
@@ -183,6 +173,48 @@ document.addEventListener('DOMContentLoaded', () => {
         renderNotifications();
     };
 
+    const createMarkAsReadPayload = (notificationId) => {
+        const demoUserId = getDemoUserId();
+        if (!demoUserId) {
+            return null;
+        }
+
+        return {
+            notificationId,
+            demoUserId
+        };
+    };
+
+    const persistReadStatus = (notificationId) => {
+        if (!notificationId) {
+            return;
+        }
+
+        const payload = createMarkAsReadPayload(notificationId);
+        if (!payload) {
+            return;
+        }
+
+        if (navigator.sendBeacon) {
+            const body = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+            const sent = navigator.sendBeacon(markAsReadUrl, body);
+
+            if (sent) {
+                return;
+            }
+        }
+
+        fetch(markAsReadUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            keepalive: true
+        }).catch(() => {
+        });
+    };
+
     const markNotificationAsRead = (index) => {
         if (index < 0 || index >= notifications.length) {
             return;
@@ -195,9 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         notification.read = true;
-        readNotificationIds.add(String(notification.id));
-        persistReadState();
         renderNotifications();
+
+        if (notification.id) {
+            persistReadStatus(notification.id);
+        }
     };
 
     window.NotificationPopup = {
@@ -206,6 +240,18 @@ document.addEventListener('DOMContentLoaded', () => {
         clearNotifications,
         removeNotification,
         markNotificationAsRead,
+        setDemoUserId: (demoUserId) => {
+            const normalized = String(demoUserId || '').trim();
+            if (!normalized) {
+                return;
+            }
+
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('demoUserId', normalized);
+            window.history.replaceState({}, '', currentUrl.toString());
+
+            loadNotifications();
+        },
         getNotifications: () => [...notifications]
     };
 
@@ -286,6 +332,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadReadState();
-    setNotifications(initialItems);
+    const loadNotifications = async () => {
+        const demoUserId = getDemoUserId();
+        try {
+            const response = await fetch(appendDemoUserId(getNotificationsUrl, demoUserId), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load notifications.');
+            }
+
+            const serverItems = await response.json();
+            setNotifications(serverItems);
+        } catch {
+            setNotifications(initialItems);
+        }
+    };
+
+    loadNotifications();
 });
