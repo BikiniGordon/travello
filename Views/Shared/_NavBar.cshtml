@@ -1,6 +1,11 @@
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 
+@{
+    var isLoggedIn = Context.Session.GetString("UserId") != null;
+    var createEventUrl = Url.Action("Index", "CreateEvent") ?? "/CreateEvent";
+}
+
 <nav class="NavBar">
 
     <button class="HomePage" onclick="window.location.href='@Url.Action("Index", "Home")'">
@@ -10,7 +15,7 @@
     </button>
     
     <div class="RightNav">
-        <button type="button" class="CreateEvent" onclick="window.location.href='@Url.Action("Index", "CreateEvent")'">
+        <button type="button" class="CreateEvent" data-create-event-url="@createEventUrl" data-is-authenticated="@isLoggedIn.ToString().ToLowerInvariant()">
             <div class="InsiderCreateEvent">
                 <div class="PlusIcon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">

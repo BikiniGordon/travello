@@ -150,10 +150,17 @@ function initializePhotoUpload() {
     const uploadButton = document.getElementById('uploadPhotoButton');
     const uploadInput = document.getElementById('uploadPhotoInput');
     const photoPlaceholder = document.querySelector('.photo-placeholder');
+    const photoLinkToggleButton = document.getElementById('photoLinkToggleButton');
+    const photoLinkSection = document.getElementById('photoLinkSection');
+    const photoLinkInput = document.getElementById('photoLinkInput');
 
     if (!uploadButton || !uploadInput || !photoPlaceholder) {
         return;
     }
+
+    const showPreview = (imageUrl) => {
+        photoPlaceholder.style.backgroundImage = `url('${imageUrl}')`;
+    };
 
     uploadButton.addEventListener('click', () => {
         uploadInput.click();
@@ -173,9 +180,44 @@ function initializePhotoUpload() {
             return;
         }
 
+        if (photoLinkInput) {
+            photoLinkInput.value = '';
+        }
+
         const objectUrl = URL.createObjectURL(selectedFile);
-        photoPlaceholder.style.backgroundImage = `url('${objectUrl}')`;
+        showPreview(objectUrl);
     });
+
+    if (photoLinkToggleButton && photoLinkSection) {
+        photoLinkToggleButton.addEventListener('click', () => {
+            photoLinkSection.classList.toggle('hidden');
+            if (!photoLinkSection.classList.contains('hidden') && photoLinkInput) {
+                photoLinkInput.focus();
+            }
+        });
+    }
+
+    if (photoLinkInput) {
+        photoLinkInput.addEventListener('input', () => {
+            const rawValue = photoLinkInput.value.trim();
+            if (!rawValue) {
+                return;
+            }
+
+            try {
+                const parsedUrl = new URL(rawValue);
+                if (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') {
+                    if (uploadInput.value) {
+                        uploadInput.value = '';
+                    }
+
+                    showPreview(parsedUrl.href);
+                }
+            } catch {
+                // Ignore invalid URL while typing.
+            }
+        });
+    }
 }
 
 const plannerDaysContainer = document.getElementById('eventPlannerDays');
@@ -366,6 +408,7 @@ function bindCreateEventFormSubmit() {
     const plannerInput = document.getElementById('plannerJsonInput');
     const packingListInput = document.getElementById('packingListJsonInput');
     const uploadPhotoButton = document.getElementById('uploadPhotoButton');
+    const photoLinkInput = form.querySelector('input[name="PhotoLink"]');
     const attendeesLimitInput = form.querySelector('input[name="AttendeesLimit"]');
     const startDateInput = form.querySelector('input[name="StartDate"]');
     const startTimeInput = form.querySelector('input[name="StartTime"]');
@@ -517,6 +560,34 @@ function bindCreateEventFormSubmit() {
         return isValid;
     }
 
+    function validatePhotoLinkFormat() {
+        if (!photoLinkInput) {
+            return true;
+        }
+
+        const rawValue = photoLinkInput.value.trim();
+        if (rawValue === '') {
+            setValidationMessage('PhotoLink', '');
+            return true;
+        }
+
+        try {
+            const parsedUrl = new URL(rawValue);
+            const isHttp = parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+
+            if (!isHttp) {
+                setValidationMessage('PhotoLink', 'Photo link must start with http:// or https://.');
+                return false;
+            }
+
+            setValidationMessage('PhotoLink', '');
+            return true;
+        } catch {
+            setValidationMessage('PhotoLink', 'Photo link must be a valid URL.');
+            return false;
+        }
+    }
+
     requiredFieldConfigs.forEach((config) => {
         const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
         config.input.addEventListener('blur', () => {
@@ -551,7 +622,8 @@ function bindCreateEventFormSubmit() {
         const requiredValid = validateAllRequiredFields();
         const attendeesValid = validateAttendeesLimitFormat();
         const dateOrderingValid = validateDateOrdering();
-        const isValid = requiredValid && attendeesValid && dateOrderingValid;
+        const photoLinkValid = validatePhotoLinkFormat();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid;
 
         if (!isValid) {
             event.preventDefault();
@@ -574,6 +646,10 @@ function bindCreateEventFormSubmit() {
                 if (endDateInput && getValidationMessageElement('EndDate')?.textContent) {
                     endDateInput.focus();
                 }
+            }
+
+            if (!photoLinkValid && photoLinkInput) {
+                photoLinkInput.focus();
             }
 
             return;
@@ -673,6 +749,11 @@ function bindCreateEventFormSubmit() {
             input.addEventListener('change', validateDateOrdering);
             input.addEventListener('blur', validateDateOrdering);
         });
+
+    if (photoLinkInput) {
+        photoLinkInput.addEventListener('input', validatePhotoLinkFormat);
+        photoLinkInput.addEventListener('blur', validatePhotoLinkFormat);
+    }
 }
 
 // Initializes the Leaflet map, tile layer, and default marker.
