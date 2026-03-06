@@ -29,5 +29,12 @@ namespace Travello.Services
             // สั่งอัปเดตลงตาราง chat_rooms โดยหาจาก Id ของห้องแชท
             await _chatRooms.UpdateOneAsync(chat => chat.id == chatid, update);
         }
+
+        // เพิ่มฟังก์ชันนี้ต่อท้ายฟังก์ชันเดิมใน ChatService.cs
+        public async Task SaveMessageAsync(ChatMessageModel newMessage)
+        {
+            // บันทึกข้อความลง Collection "messages"
+            await _messages.InsertOneAsync(newMessage);
+        }
     }
 }

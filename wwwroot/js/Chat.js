@@ -208,3 +208,31 @@ function setupPollTimeDropdowns() {
         minuteSelect.innerHTML += `<option value="${min}">${min}</option>`;
     }
 }
+
+function sendMessage() {
+    const inputField = document.getElementById('message-input');
+    const messageText = inputField.value.trim();
+
+    if (messageText === "") return;
+
+    const bubbleHtml = `
+        <div class="message-row" style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+            <div class="message-bubble text-sm font-regular" style="background-color: #CEE7E6; color: #000; padding: 12px 16px; border-radius: 20px; border-top-right-radius: 4px; max-width: 60%; word-wrap: break-word;">
+                ${messageText}
+            </div>
+        </div>
+    `;
+
+    const chatBody = document.getElementById('chat-body');
+    chatBody.insertAdjacentHTML('beforeend', bubbleHtml);
+
+    inputField.value = "";
+
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function handleEnterPress(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+}

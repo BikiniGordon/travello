@@ -200,14 +200,49 @@ body {
     text-overflow: ellipsis;
 }
 
-.chat-list {
+.chat-list-container {
     position: absolute;
     top: 145px;          
-    left: 64px;          
+    left: 64px;   
+    height: 830px;
+    width: 100%;
+    overflow: hidden; 
+}
+
+.chat-list {
+    /* top: 145px;          
+    left: 64px;           */
+    height: 100%;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 16px;              
     z-index: 3;          
+    padding-bottom: 350px;
+}
+
+.chat-list::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.scroll-blur-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 521px;
+    
+    /* 🌟 ความสูง 200px จะคลุมประมาณ 1-2 การ์ดสุดท้ายพอดีครับ (ปรับเพิ่มลดได้) */
+    height: 350px; 
+    pointer-events: none; 
+    z-index: 10; 
+    
+    /* 🌟 1. สั่งเบลออย่างเดียว (ให้เหมือนใช้ filter: blur) */
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    
+    /* 🌟 2. ไล่ระดับการเบลอ: ให้ข้างล่างเบลอสุด แล้วข้างบนค่อยๆ ใสปิ๊ง */
+    -webkit-mask-image: linear-gradient(to top, black 10%, transparent 100%);
+    mask-image: linear-gradient(to top, black 10%, transparent 100%);
 }
 
 .chat-card{
@@ -220,6 +255,7 @@ body {
     z-index: 3;
     cursor: pointer;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    flex-shrink: 0;
 }
 
 .event-image{
@@ -271,12 +307,6 @@ body {
 .path-icon{
     width: 18px;
     height: 18px;
-}
-
-.chat-list .chat-card:nth-child(4) {
-    filter: blur(2px);
-    pointer-events: none;
-    /* transition: all 0.3s ease; */
 }
 
 #empty-room{
@@ -983,6 +1013,7 @@ body {
     right: 64px;
     z-index: 3;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    transition: all 0.3s ease;
 }
 
 #chat-room-header {
@@ -1047,7 +1078,7 @@ body {
     overflow-y: auto; 
     display: flex;
     flex-direction: column;
-    gap: 42px; /* ระยะห่างระหว่างข้อความ */
+    gap: 12px; 
 }
 
 .message-row {
@@ -1170,6 +1201,7 @@ body {
     gap: 16px;
     height: 70px;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .input-actions {
@@ -1192,10 +1224,19 @@ body {
     outline: none;
     font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     color: #333;
+    min-width: 0;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+
 }
 
 #message-input::placeholder {
     color: #888;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+
 }
 
 .send-btn {
@@ -1208,6 +1249,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .send-btn img {
@@ -1222,13 +1264,24 @@ body {
         width: 320px; 
         left: 24px; 
     }
-    .chat-list { 
-        left: 24px; 
+
+    .chat-list-container {
+        position: absolute;
+        top: 145px;          
+        left: 24px;   
+        height: 680px;
+        width: 100%;
+        overflow: hidden; 
     }
-    
+
     .chat-card { 
         width: 320px; 
         height: 120px;
+    }
+
+    .scroll-blur-overlay {
+        width: 320px;
+        height: 300px;
     }
 
     .event-image {
@@ -1287,9 +1340,13 @@ body {
 
     .chat-list, #chat-list { 
         display: flex ; 
-        width: calc(100% - 48px); ; 
+        width: calc(100% - 48px);
         gap: 16px;
         box-sizing: border-box;
+    }
+
+    .scroll-blur-overlay {
+        width: calc(100% - 48px);
     }
 
     .chat-card { 

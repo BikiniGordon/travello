@@ -12,7 +12,7 @@ namespace Travello.Models
 
         // 🌟 เติม ObjectId ให้ตัวเชื่อมทั้งสองตัว
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? event_id { get; set; } 
+        public string? chat_room_id { get; set; } 
         
         [BsonRepresentation(BsonType.ObjectId)]
         public string? sender_id { get; set; } 
