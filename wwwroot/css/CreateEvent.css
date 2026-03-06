@@ -329,6 +329,27 @@ textarea[data-font-weight="bold"]::placeholder {
     align-self: center;
 }
 
+.photo-link-toggle {
+    align-self: center;
+    margin-top: var(--space-sm);
+    border: none;
+    background: transparent;
+    color: #2f5d41;
+    opacity: 0.65;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.photo-link-section {
+    width: 100%;
+    margin-top: var(--space-sm);
+}
+
+.photo-link-input {
+    border: 1px solid var(--accent);
+    padding: var(--space-sm);
+}
+
 .event-info-header {
     display: flex;
     flex-direction: column;

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 using System.Globalization;
 using System.Text.Json;
@@ -28,6 +29,13 @@ namespace Travello.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(CreateEventInputModel input)
         {
+            var createdByUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrWhiteSpace(createdByUserId))
+            {
+                TempData["CreateEventError"] = "Please log in before creating an event.";
+                return RedirectToAction(nameof(Index), "CreateEvent");
+            }
+
             var attendeesLimitRaw = Request.Form[nameof(input.AttendeesLimit)].ToString();
             int? attendeesLimit = null;
             const long maxImageSizeBytes = 10 * 1024 * 1024;
@@ -43,6 +51,12 @@ namespace Travello.Controllers
                 {
                     ModelState.AddModelError("UploadPhoto", "Upload photo must be 10 MB or smaller.");
                 }
+            }
+
+            var normalizedPhotoLink = input.PhotoLink?.Trim();
+            if (!string.IsNullOrWhiteSpace(normalizedPhotoLink) && !IsValidHttpUrl(normalizedPhotoLink))
+            {
+                ModelState.AddModelError(nameof(input.PhotoLink), "Photo link must be a valid http:// or https:// URL.");
             }
 
             if (string.IsNullOrWhiteSpace(input.EventTitle))
@@ -163,6 +177,10 @@ namespace Travello.Controllers
                 }
             }
 
+            var eventImagePath = !string.IsNullOrWhiteSpace(uploadedImageUrl)
+                ? uploadedImageUrl
+                : normalizedPhotoLink;
+
             var tags = (input.TagsCsv ?? string.Empty)
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -235,14 +253,15 @@ namespace Travello.Controllers
                 EndDate = endDate,
                 OpenDate = openDate,
                 EventTag = normalizedTags,
-                EventImgPath = uploadedImageUrl,
+                EventImgPath = eventImagePath,
                 TripRules = input.TripRules,
                 RecruitQuestion = input.RecruitQuestion,
                 Attendees = 0,
                 AttendeesLimit = attendeesLimit,
                 Itinerary = itinerary,
                 PackingList = packingList,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = createdByUserId
             };
 
             try
@@ -341,6 +360,16 @@ namespace Travello.Controllers
             {
                 return new List<string>();
             }
+        }
+
+        private static bool IsValidHttpUrl(string value)
+        {
+            if (!Uri.TryCreate(value, UriKind.Absolute, out var parsedUri))
+            {
+                return false;
+            }
+
+            return parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps;
         }
     }
 }
