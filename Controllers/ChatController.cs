@@ -9,21 +9,18 @@ namespace Travello.Controllers
     {
         private readonly ChatService _chatService;
         private readonly IMongoCollection<UserModel> _usersCollection;
-        // 🌟 1. เพิ่มตัวแปรเชื่อมต่อตาราง events
         private readonly IMongoCollection<EventModel> _eventsCollection;
 
         public ChatController(ChatService chatService, IMongoDatabase database)
         {
             _chatService = chatService;
             _usersCollection = database.GetCollection<UserModel>("User");
-            // 🌟 2. ชี้ไปที่ตาราง events ใน Database
             _eventsCollection = database.GetCollection<EventModel>("events"); 
         }
 
         public async Task<IActionResult> Index()
         {
-            // ดึง User จำลอง
-            string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear
+            string mockUserId = ""; // Dear
             // string mockUserId = "69a9d2663daa971a33606eae"; // Dear_02
 
             var currentUser = await _usersCollection
@@ -35,21 +32,17 @@ namespace Travello.Controllers
                 return View(new List<ChatRoomModel>());
             }
 
-            // ไปหาห้องแชททั้งหมด
             List<string> myEventIds = currentUser.event_id;
             List<ChatRoomModel> myChats = await _chatService.GetUserChatsAsync(myEventIds);
 
-            // 🌟 3. พระเอกอยู่ตรงนี้: วนลูปเอา event_title มาใส่เป็นชื่อห้องแชท
             foreach (var chat in myChats)
             {
                 if (chat.event_id != null)
                 {
-                    // ไปค้นหาทริปที่มี Id ตรงกับ event_id ของห้องแชทนี้
                     var eventInfo = await _eventsCollection
                         .Find(event_obj => event_obj.id == chat.event_id)
                         .FirstOrDefaultAsync();
 
-                    // ถ้าเจอทริป ก็เอาชื่อทริปมาทับ chat_name เลย
                     if (eventInfo != null && chat.chat_name != eventInfo.event_title)
                     {
                         chat.chat_name = eventInfo.event_title;

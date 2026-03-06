@@ -1,10 +1,11 @@
-const currentEventId = "trip-01"; 
-const currentUserId = "Me"; 
+let current_event_id = "";
+let current_chat_room_id = "";
 
-function openChatRoom(event_id, chat_name){
+function openChatRoom(event_id, chat_name, chat_room_id){
     //เอา event_id ไปหา chat เพื่อดึง
     // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
-    curr_room_id = event_id;
+    current_event_id = event_id;
+    current_chat_room_id = chat_room_id;
 
     document.getElementById('empty-room').style.display = 'none';
     document.getElementById('setting-room').style.display = 'none';
@@ -16,8 +17,7 @@ function openChatRoom(event_id, chat_name){
     document.getElementById('setting-event-status').innerText = event_id;
 }
 
-function openSettingChatRoom(event_id){
-    curr_room_id = event_id;
+function openSettingChatRoom(){
 
     document.getElementById('chat-room').style.display = 'none';
     document.getElementById('empty-room').style.display = 'none';
@@ -26,8 +26,7 @@ function openSettingChatRoom(event_id){
     document.getElementById('setting-event-title').innerText = chat_name;
 }
 
-function backChatRoom(event_id){
-    curr_room_id = event_id;
+function backChatRoom(){
 
     document.getElementById('chat-room').style.display = 'flex';
     document.getElementById('empty-room').style.display = 'none';
@@ -36,8 +35,7 @@ function backChatRoom(event_id){
     document.getElementById('chat-room-title').innerText = chat_name;
 }
 
-function openPollRoom(event_id) {
-    currentPollEventId = event_id;
+function openPollRoom() {
 
     document.getElementById('empty-room').style.display = 'none';
     document.getElementById('chat-room').style.display = 'none';
@@ -64,24 +62,23 @@ function openPollRoom(event_id) {
         .catch(error => console.error("Error fetching polls:", error));
     */
 
-    let mockData = [];
+    // let mockData = [];
     
     // สมมติว่าถ้า event_id เป็น 1 หรือ "trip-01" จะมีโพลโชว์
-    if (event_id === 1) { 
-        mockData = [
-            { question: "What will we eat the morning of the trip?", winner: "Ramen", time_left: "5 hours", percent: 40 },
-            { question: "Where should we stay on the second night?", winner: "Tent", time_left: "Ended", percent: 85 }
-        ];
-    } 
+    // if (event_id === 1) { 
+    //     mockData = [
+    //         { question: "What will we eat the morning of the trip?", winner: "Ramen", time_left: "5 hours", percent: 40 },
+    //         { question: "Where should we stay on the second night?", winner: "Tent", time_left: "Ended", percent: 85 }
+    //     ];
+    // } 
     // ถ้าเป็น event_id อื่นๆ mockData จะว่างเปล่า [] และไปเข้าเงื่อนไขแสดง Empty แทน
 
-    renderPollCards(mockData); // ส่งข้อมูลไปให้ฟังก์ชันวาดการ์ด
+    // renderPollCards(mockData); // ส่งข้อมูลไปให้ฟังก์ชันวาดการ์ด
 
     // =======================================================
     // 🎨 6. ฟังก์ชันซ้อน (Helper) สำหรับวาดการ์ดโพลลงจอ
     // =======================================================
     function renderPollCards(data) {
-        pollBodyBox.innerHTML = ''; // ล้างคำว่า "กำลังโหลด..." ทิ้ง
 
         if (!data || data.length === 0) {
             // กรณีไม่มีโพล: โชว์กล่อง Empty
@@ -123,9 +120,7 @@ function closeChatRoomMobile() {
     document.getElementById('chat-room').style.display = 'none';
 }
 
-function backSettingRoom(event_id){
-    curr_room_id = event_id
-
+function backSettingRoom(){
     document.getElementById('setting-room').style.display = 'flex';
     document.getElementById('all-poll-room').style.display = 'none';
 }
@@ -172,20 +167,19 @@ function openPollCard(event_id, poll_id, questionText) {
     });
 }
 
-// 🌟 2. ฟังก์ชันกดย้อนกลับไปหน้ารวมโพล
-function backToAllPolls(event_id) {
+function backToAllPolls() {
     document.getElementById('poll-select-card').style.display = 'none';
     document.getElementById('all-poll-room').style.display = 'flex';
 }
 
-function openCreatePoll(event_id){
+function openCreatePoll(){
     document.getElementById('all-poll-room').style.display = 'none';
     document.getElementById('create-poll-page').style.display = 'flex';
     setupPollTimeDropdowns(); 
 
 }
 
-function backAllPollRoom(event_id){
+function backAllPollRoom(){
     document.getElementById('all-poll-room').style.display = 'flex';
     document.getElementById('create-poll-page').style.display = 'none';
 }
@@ -194,22 +188,18 @@ function setupPollTimeDropdowns() {
     const hourSelect = document.getElementById('poll-hour-select');
     const minuteSelect = document.getElementById('poll-minute-select');
 
-    // วนลูปสร้าง ชั่วโมง 00 ถึง 23
     for (let i = 0; i < 24; i++) {
-        // padStart(2, '0') คือการเติมเลข 0 ข้างหน้าถ้าเป็นเลขหลักเดียว (เช่น 01, 02)
         let hr = i.toString().padStart(2, '0');
         hourSelect.innerHTML += `<option value="${hr}">${hr}</option>`;
     }
 
-    // วนลูปสร้าง นาที (สมมติให้เลือกทีละ 15 นาที เพื่อความสะดวก: 00, 15, 30, 45)
-    // ถ้าอยากให้มีทุกนาทีก็เปลี่ยนเงื่อนไขเป็น i < 60; i++ ได้เลยครับ
     for (let i = 0; i < 60; i += 1) {
         let min = i.toString().padStart(2, '0');
         minuteSelect.innerHTML += `<option value="${min}">${min}</option>`;
     }
 }
 
-function sendMessage() {
+async function sendMessage() {
     const inputField = document.getElementById('message-input');
     const messageText = inputField.value.trim();
 
@@ -229,6 +219,32 @@ function sendMessage() {
     inputField.value = "";
 
     chatBody.scrollTop = chatBody.scrollHeight;
+
+    try {
+        const response = await fetch('http://localhost:5123/ChatMessage/SendMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json' // บอก Backend ว่าส่ง JSON ไปนะ
+            },
+            body: JSON.stringify({
+                chat_room_id: current_chat_room_id, 
+                sender_id: '69a9afc35f16b10cdb2b5079',
+                message_text: messageText
+            })
+        });
+
+        const result = await response.json();
+        
+        if (!result.success) {
+            console.error("เซฟลง DB ไม่สำเร็จ!");
+            // เผื่ออนาคตอยากทำ UI โชว์เครื่องหมายตกใจสีแดงข้างๆ ข้อความที่ส่งไม่ผ่าน
+        } else {
+            console.log("เซฟข้อความลง DB เรียบร้อย!");
+        }
+
+    } catch (error) {
+        console.error("เชื่อมต่อ Backend ไม่สำเร็จ:", error);
+    }
 }
 
 function handleEnterPress(event) {

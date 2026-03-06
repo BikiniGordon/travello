@@ -8,6 +8,10 @@ LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromHours(2); // ตั้งเวลาหมดอายุ Session (เช่น 2 ชั่วโมง)
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 var mongoSection = builder.Configuration.GetSection("MongoDBsettings");
@@ -65,7 +69,7 @@ if (!app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();

@@ -1,54 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using Travello.Models;
+using Travello.Services; // 🌟 อย่าลืม using Services ด้วยนะครับ
 
 namespace Travello.Controllers
 {
     public class ChatMessageController : Controller
     {
-        private readonly IMongoCollection<ChatMessageModel> _messageCollection;
+        private readonly ChatService _chatService;
 
-        public ChatMessageController()
+        public ChatMessageController(ChatService chatService)
         {
-            // เชื่อมต่อ MongoDB (ใช้พอร์ต 27018 ที่เรารันผ่าน Docker ไว้)
-            var client = new MongoClient("mongodb://localhost:27018");
-            var database = client.GetDatabase("TravelloDB");
-            
-            // ใช้ Collection ชื่อ ChatMessages
-            _messageCollection = database.GetCollection<ChatMessageModel>("ChatMessages");
+            _chatService = chatService;
+            var currentUserId = HttpContext.Session.GetString("UserId");
         }
 
-        // ==========================================
-        // 1. Action สำหรับดึงข้อความ (AJAX GET)
-        // ==========================================
         [HttpGet]
-        public IActionResult GetMessages(string eventId)
+        public async Task<IActionResult> GetMessages(string chat_room_id, string sender_id)
         {
-            // ดึงข้อมูลจาก MongoDB โดยกรองเอาเฉพาะ event_id ที่ตรงกับห้องแชท
-            // และเรียงลำดับจากเก่าไปใหม่ตาม timestamp
-            var messages = _messageCollection
-                            .Find(msg => msg.event_id == eventId)
-                            .SortBy(msg => msg.timestamp)
-                            .ToList();
-                            
-            return Json(messages);
+            return Json(new { message = "เดี๋ยวมาทำต่อ" });
         }
 
-        // ==========================================
-        // 2. Action สำหรับรับข้อความใหม่ (AJAX POST)
-        // ==========================================
         [HttpPost]
-        public IActionResult SendMessage([FromBody] ChatMessageModel newMessage)
+        public async Task<IActionResult> SendMessage([FromBody] ChatMessageModel newMessage)
         {
+            Console.WriteLine(currentUserId);
             if (newMessage != null && !string.IsNullOrEmpty(newMessage.message_text))
             {
-                // ประทับเวลา ณ วินาทีที่ส่ง
-                newMessage.timestamp = DateTime.Now;
+                newMessage.sender_id = "69a9afc35f16b10cdb2b5079";
+                newMessage.timestamp = DateTime.UtcNow;
                 
-                // บันทึกลง MongoDB
-                _messageCollection.InsertOne(newMessage);
+                await _chatService.SaveMessageAsync(newMessage);
                 
                 return Json(new { success = true });
             }

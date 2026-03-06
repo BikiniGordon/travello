@@ -6,11 +6,13 @@ namespace Travello.Services
     public class ChatService
     {
         private readonly IMongoCollection<ChatRoomModel> _chatRooms;
+        private readonly IMongoCollection<ChatMessageModel> _messages;
 
         public ChatService(IMongoDatabase database)
         {
             // ชี้ไปที่ Collection ชื่อ "chat_rooms" ใน MongoDB
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _messages = database.GetCollection<ChatMessageModel>("messages");
         }
 
         // ฟังก์ชันดึงห้องแชทตาม List ของ event_id ที่ user เข้าร่วม
