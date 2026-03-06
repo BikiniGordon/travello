@@ -71,6 +71,8 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatService>();
 
+//Poll---------------------------------------------------------
+builder.Services.AddScoped<PollService>();
 
 //-------------------------------------------------------------
 
@@ -97,6 +99,7 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<PollHub>("/pollHub");
 
 app.Run();
 

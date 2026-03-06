@@ -5,6 +5,7 @@
 }
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="~/css/Chat.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
 <script src="~/js/Chat.js" asp-append-version="true"></script>
 
 
@@ -234,7 +235,7 @@
 
             </div>
             <div class="creat-new-poll-container">
-                <button id="submit-new-poll-btn" class="text-md font-semibold">Create Poll</button>
+                <button id="submit-new-poll-btn" class="text-md font-semibold" onclick="submitCreatePoll()">Create Poll</button>
             </div>
         </div>
 

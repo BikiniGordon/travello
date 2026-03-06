@@ -1,11 +1,38 @@
 let current_event_id = "";
 let current_chat_room_id = "";
+let currentPollId = ""; // Track which poll detail is open
+
+// SignalR connection for real-time poll updates
+const pollConnection = new signalR.HubConnectionBuilder()
+    .withUrl("/pollHub")
+    .withAutomaticReconnect()
+    .build();
+
+pollConnection.on("PollUpdated", function (pollId) {
+    if (currentPollId === pollId) {
+        openPollCard(pollId);
+    }
+
+    const pollRoom = document.getElementById('all-poll-room');
+    if (pollRoom && pollRoom.style.display !== 'none') {
+        openPollRoom();
+    }
+});
+
+pollConnection.on("PollCreated", function (pollId) {
+    const pollRoom = document.getElementById('all-poll-room');
+    if (pollRoom && pollRoom.style.display !== 'none') {
+        openPollRoom();
+    }
+});
+
+pollConnection.start().catch(err => console.error("PollHub connection error:", err));
 
 function openChatRoom(event_id, chat_name, chat_room_id){
-    //เอา event_id ไปหา chat เพื่อดึง
-    // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
     current_event_id = event_id;
     current_chat_room_id = chat_room_id;
+
+    pollConnection.invoke("JoinEventPolls", event_id).catch(err => console.error(err));
 
     document.getElementById('empty-room').style.display = 'none';
     document.getElementById('setting-room').style.display = 'none';
@@ -50,30 +77,13 @@ function openPollRoom() {
     // 🌟 4. ขึ้นข้อความ Loading รอระหว่างดึงข้อมูล (UX ที่ดี)
     emptyPollBox.style.display = 'none';
     pollBodyBox.style.display = 'flex';
+    pollBodyBox.innerHTML = '';
 
-    // =======================================================
-    // 📡 5. ส่วนดึงข้อมูล (เลือกใช้ Mock Data หรือ Fetch API จริง)
-    // =======================================================
-    
-    /* // 🚀 โค้ดของจริง: เมื่อคุณทำ Controller ใน C# เสร็จแล้ว ให้เปิดคอมเมนต์โค้ดนี้
-    fetch(`/Poll/GetPollsByEventId?event_id=${event_id}`)
+    // Fetch polls from API
+    fetch(`/Poll/GetPollsByEventId?event_id=${current_event_id}`)
         .then(response => response.json())
         .then(data => renderPollCards(data))
         .catch(error => console.error("Error fetching polls:", error));
-    */
-
-    // let mockData = [];
-    
-    // สมมติว่าถ้า event_id เป็น 1 หรือ "trip-01" จะมีโพลโชว์
-    // if (event_id === 1) { 
-    //     mockData = [
-    //         { question: "What will we eat the morning of the trip?", winner: "Ramen", time_left: "5 hours", percent: 40 },
-    //         { question: "Where should we stay on the second night?", winner: "Tent", time_left: "Ended", percent: 85 }
-    //     ];
-    // } 
-    // ถ้าเป็น event_id อื่นๆ mockData จะว่างเปล่า [] และไปเข้าเงื่อนไขแสดง Empty แทน
-
-    // renderPollCards(mockData); // ส่งข้อมูลไปให้ฟังก์ชันวาดการ์ด
 
     // =======================================================
     // 🎨 6. ฟังก์ชันซ้อน (Helper) สำหรับวาดการ์ดโพลลงจอ
@@ -95,6 +105,10 @@ function openPollRoom() {
                 // ยัดข้อความ
                 cardClone.querySelector('.poll-question').textContent = poll.question;
                 cardClone.querySelector('.number-one').textContent = poll.winner;
+                
+                // Wire up click to open detail with real poll ID
+                const card = cardClone.querySelector('.poll-card');
+                card.setAttribute('onclick', `openPollCard('${poll.id}')`);
                 
                 // ตกแต่งเรื่องเวลา (ถ้าหมดเวลาแล้วให้เป็นสีเทา)
                 const timeElem = cardClone.querySelector('.poll-timeout');
@@ -126,50 +140,84 @@ function backSettingRoom(){
 }
 
 // 🌟 1. ฟังก์ชันเปิดหน้ารายละเอียดโพล
-function openPollCard(event_id, poll_id, questionText) {
+function openPollCard(poll_id) {
+    currentPollId = poll_id;
     // สลับหน้าจอ
     document.getElementById('all-poll-room').style.display = 'none';
     document.getElementById('poll-select-card').style.display = 'flex';    
 
-    // ใส่หัวข้อคำถาม (รับมาจากตอนกดการ์ด)
-    document.getElementById('detail-poll-question').innerText = questionText || "What will we eat the morning of the trip?";
-
-    // 🧪 ข้อมูลจำลองตัวเลือก (Mock Data)
-    const mockOptions = [
-        { text: "Ramen", percent: 60, votersCount: 2 },
-        { text: "Sushi", percent: 40, votersCount: 2 },
-        { text: "Burger", percent: 0, votersCount: 0 }
-    ];
-
     const optionsContainer = document.getElementById('poll-options-container');
     const template = document.getElementById('poll-option-template');
-    
-    // ล้างข้อมูลเก่าก่อนวาดใหม่
-    optionsContainer.innerHTML = '';
 
-    // วนลูปวาดตัวเลือก
-    mockOptions.forEach(opt => {
-        const optionClone = template.content.cloneNode(true);
-        
-        optionClone.querySelector('.poll-option-text').textContent = opt.text;
-        optionClone.querySelector('.progress-bar-fill').style.width = `${opt.percent}%`;
-        
-        // วาดรูปคนโหวตซ้อนๆ กัน
-        const votersBox = optionClone.querySelector('.poll-voters');
-        for(let i=0; i < opt.votersCount; i++){
-            // สร้าง div รูปโปรไฟล์ (ของจริงสามารถใช้แท็ก <img> ใส่ src ได้เลย)
-            const avatar = document.createElement('div');
-            avatar.className = 'voter-avatar';
-            votersBox.appendChild(avatar);
+    fetch(`/Poll/GetPollDetail?poll_id=${poll_id}`)
+        .then(response => response.json())
+        .then(poll => {
+            // Clear inside callback to prevent race condition duplicates
+            optionsContainer.innerHTML = '';
+            document.getElementById('detail-poll-question').innerText = poll.question;
+            
+            const statusElem = document.getElementById('detail-poll-status');
+            if (poll.is_ended) {
+                statusElem.textContent = "Ended";
+                statusElem.style.color = "#888";
+            } else {
+                statusElem.textContent = `Ends in ${poll.time_left}`;
+                statusElem.style.color = "";
+            }
+
+            poll.options.forEach((opt, index) => {
+                const optionClone = template.content.cloneNode(true);
+                
+                optionClone.querySelector('.poll-option-text').textContent = opt.text;
+                optionClone.querySelector('.progress-bar-fill').style.width = `${opt.percent}%`;
+                
+                // Highlight if user voted for this option
+                const optionItem = optionClone.querySelector('.poll-option-item');
+                if (opt.voted) {
+                    optionItem.querySelector('.poll-radio-circle').style.background = '#00B4D8';
+                }
+
+                // Click to vote (only if poll is not ended)
+                if (!poll.is_ended) {
+                    optionItem.style.cursor = 'pointer';
+                    optionItem.addEventListener('click', () => votePoll(poll_id, index));
+                }
+                
+                // วาดรูปคนโหวตซ้อนๆ กัน
+                const votersBox = optionClone.querySelector('.poll-voters');
+                for(let i = 0; i < opt.voters_count; i++){
+                    const avatar = document.createElement('div');
+                    avatar.className = 'voter-avatar';
+                    votersBox.appendChild(avatar);
+                }
+
+                optionsContainer.appendChild(optionClone);
+            });
+        })
+        .catch(error => console.error("Error fetching poll detail:", error));
+}
+
+// Vote on a poll option
+function votePoll(pollId, optionIndex) {
+    fetch('/Poll/Vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pollId: pollId, optionIndex: optionIndex })
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            openPollCard(pollId); // Refresh the detail view
         }
-
-        optionsContainer.appendChild(optionClone);
-    });
+    })
+    .catch(err => console.error("Vote error:", err));
 }
 
 function backToAllPolls() {
+    currentPollId = "";
     document.getElementById('poll-select-card').style.display = 'none';
     document.getElementById('all-poll-room').style.display = 'flex';
+    openPollRoom();
 }
 
 function openCreatePoll(){
@@ -197,6 +245,53 @@ function setupPollTimeDropdowns() {
         let min = i.toString().padStart(2, '0');
         minuteSelect.innerHTML += `<option value="${min}">${min}</option>`;
     }
+}
+
+function submitCreatePoll() {
+    const question = document.getElementById('poll-question-input').value.trim();
+    if (!question) { alert('Please enter a poll question'); return; }
+
+    const optionInputs = document.querySelectorAll('#poll-options-group .poll-option-input-wrapper input');
+    const options = [];
+    optionInputs.forEach(input => {
+        const val = input.value.trim();
+        if (val) options.push(val);
+    });
+    if (options.length < 2) { alert('Please add at least 2 options'); return; }
+
+    const dateVal = document.querySelector('#create-poll-body .date-input').value;
+    const hourVal = document.getElementById('poll-hour-select').value;
+    const minVal = document.getElementById('poll-minute-select').value;
+    if (!dateVal || !hourVal || !minVal) { alert('Please set a closing time'); return; }
+
+    const deadline = new Date(`${dateVal}T${hourVal}:${minVal}:00`).toISOString();
+
+    const checkboxes = document.querySelectorAll('#create-poll-body .hidden-checkbox');
+    const allowMultiple = checkboxes[0]?.checked || false;
+    const anonymous = checkboxes[1]?.checked || false;
+
+    fetch('/Poll/Create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            eventId: current_event_id,
+            question: question,
+            options: options,
+            deadline: deadline,
+            allowMultiple: allowMultiple,
+            anonymous: anonymous
+        })
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            document.getElementById('create-poll-page').style.display = 'none';
+            openPollRoom();
+        } else {
+            alert(result.error || 'Failed to create poll');
+        }
+    })
+    .catch(err => console.error("Create poll error:", err));
 }
 
 async function sendMessage() {

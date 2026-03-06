@@ -13,7 +13,6 @@ namespace Travello.Controllers
         public ChatMessageController(ChatService chatService)
         {
             _chatService = chatService;
-            var currentUserId = HttpContext.Session.GetString("UserId");
         }
 
         [HttpGet]
@@ -25,6 +24,7 @@ namespace Travello.Controllers
         [HttpPost]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageModel newMessage)
         {
+            var currentUserId = HttpContext.Session.GetString("UserId");
             Console.WriteLine(currentUserId);
             if (newMessage != null && !string.IsNullOrEmpty(newMessage.message_text))
             {
