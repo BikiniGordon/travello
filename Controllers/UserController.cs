@@ -105,13 +105,22 @@ namespace Travello.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
-            // Temporarily hardcode a username that actually EXISTS in your Atlas collection FIX REQUIRED HERE BUDDY
-            var user = await _userCollection.Find(u => u.username == "ThaiTraveler01").FirstOrDefaultAsync();
+            // 1. Get the logged-in User's ID from the session
+            var loggedInUserId = HttpContext.Session.GetString("UserId");
+
+            // 2. Security Check: If no ID is found, they aren't logged in
+            if (string.IsNullOrEmpty(loggedInUserId))
+            {
+                // Redirect to Home or show a message
+                return RedirectToAction("Index", "Home");
+            }
+
+            // 3. Find the actual user in MongoDB using their unique ID
+            var user = await _userCollection.Find(u => u.user_id == loggedInUserId).FirstOrDefaultAsync();
             
             if (user == null)
             {
-                // If it still can't find it, create a dummy one so the page doesn't crash
-                return Content("Error: User 'ThaiTraveler01' not found in MongoDB. Please check Atlas.");
+                return NotFound("User profile not found in database.");
             }
 
             return View(user);
@@ -120,6 +129,15 @@ namespace Travello.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(EditProfileViewModel updatedUser)
         {
+
+            var loggedInUserId = HttpContext.Session.GetString("UserId");
+    
+            // Safety check: Ensure the user is editing their OWN profile
+            if (string.IsNullOrEmpty(loggedInUserId) || updatedUser.user_id != loggedInUserId)
+            {
+                return Unauthorized();
+            }
+            
             if (!ModelState.IsValid)
             {
                 TempData["StatusMessage"] = "Update failed: Please check the errors below.";
@@ -179,7 +197,7 @@ namespace Travello.Controllers
                 var filter = Builders<EditProfileViewModel>.Filter.Eq(u => u.user_id, updatedUser.user_id);
                 await _userCollection.ReplaceOneAsync(filter, updatedUser);
                 
-                HttpContext.Session.SetString("UserProfilePic", updatedUser.profile_img_path);
+                HttpContext.Session.SetString("UserProfilePic", updatedUser.profile_img_path ?? "");
                 TempData["StatusMessage"] = "Profile updated successfully!";
                 TempData["StatusType"] = "success";
             }
