@@ -2,13 +2,16 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Travello.Models;
 using Travello.Services;
+using Travello.Hubs;
 
 LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromHours(2); // ตั้งเวลาหมดอายุ Session (เช่น 2 ชั่วโมง)
+});
+
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
@@ -61,6 +64,16 @@ builder.Services.AddSingleton(serviceProvider =>
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
+
+//Chat--------------------------------------------------------
+
+
+builder.Services.AddSignalR();
+builder.Services.AddScoped<ChatService>();
+
+
+//-------------------------------------------------------------
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -71,12 +84,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
-
-app.UseSession();
-
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -86,6 +96,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
 
