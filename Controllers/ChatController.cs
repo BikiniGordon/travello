@@ -20,7 +20,7 @@ namespace Travello.Controllers
 
         public async Task<IActionResult> Index()
         {
-            string mockUserId = ""; // Dear
+            string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear
             // string mockUserId = "69a9d2663daa971a33606eae"; // Dear_02
 
             var currentUser = await _usersCollection

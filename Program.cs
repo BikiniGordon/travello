@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using Travello.Models;
 using Travello.Services;
 using Travello.Hubs;
+using Travello.DTOs;
 
 LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 

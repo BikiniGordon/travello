@@ -1,5 +1,5 @@
-let current_event_id = "";
-let current_chat_room_id = "";
+let current_event_id = null;
+let current_chat_room_id = null;
 
 function openChatRoom(event_id, chat_name, chat_room_id){
     //เอา event_id ไปหา chat เพื่อดึง
@@ -15,6 +15,12 @@ function openChatRoom(event_id, chat_name, chat_room_id){
     document.getElementById('chat-room-title').innerText = chat_name;
     document.getElementById('setting-event-title').innerText = chat_name;
     document.getElementById('setting-event-status').innerText = event_id;
+
+    loadChatMessages();
+
+    if (chatPollingInterval) clearInterval(chatPollingInterval);
+
+    chatPollingInterval = setInterval(loadChatMessages, 3000);
 }
 
 function openSettingChatRoom(){
@@ -250,5 +256,51 @@ async function sendMessage() {
 function handleEnterPress(event) {
     if (event.key === "Enter") {
         sendMessage();
+    }
+}
+
+async function loadChatMessages() {
+    if (current_chat_room_id == null) return;
+
+    try {
+        const response = await fetch(`http://localhost:5123/ChatMessage/GetMessages?chat_room_id=${current_chat_room_id}`);
+        const result = await response.json();
+
+        if (result.success) {
+            const chatBody = document.getElementById('chat-body');
+            
+            chatBody.innerHTML = ""; 
+
+            const my_user_id = "69a9afc35f16b10cdb2b5079";
+
+            result.data.forEach(msg => {
+                let bubbleHtml = "";
+
+                if (msg.sender_id === my_user_id) {
+                    bubbleHtml = `
+                    <div class="message-row" style="display: flex; justify-content: flex-end; margin-bottom: 16px;  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
+                        <div class="message-bubble text-sm font-regular" style="background-color: #CEE7E6; color: #000; padding: 12px 16px; border-radius: 20px; border-top-right-radius: 4px; max-width: 60%; word-wrap: break-word;">
+                            ${msg.message_text}
+                        </div>
+                    </div>
+                    `;
+                } else {
+                    bubbleHtml = `
+                        <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px;  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
+                            <img class="talker" src=${msg.sender_img} style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover"/>
+                            <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; max-width: 60%; word-wrap: break-word;">
+                                ${msg.message_text}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                chatBody.insertAdjacentHTML('beforeend', bubbleHtml);
+            });
+
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    } catch (error) {
+        console.error("error", error);
     }
 }

@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Travello.Models;
-using Travello.Services; // 🌟 อย่าลืม using Services ด้วยนะครับ
+using Travello.Services; 
+using Travello.DTOs;
 
 namespace Travello.Controllers
 {
@@ -13,18 +14,19 @@ namespace Travello.Controllers
         public ChatMessageController(ChatService chatService)
         {
             _chatService = chatService;
-            var currentUserId = HttpContext.Session.GetString("UserId");
         }
-
         [HttpGet]
-        public async Task<IActionResult> GetMessages(string chat_room_id, string sender_id)
+        public async Task<IActionResult> GetMessages(string chat_room_id)
         {
-            return Json(new { message = "เดี๋ยวมาทำต่อ" });
+            List<ChatHistoryResponse> chatHistory = await _chatService.GetChatHistoryAsync(chat_room_id);
+        
+            return Json(new { success = true, data = chatHistory });
         }
 
         [HttpPost]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageModel newMessage)
         {
+            var currentUserId = HttpContext.Session.GetString("UserId");
             Console.WriteLine(currentUserId);
             if (newMessage != null && !string.IsNullOrEmpty(newMessage.message_text))
             {
