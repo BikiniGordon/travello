@@ -22,6 +22,14 @@ namespace Travello.Controllers
 
         public IActionResult Index()
         {
+            var createdByUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrWhiteSpace(createdByUserId))
+            {
+                TempData["AuthPromptMessage"] = "Please log in before creating an event.";
+                TempData["OpenLoginModal"] = "true";
+                return RedirectToAction("Index", "Home");
+            }
+
             return View("~/Views/Create_event/CreateEvent.cshtml");
         }
 
