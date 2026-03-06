@@ -1,6 +1,27 @@
+let pendingRedirectAfterLogin = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('menuBtn');
     const mobileDropdown = document.getElementById('dropdown');
+    const createEventButtons = document.querySelectorAll('.CreateEvent[data-create-event-url]');
+
+    createEventButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const isAuthenticated = button.dataset.isAuthenticated === 'true';
+            const createEventUrl = button.dataset.createEventUrl;
+
+            if (!isAuthenticated) {
+                event.preventDefault();
+                pendingRedirectAfterLogin = createEventUrl || null;
+                openLoginModal();
+                return;
+            }
+
+            if (createEventUrl) {
+                window.location.href = createEventUrl;
+            }
+        });
+    });
 
     // 1. Toggle Mobile Menu (Hamburger)
     if (menuBtn && mobileDropdown) {
@@ -93,6 +114,13 @@ if (loginForm) {
         const result = await response.json();
 
         if (result.success) {
+            if (pendingRedirectAfterLogin) {
+                const destination = pendingRedirectAfterLogin;
+                pendingRedirectAfterLogin = null;
+                window.location.href = destination;
+                return;
+            }
+
             // This refreshes the page so the @if (Session) logic in Razor triggers
             window.location.reload();
         } else {
