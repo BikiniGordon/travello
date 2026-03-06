@@ -7,6 +7,7 @@ namespace Travello.Models;
 
 public class CreateEventInputModel
 {
+    public string? EventId { get; set; }
     public IFormFile? UploadPhoto { get; set; }
     public string? PhotoLink { get; set; }
     public string EventTitle { get; set; } = string.Empty;
