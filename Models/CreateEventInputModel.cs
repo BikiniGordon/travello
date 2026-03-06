@@ -7,7 +7,9 @@ namespace Travello.Models;
 
 public class CreateEventInputModel
 {
+    public string? EventId { get; set; }
     public IFormFile? UploadPhoto { get; set; }
+    public string? PhotoLink { get; set; }
     public string EventTitle { get; set; } = string.Empty;
     public string? Detail { get; set; }
     public int? AttendeesLimit { get; set; }
@@ -25,6 +27,7 @@ public class CreateEventInputModel
     public string? PackingListJson { get; set; }
 }
 
+[BsonIgnoreExtraElements]
 public class EventDocument
 {
     [BsonId]
@@ -79,6 +82,16 @@ public class EventDocument
     [BsonElement("created_at")]
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    [BsonElement("created_by")]
+    public string CreatedBy { get; set; } = string.Empty;
+
+    [BsonElement("isRegistrationClosed")]
+    public bool IsRegistrationClosed { get; set; } = false;
+
+    [BsonElement("closingReason")]
+    public string? ClosingReason { get; set; }
+
 }
 
 public class LocationDocument

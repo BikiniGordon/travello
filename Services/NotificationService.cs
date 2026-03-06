@@ -7,6 +7,7 @@ public interface INotificationService
 {
     Task<IReadOnlyList<NotificationDocument>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
     Task MarkAsReadAsync(string notificationId, string userId, CancellationToken cancellationToken = default);
+    Task CreateNotificationAsync(NotificationDocument notification, CancellationToken cancellationToken = default);
 }
 
 public class NotificationService : INotificationService
@@ -55,4 +56,10 @@ public class NotificationService : INotificationService
 
         await _notificationsCollection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
+
+    public async Task CreateNotificationAsync(NotificationDocument notification, CancellationToken cancellationToken = default)
+    {
+        await _notificationsCollection.InsertOneAsync(notification, cancellationToken: cancellationToken);
+    }
+
 }

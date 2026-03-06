@@ -54,6 +54,11 @@
                         </div>
                         <input type="file" id="uploadPhotoInput" name="UploadPhoto" accept="image/*" style="display: none;" />
                     </div>
+                    <button type="button" id="photoLinkToggleButton" class="photo-link-toggle text-sm font-regular">Or paste a photo link</button>
+                    <div id="photoLinkSection" class="photo-link-section hidden">
+                        <input type="url" id="photoLinkInput" name="PhotoLink" class="input-field photo-link-input" placeholder="https://example.com/cover.jpg" data-text-size="sm" data-font-weight="regular" />
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="PhotoLink"></span>
+                    </div>
                     <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="UploadPhoto"></span>
                 </div>
 

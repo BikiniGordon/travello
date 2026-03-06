@@ -15,10 +15,8 @@ namespace Travello.Controllers
         
         private readonly IMongoCollection<EventModel> _eventsCollection;
 
-        // The Constructor: This pulls the database connection from Program.cs
         public HomeController(IMongoDatabase database)
         {
-            // "Event" is the name of the Collection in your MongoDB Atlas
             _eventsCollection = database.GetCollection<EventModel>("events");
         }
 
@@ -29,22 +27,18 @@ namespace Travello.Controllers
             var filterBuilder = Builders<EventModel>.Filter;
             var filter = filterBuilder.Where(x => x.attendees_limit > x.attendees);
 
-            // 1. Filter by Location
-            // We use the string "location" to avoid C# List vs String conflicts
             if (!string.IsNullOrEmpty(searchLocation))
             {
                 var regex = new MongoDB.Bson.BsonRegularExpression(searchLocation, "i");
-                filter &= filterBuilder.Regex("location", regex); 
+                filter &= filterBuilder.Regex(x => x.location, regex);
             }
 
-            // 2. Filter by Date (Event is active during the searched date)
             if (searchDate.HasValue)
             {
                 DateTime dateOnly = DateTime.SpecifyKind(searchDate.Value.Date, DateTimeKind.Unspecified);
-                DateTime searchDayStart = searchDate.Value.Date; // 00:00:00
-                DateTime searchDayEnd = searchDate.Value.Date.AddDays(1).AddTicks(-1); // 23:59:59
+                DateTime searchDayStart = searchDate.Value.Date;
+                DateTime searchDayEnd = searchDate.Value.Date.AddDays(1).AddTicks(-1);
 
-                // Logic: Event must start before the day ends AND end after the day begins
                 filter &= filterBuilder.Lte(x => x.start_date, searchDayEnd);
                 filter &= filterBuilder.Gte(x => x.end_date, searchDayStart);
             }
@@ -55,7 +49,6 @@ namespace Travello.Controllers
                     filterBuilder.Regex("event_tag", new MongoDB.Bson.BsonRegularExpression($"^{tag}$", "i"))
                 ).ToList();
 
-                // Combine them with OR: "Show event if event_tag matches TagA OR TagB (Case Insensitive)"
                 filter &= filterBuilder.Or(tagFilters);
             }
 
@@ -74,7 +67,6 @@ namespace Travello.Controllers
 
             var popularTagsAggregation = await _eventsCollection.Aggregate()
                 .Unwind(x => x.event_tag)
-                // Convert to lowercase during the grouping stage for true case insensitivity
                 .Project(new BsonDocument { { "tagLower", new BsonDocument("$toLower", "$event_tag") } })
                 .Group(new BsonDocument { { "_id", "$tagLower" }, { "count", new BsonDocument("$sum", 1) } })
                 .Match(new BsonDocument("_id", new BsonDocument("$nin", new BsonArray(categories.Select(c => c.ToLower())))))
@@ -84,7 +76,6 @@ namespace Travello.Controllers
 
             ViewBag.PopularTags = popularTagsAggregation.Select(t => t["_id"].AsString).ToList();
 
-            // AJAX Check for HomePage.js compatibility
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView("_DataWrapper", events);

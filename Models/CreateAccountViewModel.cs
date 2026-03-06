@@ -44,6 +44,7 @@ namespace Travello.Models
         [BsonElement("date_of_birth")]
         public DateTime? date_of_birth { get; set; }
         public string? about_me { get; set; }
+        public List<string> event_id { get; set; } = new List<string>();
         public string? profile_img_path { get; set; }
         public List<string> user_tag { get; set; } = new List<string>();
         [BsonIgnore]

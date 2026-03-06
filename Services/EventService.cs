@@ -110,5 +110,11 @@ namespace Travello.Services
             var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
             return await _users.Find(filter).FirstOrDefaultAsync();
         }
+
+        public async Task<EventParticipant?> GetParticipantByIdAsync(string participantId)
+        {
+            var filter = Builders<EventParticipant>.Filter.Eq(p => p.Id, participantId);
+            return await _participants.Find(filter).FirstOrDefaultAsync();
+        }
     }
 }
