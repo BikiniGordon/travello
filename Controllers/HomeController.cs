@@ -12,11 +12,7 @@ namespace Travello.Controllers
         {
             return View();
         }
-        // หน้าโปรไฟล์ของตาต้า
-        public IActionResult Profile() 
-        {
-            return View();
-        }
+        
         private readonly IMongoCollection<EventModel> _eventsCollection;
 
         // The Constructor: This pulls the database connection from Program.cs
