@@ -147,6 +147,8 @@ function initializeTagButtons() {
 
 // Connects the photo upload trigger and preview behavior.
 function initializePhotoUpload() {
+    const form = document.getElementById('createEventForm');
+    const isLimitedEditMode = form?.dataset?.editMode === 'limited';
     const uploadButton = document.getElementById('uploadPhotoButton');
     const uploadInput = document.getElementById('uploadPhotoInput');
     const photoPlaceholder = document.querySelector('.photo-placeholder');
@@ -161,11 +163,23 @@ function initializePhotoUpload() {
 
     const showPreview = (imageUrl) => {
         photoPlaceholder.style.backgroundImage = `url('${imageUrl}')`;
+        photoPlaceholder.style.backgroundSize = 'cover';
+        photoPlaceholder.style.backgroundPosition = 'center';
+        photoPlaceholder.classList.add('has-preview');
+
+        if (uploadButton) {
+            uploadButton.style.display = isLimitedEditMode ? 'flex' : 'none';
+        }
+        
     };
 
     const initialPhotoUrl = initialPhotoUrlSeed?.value?.trim();
     if (initialPhotoUrl) {
         showPreview(initialPhotoUrl);
+    }
+
+    if (isLimitedEditMode) {
+        return;
     }
 
     uploadButton.addEventListener('click', () => {
@@ -464,13 +478,14 @@ function recalculatePlaceNumbers() {
 }
 
 // Rebuilds map markers so they match planner rows and order.
-function syncMapMarkers() {
+function syncMapMarkers(zoomToFirst = false) {
     if (!map || !placeMarkersLayer) {
         return;
     }
 
     placeMarkersLayer.clearLayers();
     let placeMarkerCount = 0;
+    let firstMarkerCoords = null;
 
     const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
     allRows.forEach((row) => {
@@ -484,6 +499,11 @@ function syncMapMarkers() {
 
         if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(placeNumber) || placeNumber <= 0) {
             return;
+        }
+
+        // Store first marker coordinates
+        if (placeMarkerCount === 0) {
+            firstMarkerCoords = { lat, lng };
         }
 
         const markerLabel = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
@@ -508,6 +528,11 @@ function syncMapMarkers() {
         } else if (!map.hasLayer(defaultMapMarker)) {
             defaultMapMarker.addTo(map);
         }
+    }
+
+    // Zoom to first marker if requested and exists
+    if (zoomToFirst && firstMarkerCoords) {
+        map.setView([firstMarkerCoords.lat, firstMarkerCoords.lng], 16);
     }
 }
 
@@ -603,6 +628,7 @@ function bindCreateEventFormSubmit() {
     if (!form) {
         return;
     }
+    const isLimitedEditMode = form.dataset.editMode === 'limited';
 
     const categoryInput = document.getElementById('selectedCategoryInput');
     const tagsInput = document.getElementById('selectedTagsInput');
@@ -617,18 +643,23 @@ function bindCreateEventFormSubmit() {
     const endTimeInput = form.querySelector('input[name="EndTime"]');
     const openDateInput = form.querySelector('input[name="OpenDate"]');
 
-    const requiredFieldConfigs = [
-        { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
-        { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
-        { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
-        { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
-        { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
-        { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
-        { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
-        { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
-        { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
-        { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
-    ]
+    const requiredFieldConfigs = (isLimitedEditMode
+        ? [
+            { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+            { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+        ]
+        : [
+            { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
+            { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+            { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
+            { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
+            { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
+            { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
+            { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
+            { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
+            { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
+            { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+        ])
         .map((config) => ({
             ...config,
             input: form.querySelector(config.selector)
@@ -713,6 +744,10 @@ function bindCreateEventFormSubmit() {
     }
 
     function validateAttendeesLimitFormat() {
+        if (isLimitedEditMode) {
+            return true;
+        }
+
         if (!attendeesLimitInput) {
             return true;
         }
@@ -732,6 +767,10 @@ function bindCreateEventFormSubmit() {
     }
 
     function validateDateOrdering() {
+        if (isLimitedEditMode) {
+            return true;
+        }
+
         let isValid = true;
 
         if (startDateInput && startTimeInput && endDateInput && endTimeInput) {
@@ -762,6 +801,10 @@ function bindCreateEventFormSubmit() {
     }
 
     function validatePhotoLinkFormat() {
+        if (isLimitedEditMode) {
+            return true;
+        }
+
         if (!photoLinkInput) {
             return true;
         }
@@ -856,19 +899,21 @@ function bindCreateEventFormSubmit() {
             return;
         }
 
-        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
-        const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
-        if (categoryInput) {
-            categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
-        }
+        if (!isLimitedEditMode) {
+            const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+            const selectedCategoryButton = Array.from(categoryButtons).find((button) => button.classList.contains('is-selected'));
+            if (categoryInput) {
+                categoryInput.value = selectedCategoryButton ? getTagButtonValue(selectedCategoryButton) : '';
+            }
 
-        const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
-        const tags = Array.from(customTagButtons)
-            .map((button) => getTagButtonValue(button))
-            .filter((tagValue, index, array) => tagValue && array.indexOf(tagValue) === index);
+            const customTagButtons = document.querySelectorAll('.catagory-section .tags-container:last-of-type .tag-btn:not(.add-btn)');
+            const tags = Array.from(customTagButtons)
+                .map((button) => getTagButtonValue(button))
+                .filter((tagValue, index, array) => tagValue && array.indexOf(tagValue) === index);
 
-        if (tagsInput) {
-            tagsInput.value = tags.join(',');
+            if (tagsInput) {
+                tagsInput.value = tags.join(',');
+            }
         }
 
         const plannerRows = [];
@@ -939,19 +984,21 @@ function bindCreateEventFormSubmit() {
         }
     });
 
-    if (attendeesLimitInput) {
+    if (!isLimitedEditMode && attendeesLimitInput) {
         attendeesLimitInput.addEventListener('input', validateAttendeesLimitFormat);
         attendeesLimitInput.addEventListener('blur', validateAttendeesLimitFormat);
     }
 
-    [startDateInput, startTimeInput, endDateInput, endTimeInput, openDateInput]
-        .filter((input) => Boolean(input))
-        .forEach((input) => {
-            input.addEventListener('change', validateDateOrdering);
-            input.addEventListener('blur', validateDateOrdering);
-        });
+    if (!isLimitedEditMode) {
+        [startDateInput, startTimeInput, endDateInput, endTimeInput, openDateInput]
+            .filter((input) => Boolean(input))
+            .forEach((input) => {
+                input.addEventListener('change', validateDateOrdering);
+                input.addEventListener('blur', validateDateOrdering);
+            });
+    }
 
-    if (photoLinkInput) {
+    if (!isLimitedEditMode && photoLinkInput) {
         photoLinkInput.addEventListener('input', validatePhotoLinkFormat);
         photoLinkInput.addEventListener('blur', validatePhotoLinkFormat);
     }

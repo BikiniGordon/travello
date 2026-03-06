@@ -17,6 +17,14 @@
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
+    <style>
+        fieldset {
+            border: 0;
+            margin: 0;
+            padding: 0;
+            min-inline-size: 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -34,37 +42,15 @@
             <div class="text-sm font-regular" style="color: #d55351; margin-bottom: 12px;" asp-validation-summary="All"></div>
         }
 
-        <form id="createEventForm" method="post" asp-controller="Event" asp-action="Edit" asp-route-id="@Model?.EventId" enctype="multipart/form-data" novalidate>
+        <form id="createEventForm" data-edit-mode="limited" method="post" asp-controller="Event" asp-action="Edit" asp-route-id="@Model?.EventId" enctype="multipart/form-data" novalidate>
             @Html.AntiForgeryToken()
             <input type="hidden" name="EventId" value="@Model?.EventId" />
+            <div class="text-sm font-regular" style="color: #666; margin-bottom: 12px;">You can edit only event detail, trip rules, important things to pack, and event plan.</div>
             <div class="layout">
                 <div class="form-column">
-                    <div class="upload-photo">
-                        <div class="photo-placeholder">
-                            <div id="uploadPhotoButton" class="upload-button" role="button" tabindex="0" aria-label="Upload photo">
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g clip-path="url(#clip0_616_1324)">
-                                        <path d="M13.125 9.375V11.875C13.125 12.2065 12.9933 12.5245 12.7589 12.7589C12.5245 12.9933 12.2065 13.125 11.875 13.125H3.125C2.79348 13.125 2.47554 12.9933 2.24112 12.7589C2.0067 12.5245 1.875 12.2065 1.875 11.875V9.375M10.625 5L7.5 1.875M7.5 1.875L4.375 5M7.5 1.875V9.375" stroke="#1E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_616_1324">
-                                            <rect width="15" height="15" fill="white"/>
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                                <span class="text-sm font-semilight text-muted">UPLOAD PHOTO</span>
-                            </div>
-                            <input type="file" id="uploadPhotoInput" name="UploadPhoto" accept="image/*" style="display: none;" />
-                        </div>
-                        <button type="button" id="photoLinkToggleButton" class="photo-link-toggle text-sm font-regular">Or paste a photo link</button>
-                        <div id="photoLinkSection" class="photo-link-section hidden">
-                            <input type="url" id="photoLinkInput" name="PhotoLink" class="input-field photo-link-input" placeholder="https://example.com/cover.jpg" value="@Model?.PhotoLink" data-text-size="sm" data-font-weight="regular" />
-                            <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="PhotoLink"></span>
-                        </div>
-                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="UploadPhoto"></span>
-                    </div>
 
                     <div class="event-info-header">
+                        <fieldset disabled>
                         <section class="form-section form-with-note">
                             <input
                                 type="text"
@@ -79,6 +65,7 @@
                             <p class="text-sm font-regular text-dark">*The event title should be clear and descriptive.</p>
                             <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="EventTitle"></span>
                         </section>
+                        </fieldset>
 
                         <section class="form-section">
                             <textarea
@@ -94,6 +81,7 @@
                             <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="Detail"></span>
                         </section>
 
+                        <fieldset disabled>
                         <section class="catagory-section">
                             <label class="text-lg font-semibold text-dark">CATEGORY</label>
                             <span class="text-sm font-regular text-error">*required</span>
@@ -110,7 +98,9 @@
                                 <button type="button" class="tag-btn text-md font-regular add-btn">+</button>
                             </div>
                         </section>
+                        </fieldset>
 
+                        <fieldset disabled>
                         <section class="form-section form-with-note">
                             <div class="input-row">
                                 <label class="text-lg font-semibold text-dark">MAXIMUM NUMBER OF ATTENDEES</label>
@@ -129,7 +119,9 @@
                             <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="AttendeesLimit"></span>
                             <p class="text-sm font-regular text-dark">*When the number of attendees reaches the limit, registration will be closed automatically.</p>
                         </section>
+                        </fieldset>
 
+                        <fieldset disabled>
                         <section class="form-section">
                             <div class="input-row">
                                 <label class="text-lg font-semibold text-dark">REGISTRATION QUESTIONS</label>
@@ -144,8 +136,10 @@
                                 >@Model?.RecruitQuestion</textarea>
                             </div>
                         </section>
+                        </fieldset>
                     </div>
 
+                    <fieldset disabled>
                     <section class="form-section section-group date-time-section">
                         <div class="input-row">
                             <label class="text-lg font-semibold text-dark">DATE AND TIME</label>
@@ -170,7 +164,9 @@
                             <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="OpenDate"></span>
                         </div>
                     </section>
+                    </fieldset>
 
+                    <fieldset disabled>
                     <section class="form-section section-group">
                         <div class="input-row">
                             <label class="text-lg font-semibold text-dark">LOCATION</label>
@@ -183,6 +179,7 @@
                             <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="LocationName"></span>
                         </div>
                     </section>
+                    </fieldset>
 
                     <section class="form-section section-group section-xl-gap">
                         <textarea
@@ -255,7 +252,15 @@
     <script src="~/js/NavBar.js" asp-append-version="true"></script>
     <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', initializeMap);
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMap();
+
+            setTimeout(() => {
+                if (typeof syncMapMarkers === 'function') {
+                    syncMapMarkers(true); 
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>
