@@ -34,7 +34,7 @@ namespace Travello.Controllers
             if (!string.IsNullOrEmpty(searchLocation))
             {
                 var regex = new MongoDB.Bson.BsonRegularExpression(searchLocation, "i");
-                filter &= filterBuilder.Regex("location", regex); 
+                filter &= filterBuilder.Regex(x => x.location, regex);
             }
 
             // 2. Filter by Date (Event is active during the searched date)
