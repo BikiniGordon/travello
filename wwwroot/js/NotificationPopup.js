@@ -14,20 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const markAsReadUrl = '/Notification/MarkAsRead';
     let notifications = [];
 
-    const getDemoUserId = () => {
-        const queryValue = new URLSearchParams(window.location.search).get('demoUserId');
-        return queryValue && queryValue.trim() ? queryValue.trim() : '';
-    };
-
-    const appendDemoUserId = (url, demoUserId) => {
-        if (!demoUserId) {
-            return url;
-        }
-
-        const queryPrefix = url.includes('?') ? '&' : '?';
-        return `${url}${queryPrefix}demoUserId=${encodeURIComponent(demoUserId)}`;
-    };
-
     const hashString = (value) => {
         let hash = 0;
 
@@ -174,14 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const createMarkAsReadPayload = (notificationId) => {
-        const demoUserId = getDemoUserId();
-        if (!demoUserId) {
+        if (!notificationId) {
             return null;
         }
 
         return {
-            notificationId,
-            demoUserId
+            notificationId
         };
     };
 
@@ -240,18 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearNotifications,
         removeNotification,
         markNotificationAsRead,
-        setDemoUserId: (demoUserId) => {
-            const normalized = String(demoUserId || '').trim();
-            if (!normalized) {
-                return;
-            }
-
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('demoUserId', normalized);
-            window.history.replaceState({}, '', currentUrl.toString());
-
-            loadNotifications();
-        },
         getNotifications: () => [...notifications]
     };
 
@@ -333,9 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const loadNotifications = async () => {
-        const demoUserId = getDemoUserId();
         try {
-            const response = await fetch(appendDemoUserId(getNotificationsUrl, demoUserId), {
+            const response = await fetch(getNotificationsUrl, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
