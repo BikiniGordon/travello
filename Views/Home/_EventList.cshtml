@@ -4,7 +4,7 @@
 
 @foreach (var item in Model)
 {
-    <div class="Event">
+    <div class="Event" onclick="location.href='@Url.Action("Detail", "Event", new { id = item.event_id })'">
         <div class="EventImage" style="background: url('@item.event_img_path') lightgray 50% / cover no-repeat;"></div>
 
         <div class="EventData">

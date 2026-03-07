@@ -27,6 +27,7 @@ public class CreateEventInputModel
     public string? PackingListJson { get; set; }
 }
 
+[BsonIgnoreExtraElements]
 public class EventDocument
 {
     [BsonId]
@@ -84,6 +85,13 @@ public class EventDocument
 
     [BsonElement("created_by")]
     public string CreatedBy { get; set; } = string.Empty;
+
+    [BsonElement("isRegistrationClosed")]
+    public bool IsRegistrationClosed { get; set; } = false;
+
+    [BsonElement("closingReason")]
+    public string? ClosingReason { get; set; }
+
 }
 
 public class LocationDocument

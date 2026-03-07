@@ -3,7 +3,7 @@ namespace Travello.Models
 
     public class AttendeeViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string ProfileImage { get; set; }
         public bool IsApproved { get; set; }
@@ -25,6 +25,13 @@ namespace Travello.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public List<ExpenseViewModel> Expenses { get; set; } = new();
+    }
+
+        public class LocationViewModel
+    {
+        public string PlaceName { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 
 
@@ -51,9 +58,9 @@ namespace Travello.Models
 
     public class EventDetailViewModel
     {
-        public int EventId { get; set; }
+        public string EventId { get; set; }
         public string EventTitle { get; set; }
-        public string Category { get; set; }
+        public List<string> Category { get; set; }
         public string HostName { get; set; }
         public string HostProfileImage { get; set; }
         public string CoverImage { get; set; }
@@ -70,6 +77,7 @@ namespace Travello.Models
 
         public List<string> PackingList { get; set; } = new();
         public List<DayViewModel> Days { get; set; } = new();
+        public List<LocationViewModel> Locations { get; set; } = new();
         public List<AttendeeViewModel> Attendees { get; set; } = new();
         public List<JoinQuestionViewModel> JoinQuestions { get; set; } = new();
         public List<AdditionViewModel> Additions { get; set; } = new();
