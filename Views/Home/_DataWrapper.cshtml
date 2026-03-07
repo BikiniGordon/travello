@@ -1,0 +1,9 @@
+@model List<EventModel>
+
+<div id="EventTarget">
+    @await Html.PartialAsync("_EventList", Model)
+</div>
+
+<div id="PaginationTarget">
+    @await Html.PartialAsync("_Pagination", Model)
+</div>

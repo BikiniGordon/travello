@@ -1,13 +1,23 @@
-# ไม่เก็บไฟล์ที่เกิดจากการคอมไพล์ (Build)
 bin/
 obj/
-
-# ไม่เก็บไฟล์ตั้งค่าส่วนตัวของ VS Code
-.vscode/
 .vs/
-
-# ไม่เก็บไฟล์ User Specific
 *.user
+*.suo
 
-# ไม่เก็บไฟล์ Library ที่โหลดมา (ถ้ามี)
-node_modules/
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Development settings
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db

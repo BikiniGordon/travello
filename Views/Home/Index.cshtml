@@ -1,8 +1,78 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@using Travello.Models
+@model List<EventModel>
+<link rel="stylesheet" href="~/css/HomePage.css" />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="CenterContainer">
+    <div class="HomePageContainer">
+        <div class="HomePageBackground">
+            <div class="ContextContainer">
+                <div class="text-4xl font-semibold">¿</div>
+                <div class="text-4xl font-semibold">SHALL WE GO</div>
+                <div class="text-4xl font-regular SpecialText">Together</div>
+                <div class="text-4xl font-semibold">?</div>
+            </div>
+        </div>
+    </div>
+    <div class="DataPartContainer" id="DataPart">
+        <div class="MainDataPart">
+            <div class="EventsAndSearch">
+                <div class="SearchBar">
+                    <div class="SearchIcon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
+                            <path d="M21.25 21.25L16.5375 16.5375M19.0833 10.4167C19.0833 15.2031 15.2031 19.0833 10.4167 19.0833C5.6302 19.0833 1.75 15.2031 1.75 10.4167C1.75 5.6302 5.6302 1.75 10.4167 1.75C15.2031 1.75 19.0833 5.6302 19.0833 10.4167Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <input type="text" class="text-md font-bold LocationSearchInput" id="LocationSearch" oninput="liveSearch()" placeholder="Location" />
+                    |
+                    <input type="date" class="text-md font-bold DateSearchInput" id="DateSearch" onchange="liveSearch()"/>
+                </div>
+
+                <div class="EventRow">
+                    @await Html.PartialAsync("_EventList", Model)
+                </div>
+            </div>
+
+            <div class="Tags">
+                <div class="TagsContainer">
+                    <div class="Category">
+                        <div class="text-sm font-semibold CategoryHeader">CATEGORY</div>
+                    </div>
+
+                    <div class="CategoryTags">
+                        <div class="text-sm font-semilight Tag" data-tag="CAMPING" onclick="toggleTag(this)">CAMPING</div>
+                        <div class="text-sm font-semilight Tag" data-tag="PHOTOGRAPHY" onclick="toggleTag(this)">PHOTOGRAPHY</div>
+                        <div class="text-sm font-semilight Tag" data-tag="RELAX" onclick="toggleTag(this)">RELAX</div>
+                        <div class="text-sm font-semilight Tag" data-tag="SHOPPING" onclick="toggleTag(this)">SHOPPING</div>
+                        <div class="text-sm font-semilight Tag" data-tag="ADVENTURE" onclick="toggleTag(this)">ADVENTURE</div>
+                    </div>
+                </div>
+
+                <div class="TagsContainer">
+                    <div class="Popular">
+                        <div class="text-sm font-semibold PopularHeader">POPULAR</div>
+                    </div>
+
+                    <div class="PopularTags">
+                        @if (ViewBag.PopularTags != null)
+                        {
+                            foreach (var tag in ViewBag.PopularTags)
+                            {
+                                <div class="text-sm font-semilight Tag" data-tag="@tag" onclick="toggleTag(this)">@tag</div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="Pagination">
+            @await Html.PartialAsync("_Pagination", Model)
+        </div>
+    </div>
+    @section Scripts {
+        <script src="~/js/HomePage.js"></script>
+    }
 </div>
