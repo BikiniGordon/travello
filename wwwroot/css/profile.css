@@ -180,12 +180,14 @@
     width: 135px;
     height: 135px;
     object-fit: cover;
+    border-radius: 50%
 }
 
 #frame_photo {
     display: flex;
     justify-content: center;
     align-items: center;     /* จัดรูปให้อยู่ตรงกลางแนวตั้ง */
+
 }
 ฺิ
 .letter-spacing {
@@ -209,7 +211,10 @@
     justify-content: center;
     gap: var(--space-sm);
     font-family: 'Segoe UI', Tahoma;
+    text-align: center;
+    width: 100%;
 }
+
 .frame_1677 {
     display: flex;
     justify-content: left;

@@ -1,10 +1,26 @@
 @model List<Travello.Models.EventDetailViewModel>
 @{
     ViewData["Title"] = "profile";
+
+    // แกะข้อมูล User ออกมาจาก ViewBag
+    var user = ViewBag.UserProfile as Travello.Models.EditProfileViewModel;
+
+    // calculate age
+    string genderText = string.IsNullOrEmpty(user?.gender) ? "Unknown" : user.gender;
+    string ageText = "";
+    if (user?.date_of_birth != null)
+    {
+        var today = DateTime.Today;
+        var bday = user.date_of_birth.Value;
+        int age = today.Year - bday.Year;
+        if (bday.Date > today.AddYears(-age)) age--; 
+        
+        ageText = $" , Age {age}";
+    }
 }
 <style>
     .NavBar {
-        background: rgba(255, 255, 255, 0.9) !important; /* ทำให้ทึบขึ้นจนมองเห็นชัด */
+        background: rgba(255, 255, 255, 0.9) !important;
         backdrop-filter: none !important;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
     }
@@ -18,11 +34,13 @@
             <div class="profile-card text-center shadow">
                 <div id="frame_photo_text">
                     <div id="frame_photo">
-                        <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="rounded-circle profile-img" alt="Profile">
+                        <img src="@(string.IsNullOrEmpty(user?.profile_img_path) ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" : user.profile_img_path)" class="rounded-circle profile-img" alt="Profile">
                     </div>
                     <div id="frame_text">
-                        <h2 class="text_name">Dearja</h2>
-                        <p class="text-secondary text-uppercase letter-spacing">Man , Age 96</p>
+                        <h2 class="text_name">@(string.IsNullOrEmpty(user?.username) ? "Unknown User" : user.username)</h2>
+                        <p class="text-secondary text-uppercase letter-spacing">
+                            @genderText@ageText
+                        </p>
                     </div>
                 </div>
             </div>
@@ -34,32 +52,29 @@
                 </div>
                 <div class="box_paragraph">
                     <p class="paragraph_abountme">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-                        Illo sit omnis nemo eum tempore enim ab quibusdam cumque ad eaque 
-                        facilis quam accusamus minus repellendus et provident, in aperiam soluta!
+                        @(string.IsNullOrEmpty(user?.about_me) ? "You haven't written anything about yourself yet" : user.about_me)
                     </p>
                 </div>
+                
                 <div class="box_tag">
                     <h1 class="tag">TAG</h1>
                     <div class="frame_tag_editer">
                         <div class="box_element_tag">
-                            <div class="tag_item">
-                                <span class="tag_icon">🏕️</span>
-                                <span class="tag_text">CAMPING</span>
-                                <button type="button" class="btn_close_tag">×</button>
-                            </div>
-
-                            <div class="tag_item">
-                                <span class="tag_icon">📷</span>
-                                <span class="tag_text">PHOTOGRAPHY</span>
-                                <button type="button" class="btn_close_tag">×</button>
-                            </div>
-
-                            <div class="tag_item">
-                                <span class="tag_icon">🎒</span>
-                                <span class="tag_text">BACKPACKER</span>
-                                <button type="button" class="btn_close_tag">×</button>
-                            </div>
+                            @if (user?.user_tag != null && user.user_tag.Any())
+                            {
+                                foreach (var tag in user.user_tag)
+                                {
+                                    <div class="tag_item">
+                                        <span class="tag_icon">#</span>
+                                        <span class="tag_text">@tag</span>
+                                        <button type="button" class="btn_close_tag">×</button>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color: gray; font-size: 14px; margin-left: 10px;">Haven't added any tags yet</span>
+                            }
                         </div>
                         <div class="btn_edit_tag">
                             <button type="button">
@@ -68,108 +83,44 @@
                         </div>
                     </div>
                 </div>
+            </div>
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var post in Model)
+        {
+            <div class="frame_1388">
+                <div class="event_post">
+                    <div class="head_post">
+                        <p style="font-size: 40px;">@post.EventTitle</p>
+                        <div class="box_post_action">
+                            <span>
+                                <button type="button" class="box_action text_action box_detail">DETAIL</button>
+                            </span>
+                            <span>
+                                <button type="button" class="box_action text_action box_chat">CHAT</button>
+                            </span>
+                            <span>
+                                <button type="button" class="box_action text_action box_delete">DELETE</button>
+                            </span>
+                        </div>
+                    </div>
 
-            </div>
-        </div>
-    <div class="frame_1388">
-        <div class="event_post">
-            <div class="head_post">
-                <p style="font-size: 40px;">ปีนเขาชิวรับเเสงอาทิตย์หน้าหนาว</p>
-                <div class="box_post_action">
-                 
-                    <span>
-                        <button type="button" class="box_action text_action box_detail">DETAIL</button>
-                    </span>
-              
-                  
-                    <span>
-                        <button type="button" class="box_action text_action box_chat">CHAT</button>
-                    </span>
+                    <p class="paragraph_post">@post.Detail</p>
                     
-                    
-                    <span>
-                        <button type="button" class="box_action text_action box_delete">DELETE</button>
-                    </span>
-    
+                    <div class="photo_post">
+                        <img src="@post.CoverImage" class="photo_post_item" alt="Post Photo">
+                    </div>
                 </div>
             </div>
-            <p class="paragraph_post">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Est nostrum repellendus molestias illum sed earum velit beatae magnam, 
-                qui ratione similique officia. Voluptas necessitatibus veniam dolorem sequi, repudiandae corrupti dicta.</p>
-            <div class="photo_post">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-            </div>
-            
+        }
+    }
+    else
+    {
+        <div class="frame_1388" style="text-align: center; padding: 50px;">
+            <p style="font-size: 20px; color: gray;">You haven't created any events yet</p>
         </div>
-        
-    </div>
-    <div class="frame_1388">
-        <div class="event_post">
-            <div class="head_post">
-                <p style="font-size: 40px;">ปีนเขาชิวรับเเสงอาทิตย์หน้าหนาว</p>
-                <div class="box_post_action">
-                 
-                    <span>
-                        <button type="button" class="box_action text_action box_detail">DETAIL</button>
-                    </span>
-              
-                  
-                    <span>
-                        <button type="button" class="box_action text_action box_chat">CHAT</button>
-                    </span>
-                    
-                    
-                    <span>
-                        <button type="button" class="box_action text_action box_delete">DELETE</button>
-                    </span>
-    
-                </div>
-            </div>
-            <p class="paragraph_post">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Est nostrum repellendus molestias illum sed earum velit beatae magnam, 
-                qui ratione similique officia. Voluptas necessitatibus veniam dolorem sequi, repudiandae corrupti dicta.</p>
-            <div class="photo_post">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-            </div>
-            
-        </div>
-        
-    </div>
-    <div class="frame_1388">
-        <div class="event_post">
-            <div class="head_post">
-                <p style="font-size: 40px;">ปีนเขาชิวรับเเสงอาทิตย์หน้าหนาว</p>
-                <div class="box_post_action">
-                 
-                    <span>
-                        <button type="button" class="box_action text_action box_detail">DETAIL</button>
-                    </span>
-              
-                  
-                    <span>
-                        <button type="button" class="box_action text_action box_chat">CHAT</button>
-                    </span>
-                    
-                    
-                    <span>
-                        <button type="button" class="box_action text_action box_delete">DELETE</button>
-                    </span>
-    
-                </div>
-            </div>
-            <p class="paragraph_post">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Est nostrum repellendus molestias illum sed earum velit beatae magnam, 
-                qui ratione similique officia. Voluptas necessitatibus veniam dolorem sequi, repudiandae corrupti dicta.</p>
-            <div class="photo_post">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-                <img src="https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?semt=ais_user_personalization&w=740&q=80" class="photo_post_item" alt="Post Photo">
-            </div>
-            
-        </div>
-        
-    </div>
+    }
     
 </div>
     

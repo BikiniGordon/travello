@@ -12,6 +12,40 @@ namespace Travello.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> Profile() 
+        {
+            // 1. เช็คว่าใครล็อกอินอยู่ (ดึง UserId จาก Session)
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                // ถ้ายังไม่ล็อกอิน ให้เด้งกลับไปหน้าแรกก่อน
+                return RedirectToAction("Index", "Home");
+            }
+
+            // 2. ดึงข้อมูล "ข้อมูลส่วนตัว" จาก Collection "User"
+            // (ใช้ EditProfileViewModel เป็นกล่องรับข้อมูล)
+            var userCollection = _eventsCollection.Database.GetCollection<EditProfileViewModel>("User");
+            var userProfile = await userCollection.Find(u => u.user_id == userId).FirstOrDefaultAsync();
+
+            // 3. เอาข้อมูล User ยัดใส่กระเป๋า ViewBag ส่งไปหน้าเว็บ
+            ViewBag.UserProfile = userProfile;
+
+            // 4. ดึงข้อมูล "โพสต์กิจกรรม" (ใช้โค้ดเดิมที่ทำไว้เลยครับ)
+            var eventsDocCollection = _eventsCollection.Database.GetCollection<EventDocument>("events");
+            var dbPosts = await eventsDocCollection.Find(_ => true).ToListAsync();
+
+            var viewModels = dbPosts.Select(db => new EventDetailViewModel
+            {
+                EventId = db.Id,
+                EventTitle = string.IsNullOrWhiteSpace(db.EventTitle) ? "ไม่มีชื่อกิจกรรม" : db.EventTitle,
+                Detail = string.IsNullOrWhiteSpace(db.Detail) ? "ไม่มีรายละเอียด" : db.Detail,
+                CoverImage = string.IsNullOrWhiteSpace(db.EventImgPath) 
+                    ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" 
+                    : db.EventImgPath
+            }).ToList();
+
+            return View(viewModels);
+        }
         
         private readonly IMongoCollection<EventModel> _eventsCollection;
 
