@@ -11,6 +11,10 @@ appsettings.Development.json
 
 # User-specific files
 *.rsuser
+bin/
+obj/
+.vs/
+*.user
 *.suo
 *.user
 *.userosscache
@@ -411,6 +415,15 @@ FodyWeavers.xsd
 ## Visual studio for Mac
 ##
 
+<<<<<<< HEAD
+=======
+# Development settings
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+>>>>>>> main
 
 # globs
 Makefile.in

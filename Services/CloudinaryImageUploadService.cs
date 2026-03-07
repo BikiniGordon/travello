@@ -6,6 +6,7 @@ namespace Travello.Services;
 public interface IImageUploadService
 {
     Task<string?> UploadEventImageAsync(IFormFile? file, CancellationToken cancellationToken = default);
+    Task<string?> UploadProfileImageAsync(IFormFile? file, CancellationToken cancellationToken = default);
 }
 
 public class CloudinaryImageUploadService : IImageUploadService
@@ -56,5 +57,25 @@ public class CloudinaryImageUploadService : IImageUploadService
         }
 
         return uploadResult.SecureUrl.ToString();
+    }
+
+    public async Task<string?> UploadProfileImageAsync(IFormFile? file, CancellationToken cancellationToken = default)
+    {
+        if (_cloudinary is null || file is null || file.Length == 0) return null;
+
+        await using var stream = file.OpenReadStream();
+
+        var uploadParams = new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, stream),
+            Folder = "travello/user_profile",
+            Overwrite = true,
+            UniqueFilename = true,
+            UseFilename = false
+        };
+
+        var uploadResult = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
+
+        return uploadResult.SecureUrl?.ToString();
     }
 }

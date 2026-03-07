@@ -1,6 +1,3 @@
-@{
-    Layout = null;
-}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +13,6 @@
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
 </head>
 <body>
-    @Html.Partial("_NavBar")
 
     <main class="container">
         @if (TempData["CreateEventSuccess"] is string successMessage)
@@ -57,6 +53,11 @@
                             <span class="text-sm font-semilight text-muted">UPLOAD PHOTO</span>
                         </div>
                         <input type="file" id="uploadPhotoInput" name="UploadPhoto" accept="image/*" style="display: none;" />
+                    </div>
+                    <button type="button" id="photoLinkToggleButton" class="photo-link-toggle text-sm font-regular">Or paste a photo link</button>
+                    <div id="photoLinkSection" class="photo-link-section hidden">
+                        <input type="url" id="photoLinkInput" name="PhotoLink" class="input-field photo-link-input" placeholder="https://example.com/cover.jpg" data-text-size="sm" data-font-weight="regular" />
+                        <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="PhotoLink"></span>
                     </div>
                     <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="UploadPhoto"></span>
                 </div>
@@ -223,6 +224,7 @@
                 <!-- Event Plan -->
                 <section class="form-section event-plan-section">
                     <label class="text-lg font-semibold text-dark">EVENT PLAN</label>
+                    <span class="text-sm font-regular text-muted">*Only full Google Maps link allowed. Ex: https://google.com/maps/XXXXXX</span>
                     <div class="event-plan-detail">
                         <div id="eventPlannerDays"></div>
 
@@ -246,7 +248,7 @@
             <input type="hidden" id="selectedTagsInput" name="TagsCsv" />
             <input type="hidden" id="plannerJsonInput" name="PlannerJson" />
             <input type="hidden" id="packingListJsonInput" name="PackingListJson" />
-            <button type="submit" form="createEventForm" class="btn-create-event-bottom text-lg font-regular default-font">Create Event</button>
+            <button type="submit" form="createEventForm" class="btn-create-event-bottom text-lg font-regular default-font">CREATE EVENT</button>
         </div>
         </form>
     </main>

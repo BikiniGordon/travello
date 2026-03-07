@@ -10,33 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const fallbackImage = '/images/notification.png';
-    const readStateStorageKey = 'travello.readNotifications';
-    const readNotificationIds = new Set();
+    const getNotificationsUrl = '/Notification/MyNotifications';
+    const markAsReadUrl = '/Notification/MarkAsRead';
     let notifications = [];
-
-    const loadReadState = () => {
-        try {
-            const stored = JSON.parse(localStorage.getItem(readStateStorageKey) || '[]');
-
-            if (!Array.isArray(stored)) {
-                return;
-            }
-
-            stored.forEach((id) => {
-                if (id) {
-                    readNotificationIds.add(String(id));
-                }
-            });
-        } catch {
-        }
-    };
-
-    const persistReadState = () => {
-        try {
-            localStorage.setItem(readStateStorageKey, JSON.stringify(Array.from(readNotificationIds)));
-        } catch {
-        }
-    };
 
     const hashString = (value) => {
         let hash = 0;
@@ -86,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrl: normalized.imageUrl || fallbackImage,
             status: normalizeStatus(normalized.status),
             url: normalized.url || '',
-            read: Boolean(normalized.read) || readNotificationIds.has(String(id))
+            read: Boolean(normalized.read)
         };
     };
 
@@ -183,6 +159,46 @@ document.addEventListener('DOMContentLoaded', () => {
         renderNotifications();
     };
 
+    const createMarkAsReadPayload = (notificationId) => {
+        if (!notificationId) {
+            return null;
+        }
+
+        return {
+            notificationId
+        };
+    };
+
+    const persistReadStatus = (notificationId) => {
+        if (!notificationId) {
+            return;
+        }
+
+        const payload = createMarkAsReadPayload(notificationId);
+        if (!payload) {
+            return;
+        }
+
+        if (navigator.sendBeacon) {
+            const body = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+            const sent = navigator.sendBeacon(markAsReadUrl, body);
+
+            if (sent) {
+                return;
+            }
+        }
+
+        fetch(markAsReadUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            keepalive: true
+        }).catch(() => {
+        });
+    };
+
     const markNotificationAsRead = (index) => {
         if (index < 0 || index >= notifications.length) {
             return;
@@ -195,9 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         notification.read = true;
-        readNotificationIds.add(String(notification.id));
-        persistReadState();
         renderNotifications();
+
+        if (notification.id) {
+            persistReadStatus(notification.id);
+        }
     };
 
     window.NotificationPopup = {
@@ -286,6 +304,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadReadState();
-    setNotifications(initialItems);
+    const loadNotifications = async () => {
+        try {
+            const response = await fetch(getNotificationsUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load notifications.');
+            }
+
+            const serverItems = await response.json();
+            setNotifications(serverItems);
+        } catch {
+            setNotifications(initialItems);
+        }
+    };
+
+    loadNotifications();
 });

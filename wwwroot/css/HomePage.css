@@ -9,6 +9,7 @@
     --space-2xl: 64px;
     --space-paddingout: 72px;
 
+    --text-xs: 12px;
     --text-sm: 18px;
     --text-md: 20px;
     --text-lg: 24px;
@@ -18,14 +19,16 @@
     --text-4xl: 64px;
 }
 
-.text-sm  { font-size: var(--text-sm); }
-.text-md  { font-size: var(--text-md); }
-.text-xl  { font-size: var(--text-xl); }
-.text-2xl { font-size: var(--text-2xl); }
-.text-3xl { font-size: var(--text-3xl); }
-.text-4xl { font-size: var(--text-4xl); }
+.text-xs  { font-size: var(--text-xs); line-height: 1.2;}
+.text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+.text-md  { font-size: var(--text-md); line-height: 1.2;}
+.text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+.text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+.text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+.text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+.text-4xl { font-size: var(--text-4xl); line-height: 1.2;}
 
-.font-semilight  { font-weight: 300; }
+.font-semilight  { font-weight: 350; }
 .font-regular    { font-weight: 400; }
 .font-medium     { font-weight: 500; }
 .font-semibold   { font-weight: 600; }
@@ -33,7 +36,6 @@
 
 .CenterContainer {
     width: 100%;
-    max-width: 1440px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -105,7 +107,7 @@
     width: 100%;
 }
 
-.ActivitiesAndSearch {
+.EventsAndSearch {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -116,6 +118,7 @@
 .SearchBar {
     display: flex;
     height: 40px;
+    width: 100%;
     padding: 10px 12px;
     align-items: center;
     gap: 10px;
@@ -130,14 +133,24 @@
     height: 26px;
 }
 
-.SearchInput {
-    width: 100%;
+.LocationSearchInput {
+    width: 70%;
     border: none;
     outline: none;
     background: transparent;
+    font-family: inherit;
 }
 
-.ActivityRow {
+.DateSearchInput {
+    width: 30%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: rgba(29, 27, 32, 0.5);
+    font-family: inherit;
+}
+
+.EventRow {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,45 +158,44 @@
     gap: 32px var(--space-lg);
     align-self: stretch;
     flex-wrap: wrap;
+
+    min-height: 800px;
 }
 
-.Activity {
+.Event {
     display: flex;
     width: 341px;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
+    cursor: pointer
 }
 
-.ActivityImage {
+.EventImage {
     height: 213px;
     align-self: stretch;
     aspect-ratio: 341/213;
+    background: #F5F6EE;
 
     border-radius: 18px;
-    background: url('/images/HomePageBackground.jpg') lightgray 50% / cover no-repeat;
 }
 
-.ActivityData {
+.EventData {
     display: flex;
     height: 178px;
     padding: 0 var(--space-xl);
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     gap: var(--space-sm);
     align-self: stretch;
     margin-top: -53px;
 
     border-radius: 18px;
-    background: #CCD6D5; /* Set this to 3 different bg */
+    background: #CCD6D5;
 }
 
-.ActivityName {
-    font-family: "Segoe UI", sans-serif;
-}
-
-.ActivityDetails {
+.EventDetails {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -191,7 +203,7 @@
     align-self: stretch;
 }
 
-.ActivityLocation {
+.EventLocation {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -204,7 +216,7 @@
     aspect-ratio: 1/1;
 }
 
-.ActivityDuration {
+.EventDuration {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -216,7 +228,7 @@
     height: 21px;
 }
 
-.ActivityTag {
+.event_tag {
     display: flex;
     width: auto;
     padding: 3px 8px;
@@ -307,17 +319,24 @@
     display: flex;
     padding: var(--space-sm) var(--space-md);
     align-items: center;
+    cursor: pointer;
+    text-transform: uppercase;
 
     border-radius: 38px;
     border: 1px solid #849C84;
 }
 
+.active-tag-style {
+    background: rgba(132, 156, 132, 0.30);
+}
+
 .Pagination {
     display: flex;
+    flex-wrap: wrap;
     padding: var(--space-xs);
     justify-content: center;
     align-items: center;
-    gap: var(--space-space-xs, 8px);
+    gap: var(--space-xs);
     align-self: stretch;
 }
 
@@ -328,8 +347,11 @@
     justify-content: center;
     align-items: center;
     background: transparent;
+    font-family: inherit;
 
     border-radius: 50px;
+    color: black;
+    text-decoration: none;
 }
 
 .PageNumber {
@@ -339,12 +361,30 @@
     align-items: center;
     min-width: 31px;
     height: 31px;
+    font-family: inherit;
 
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     outline: none;
+    color: black;
+    text-decoration: none;
+}
+
+.PageNumber.active {
+    background-color: #CEE7E6;
+    border-radius: 20px;
+    font-family: inherit;
+}
+
+.PageInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 31px;
+    height: 31px;
 }
 
 .PageInput {
@@ -354,12 +394,53 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
+    font-family: inherit;
     
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     outline: none;
+}
+
+.PageInput::placeholder {
+    text-align: center;
+    opacity: 1;
+}
+
+.PageInput::-webkit-outer-spin-button,
+.PageInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+html, body, footer {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1440px) {
+    .EventRow {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; 
+        gap: 32px; 
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 1025px) {
@@ -370,7 +451,7 @@
         --text-xl: 28px;
         --text-2xl: 36px;
         --text-3xl: 48px;
-        --text-4xl: 48px;
+        --text-4xl: 56px;
 
         --space-xs: 6px;
         --space-sm: 12px;
@@ -378,7 +459,7 @@
         --space-lg: 28px;
         --space-xl: 40px;
         --space-2xl: 56px;
-        --space-paddingout: 16px;
+        --space-paddingout: 32px;
     }
 
     .ContextContainer {
@@ -391,12 +472,12 @@
         gap: var(--space-xl);
     }
 
-    .ActivitiesAndSearch {
+    .EventsAndSearch {
         display: contents; 
     }
 
     .SearchBar {
-        order: 1; /* First: Search Bar */
+        order: 1;
         width: 100%;
     }
 
@@ -407,7 +488,7 @@
         align-items: center;
     }
 
-    .ActivityRow {
+    .EventRow {
         order: 3;
         width: 100%;
         justify-content: center;
@@ -442,7 +523,7 @@
         --text-xl: 24px;
         --text-2xl: 32px;
         --text-3xl: 40px;
-        --text-4xl: 32px;
+        --text-4xl: 48px;
 
         --space-xs: 4px;
         --space-sm: 8px;
@@ -452,4 +533,13 @@
         --space-2xl: 48px;
         --space-paddingout: 16px;
     }
+
+    .LocationSearchInput {
+        width: 60%;
+    }
+
+    .DateSearchInput {
+        width: 40%;
+    }
+
 }

@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Travello</title>
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Travello.styles.css" asp-append-version="true" />
 
@@ -14,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
@@ -23,13 +26,51 @@
     <div class="main-container">
         <main role="main">
             @RenderBody()
+            
+            <div id="loginModal" class="ModalContainer">
+                <div class="ModalContent">
+                    <span class="CloseModal" onclick="closeLoginModal()">&times;</span>
+                    @if (TempData["AuthPromptMessage"] is string authPromptMessage)
+                    {
+                        <p class="text-sm" style="margin-bottom: 12px; color: #d55351;">@authPromptMessage</p>
+                    }
+                    
+                    <div class="ModalHeader">
+                        <h2 class="font-semibold">Log In</h2>
+                        <p class="text-sm">Welcome back to Travello</p>
+                    </div>
+
+                    <form id="loginForm">
+                        <div class="InputGroup">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="InputGroup">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="LoginSubmitBtn">Log In</button>
+                    </form>
+                </div>
+            </div>
+
         </main>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="~/lib/jquery/dist/jquery.min.js"></script> -->
+    <!-- <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/NavBar.js" asp-append-version="true"></script>
     <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
+    @if (TempData["OpenLoginModal"] is string openLoginModal && openLoginModal == "true")
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof openLoginModal === 'function') {
+                    openLoginModal();
+                }
+            });
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

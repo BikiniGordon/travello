@@ -8,19 +8,19 @@ namespace Travello.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IMongoCollection<EventModel> _eventsCollection;
-
         public IActionResult Privacy()
         {
             return View();
         }
+        
+        private readonly IMongoCollection<EventModel> _eventsCollection;
 
         public HomeController(IMongoDatabase database)
         {
-            _eventsCollection = database.GetCollection<EventModel>("Event");
+            _eventsCollection = database.GetCollection<EventModel>("events");
         }
 
-        public async Task<IActionResult> Index(int page = 1, string? searchLocation = null, DateTime? searchDate = null, string[]? selectedTags = null)
+        public async Task<IActionResult> Index(int page = 1, string? searchLocation = null, DateTime? searchDate = null, string[]? selectedTags = null) 
         {
             int page_size = 9;
 
@@ -29,12 +29,13 @@ namespace Travello.Controllers
 
             if (!string.IsNullOrEmpty(searchLocation))
             {
-                var regex = new BsonRegularExpression(searchLocation, "i");
-                filter &= filterBuilder.Regex("location", regex);
+                var regex = new MongoDB.Bson.BsonRegularExpression(searchLocation, "i");
+                filter &= filterBuilder.Regex(x => x.location, regex);
             }
 
             if (searchDate.HasValue)
             {
+                DateTime dateOnly = DateTime.SpecifyKind(searchDate.Value.Date, DateTimeKind.Unspecified);
                 DateTime searchDayStart = searchDate.Value.Date;
                 DateTime searchDayEnd = searchDate.Value.Date.AddDays(1).AddTicks(-1);
 
@@ -44,8 +45,8 @@ namespace Travello.Controllers
 
             if (selectedTags != null && selectedTags.Length > 0)
             {
-                var tagFilters = selectedTags.Select(tag =>
-                    filterBuilder.Regex("event_tag", new BsonRegularExpression($"^{tag}$", "i"))
+                var tagFilters = selectedTags.Select(tag => 
+                    filterBuilder.Regex("event_tag", new MongoDB.Bson.BsonRegularExpression($"^{tag}$", "i"))
                 ).ToList();
 
                 filter &= filterBuilder.Or(tagFilters);
@@ -57,7 +58,7 @@ namespace Travello.Controllers
                 .ToListAsync();
 
             long totalEvents = await _eventsCollection.CountDocumentsAsync(filter);
-
+            
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = (int)Math.Ceiling((double)totalEvents / page_size);
             if (ViewBag.TotalPages < 1) ViewBag.TotalPages = 1;
