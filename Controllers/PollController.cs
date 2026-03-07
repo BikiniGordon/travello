@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Driver;
 using Travello.Hubs;
 using Travello.Models;
 using Travello.Services;
@@ -10,11 +11,13 @@ namespace Travello.Controllers
     {
         private readonly PollService _pollService;
         private readonly IHubContext<PollHub> _pollHub;
+        private readonly IMongoCollection<UserModel> _usersCollection;
 
-        public PollController(PollService pollService, IHubContext<PollHub> pollHub)
+        public PollController(PollService pollService, IHubContext<PollHub> pollHub, IMongoDatabase database)
         {
             _pollService = pollService;
             _pollHub = pollHub;
+            _usersCollection = database.GetCollection<UserModel>("User");
         }
 
         [HttpGet]
@@ -24,6 +27,11 @@ namespace Travello.Controllers
                 return Json(new List<object>());
 
             var polls = await _pollService.GetPollsByEventIdAsync(event_id);
+
+            var endedPollSaveTasks = polls
+                .Where(p => p.IsEnded)
+                .Select(p => _pollService.SaveVoteResultForEndedPollAsync(p));
+            await Task.WhenAll(endedPollSaveTasks);
 
             var result = polls.Select(p =>
             {
@@ -57,8 +65,39 @@ namespace Travello.Controllers
             if (poll == null)
                 return Json(new { error = "Poll not found" });
 
+            if (poll.IsEnded)
+            {
+                await _pollService.SaveVoteResultForEndedPollAsync(poll);
+            }
+
             var userId = HttpContext.Session.GetString("UserId") ?? "";
             int totalVotes = poll.Options.Sum(o => o.Voters.Count);
+
+            var allVoterIds = poll.Options
+                .SelectMany(option => option.Voters)
+                .Where(voterId => !string.IsNullOrWhiteSpace(voterId))
+                .Distinct()
+                .ToList();
+
+            var voterProfilesById = new Dictionary<string, string>(StringComparer.Ordinal);
+            if (allVoterIds.Count > 0)
+            {
+                var voters = await _usersCollection
+                    .Find(user => user.id != null && allVoterIds.Contains(user.id))
+                    .ToListAsync();
+
+                foreach (var voter in voters)
+                {
+                    if (string.IsNullOrWhiteSpace(voter.id))
+                    {
+                        continue;
+                    }
+
+                    voterProfilesById[voter.id] = string.IsNullOrWhiteSpace(voter.profile_img_path)
+                        ? "/images/pic.png"
+                        : voter.profile_img_path!;
+                }
+            }
 
             var result = new
             {
@@ -67,11 +106,19 @@ namespace Travello.Controllers
                 is_ended = poll.IsEnded,
                 time_left = poll.IsEnded ? "Ended" : GetTimeLeft(poll.Deadline),
                 allow_multiple = poll.AllowMultiple,
+                anonymous = poll.Anonymous,
                 options = poll.Options.Select(o => new
                 {
                     text = o.Text,
                     percent = totalVotes > 0 ? (int)Math.Round(o.Voters.Count * 100.0 / totalVotes) : 0,
                     voters_count = o.Voters.Count,
+                    voter_profiles = poll.Anonymous
+                        ? Array.Empty<string>()
+                        : o.Voters.Select(voterId =>
+                            voterProfilesById.TryGetValue(voterId, out var profilePath)
+                                ? profilePath
+                                : "/images/pic.png"
+                        ),
                     voted = o.Voters.Contains(userId)
                 })
             };

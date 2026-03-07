@@ -1,6 +1,7 @@
 let current_event_id = "";
 let current_chat_room_id = "";
 let currentPollId = ""; // Track which poll detail is open
+let pollDetailRequestSeq = 0; // Guards against out-of-order poll detail responses
 
 // SignalR connection for real-time poll updates
 const pollConnection = new signalR.HubConnectionBuilder()
@@ -142,21 +143,34 @@ function backSettingRoom(){
 // 🌟 1. ฟังก์ชันเปิดหน้ารายละเอียดโพล
 function openPollCard(poll_id) {
     currentPollId = poll_id;
+    const requestSeq = ++pollDetailRequestSeq;
     // สลับหน้าจอ
     document.getElementById('all-poll-room').style.display = 'none';
     document.getElementById('poll-select-card').style.display = 'flex';    
 
     const optionsContainer = document.getElementById('poll-options-container');
     const template = document.getElementById('poll-option-template');
+    const questionElement = document.getElementById('detail-poll-question');
+    const statusElem = document.getElementById('detail-poll-status');
+
+    // Reset immediately so old poll content does not flash while loading a new poll.
+    optionsContainer.innerHTML = '';
+    questionElement.innerText = 'Loading poll...';
+    statusElem.textContent = '';
+    statusElem.style.color = '';
 
     fetch(`/Poll/GetPollDetail?poll_id=${poll_id}`)
         .then(response => response.json())
         .then(poll => {
+            // Ignore stale responses if user already clicked another poll.
+            if (requestSeq !== pollDetailRequestSeq || currentPollId !== poll_id) {
+                return;
+            }
+
             // Clear inside callback to prevent race condition duplicates
             optionsContainer.innerHTML = '';
-            document.getElementById('detail-poll-question').innerText = poll.question;
+            questionElement.innerText = poll.question;
             
-            const statusElem = document.getElementById('detail-poll-status');
             if (poll.is_ended) {
                 statusElem.textContent = "Ended";
                 statusElem.style.color = "#888";
@@ -185,10 +199,24 @@ function openPollCard(poll_id) {
                 
                 // วาดรูปคนโหวตซ้อนๆ กัน
                 const votersBox = optionClone.querySelector('.poll-voters');
-                for(let i = 0; i < opt.voters_count; i++){
-                    const avatar = document.createElement('div');
-                    avatar.className = 'voter-avatar';
-                    votersBox.appendChild(avatar);
+                const isAnonymousPoll = poll.anonymous === true || poll.anonymous === 'true';
+                if (isAnonymousPoll) {
+                    const voteCountBadge = document.createElement('span');
+                    voteCountBadge.className = 'poll-voter-count text-xs font-semibold';
+                    const voteCount = Number(opt.voters_count) || 0;
+                    voteCountBadge.textContent = `${voteCount} ${voteCount === 1 ? 'vote' : 'votes'}`;
+                    votersBox.appendChild(voteCountBadge);
+                } else {
+                    const voterProfiles = Array.isArray(opt.voter_profiles) ? opt.voter_profiles : [];
+
+                    voterProfiles.forEach((profilePath) => {
+                        const avatar = document.createElement('div');
+                        avatar.className = 'voter-avatar';
+                        avatar.style.backgroundImage = `url('${profilePath || '/images/pic.png'}')`;
+                        avatar.style.backgroundSize = 'cover';
+                        avatar.style.backgroundPosition = 'center';
+                        votersBox.appendChild(avatar);
+                    });
                 }
 
                 optionsContainer.appendChild(optionClone);
@@ -221,10 +249,86 @@ function backToAllPolls() {
 }
 
 function openCreatePoll(){
+    resetCreatePollForm();
     document.getElementById('all-poll-room').style.display = 'none';
     document.getElementById('create-poll-page').style.display = 'flex';
     setupPollTimeDropdowns(); 
 
+}
+
+function resetCreatePollForm() {
+    const questionInput = document.getElementById('poll-question-input');
+    if (questionInput) {
+        questionInput.value = '';
+    }
+
+    const optionsGroup = document.getElementById('poll-options-group');
+    if (optionsGroup) {
+        const optionWrappers = optionsGroup.querySelectorAll('.poll-option-input-wrapper');
+
+        optionWrappers.forEach((wrapper, index) => {
+            if (index >= 2) {
+                wrapper.remove();
+                return;
+            }
+
+            const input = wrapper.querySelector('input');
+            if (input) {
+                input.value = '';
+                input.placeholder = `Option ${index + 1}`;
+            }
+        });
+    }
+
+    const dateInput = document.querySelector('#create-poll-body .date-input');
+    if (dateInput) {
+        dateInput.value = '';
+    }
+
+    const hourSelect = document.getElementById('poll-hour-select');
+    if (hourSelect) {
+        hourSelect.value = '';
+    }
+
+    const minuteSelect = document.getElementById('poll-minute-select');
+    if (minuteSelect) {
+        minuteSelect.value = '';
+    }
+
+    const checkboxes = document.querySelectorAll('#create-poll-body .hidden-checkbox');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+    });
+}
+
+function addPollOptionInput() {
+    const optionsGroup = document.getElementById('poll-options-group');
+    const addOptionButton = document.getElementById('add-option-btn');
+    if (!optionsGroup || !addOptionButton) {
+        return;
+    }
+
+    const existingOptionCount = optionsGroup.querySelectorAll('.poll-option-input-wrapper').length;
+    const nextOptionNumber = existingOptionCount + 1;
+
+    const optionWrapper = document.createElement('div');
+    optionWrapper.className = 'poll-option-input-wrapper';
+    optionWrapper.innerHTML = `
+        <input type="text" class="poll-form-input text-md font-semibold" placeholder="Option ${nextOptionNumber}">
+    `;
+
+    optionsGroup.insertBefore(optionWrapper, addOptionButton);
+    optionWrapper.querySelector('input')?.focus();
+}
+
+function initializeAddOptionButton() {
+    const addOptionButton = document.getElementById('add-option-btn');
+    if (!addOptionButton || addOptionButton.dataset.bound === 'true') {
+        return;
+    }
+
+    addOptionButton.addEventListener('click', addPollOptionInput);
+    addOptionButton.dataset.bound = 'true';
 }
 
 function backAllPollRoom(){
@@ -235,6 +339,15 @@ function backAllPollRoom(){
 function setupPollTimeDropdowns() {
     const hourSelect = document.getElementById('poll-hour-select');
     const minuteSelect = document.getElementById('poll-minute-select');
+
+    if (!hourSelect || !minuteSelect) {
+        return;
+    }
+
+    // Prevent duplicate options when the create poll panel is opened repeatedly.
+    if (hourSelect.options.length > 1 && minuteSelect.options.length > 1) {
+        return;
+    }
 
     for (let i = 0; i < 24; i++) {
         let hr = i.toString().padStart(2, '0');
@@ -347,3 +460,7 @@ function handleEnterPress(event) {
         sendMessage();
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeAddOptionButton();
+});

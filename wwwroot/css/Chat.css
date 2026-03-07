@@ -757,13 +757,28 @@ body {
     align-items: center;
 }
 
+.poll-voter-count {
+    color: #4E4E4E;
+    background-color: #EDEDED;
+    border-radius: 999px;
+    padding: 2px 10px;
+    line-height: 1.2;
+}
+
 .voter-avatar {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: #387BFF; /* สีฟ้าเข้มสมมติเป็นรูปคน */
+    background-color: #387BFF;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border: 2px solid #F4F4F4; /* 🌟 สำคัญ! ขอบต้องสีเดียวกับพื้นหลัง .poll-detail-box มันถึงจะดูตัดซ้อนกัน */
     margin-left: -8px; /* ทำให้รูปซ้อนทับกันไปทางซ้าย */
+}
+
+.voter-avatar:first-child {
+    margin-left: 0;
 }
 
 #update-event-btn {
@@ -850,7 +865,7 @@ body {
 }
 
 .poll-option-input-wrapper .poll-form-input {
-    padding-right: 48px; /* เว้นที่ให้ไอคอนรูปภาพ */
+    padding-right: 16px;
 }
 
 .option-img-icon {
