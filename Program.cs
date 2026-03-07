@@ -1,7 +1,24 @@
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Microsoft.Extensions.Options;
 using Travello.Models;
 using Travello.Services;
+
+void LoadDotEnv(string path)
+{
+    if (!File.Exists(path)) return;
+
+    foreach (var line in File.ReadAllLines(path))
+    {
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
+
+        var parts = line.Split('=', 2);
+        if (parts.Length != 2) continue;
+
+        var key = parts[0].Trim();
+        var value = parts[1].Trim();
+        Environment.SetEnvironmentVariable(key, value);
+    }
+}
 
 LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
@@ -26,52 +43,40 @@ builder.Services.Configure<MongoDbSettings>(options =>
     options.ConnectionString = builder.Configuration["MONGODB_CONNECTION_STRING"] ?? options.ConnectionString;
     options.DatabaseName = builder.Configuration["MONGODB_DATABASE_NAME"] ?? options.DatabaseName;
 });
+
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
     if (string.IsNullOrWhiteSpace(settings.ConnectionString))
-    {
-        throw new InvalidOperationException(
-            "MongoDB connection string is missing. Set MongoDBsettings:ConnectionString via user-secrets or MongoDBsettings__ConnectionString / MONGODB_CONNECTION_STRING environment variable.");
-    }
-
+        throw new InvalidOperationException("MongoDB connection string is missing.");
     return new MongoClient(settings.ConnectionString);
 });
+
 builder.Services.AddSingleton(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
     if (string.IsNullOrWhiteSpace(settings.DatabaseName))
-    {
-        throw new InvalidOperationException(
-            "MongoDB database name is missing. Set MongoDBsettings:DatabaseName via user-secrets or MongoDBsettings__DatabaseName / MONGODB_DATABASE_NAME environment variable.");
-    }
-
+        throw new InvalidOperationException("MongoDB database name is missing.");
     return serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(settings.DatabaseName);
 });
 
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EventDocument>("events"));
 
+builder.Services.AddSingleton<EventService>();
+
+builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
+builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<EditProfileViewModel>("User"));
 
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<NotificationDocument>("notifications"));
-
-builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 
@@ -83,48 +88,6 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-static void LoadDotEnv(string path)
-{
-    if (!File.Exists(path))
-    {
-        return;
-    }
-
-    foreach (var rawLine in File.ReadAllLines(path))
-    {
-        var line = rawLine.Trim();
-        if (string.IsNullOrWhiteSpace(line) || line.StartsWith('#'))
-        {
-            continue;
-        }
-
-        var separatorIndex = line.IndexOf('=');
-        if (separatorIndex <= 0)
-        {
-            continue;
-        }
-
-        var key = line[..separatorIndex].Trim();
-        var value = line[(separatorIndex + 1)..].Trim();
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            continue;
-        }
-
-        if ((value.StartsWith('"') && value.EndsWith('"')) || (value.StartsWith('\'') && value.EndsWith('\'')))
-        {
-            value = value[1..^1];
-        }
-
-        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
-        {
-            Environment.SetEnvironmentVariable(key, value);
-        }
-    }
-}

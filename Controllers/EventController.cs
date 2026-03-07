@@ -6,12 +6,22 @@ using System.Globalization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Travello.Models;
+using Travello.Services;
 
 namespace Travello.Controllers
 {
     public class EventController : Controller
     {
+        private readonly EventService _eventService;
         private readonly IMongoCollection<EventDocument> _eventsCollection;
+        private readonly INotificationService _notificationService;
+
+        public EventController(EventService eventService, IMongoDatabase database,INotificationService notificationService)
+        {
+            _eventService = eventService;
+            _eventsCollection = database.GetCollection<EventDocument>("events");
+            _notificationService = notificationService;
+        }
 
         private static readonly JsonSerializerOptions PlannerJsonSerializerOptions = new()
         {
@@ -26,11 +36,6 @@ namespace Travello.Controllers
             "SHOPPING",
             "ADVENTURE"
         };
-
-        public EventController(IMongoDatabase database)
-        {
-            _eventsCollection = database.GetCollection<EventDocument>("events");
-        }
 
         [HttpGet("/Event/Edit/{id}")]
         public async Task<IActionResult> Edit(string id)
@@ -178,14 +183,15 @@ namespace Travello.Controllers
                 Itinerary = itinerary,
                 PackingList = packingList,
                 CreatedAt = existingEvent.CreatedAt,
-                CreatedBy = existingEvent.CreatedBy
+                CreatedBy = existingEvent.CreatedBy,
+                IsRegistrationClosed = existingEvent.IsRegistrationClosed,  
+                ClosingReason = existingEvent.ClosingReason
             };
 
             try
             {
                 await _eventsCollection.ReplaceOneAsync(e => e.Id == id, updatedEvent);
-                TempData["CreateEventSuccess"] = "Event updated successfully.";
-                return RedirectToAction(nameof(Edit), new { id });
+                return RedirectToAction("Detail", "Event", new { id });
             }
             catch
             {
@@ -194,94 +200,334 @@ namespace Travello.Controllers
             }
         }
 
-        public IActionResult Detail(int id)
+
+        // DETAIL PAGE
+
+        public async Task<IActionResult> Detail(string id)
         {
-            //mock NO database yet
-            var model = new EventDetailViewModel
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
+
+            var currentUserId = HttpContext.Session.GetString("UserId") 
+            ?? "69a714e4cbab5148e804d87d";
+            
+            string userStatus = "none";
+
+            if (ev.IsRegistrationClosed && currentUserId == ev.CreatorId)
             {
-                EventId = id,
-                EventTitle = "ปีนเขาชิวรับแสงอาทิตย์หน้าหนาว",
-                Category = "ADVENTURE",
-                HostName = "Dearja",
-                HostProfileImage = "Ellipse 12.png",
-                CoverImage = "cover.png",
-                Detail = "Lorem ipsum dolor sit amet...",
-                TripRules = "Lorem ipsum dolor sit amet...",
-                ClosingDate = new DateTime(2026, 3, 20),
-                StartDate = new DateTime(2026, 3, 20),
-                EndDate = new DateTime(2026, 3, 26),
-                Location = "Everest mountain",
-                RemainingSlots = 10,
-                AttendeeCount = 21,
-                UserStatus = "approved", // none | pending | owner 
-                TotalExpenses = 4280,
+                userStatus = "owner_closed";
+            }
+            else if (ev.IsRegistrationClosed)
+            {
+                userStatus = "closed";
+            }
 
-                PackingList = new List<string> { "คนรู้ใจ", "เสื้อกันหนาว", "รองเท้า" },
+            else
+            {
+                var allParticipants = await _eventService.GetParticipantsAsync(id);
 
-                Days = new List<DayViewModel>
+                if (!string.IsNullOrEmpty(currentUserId))
                 {
-                    new DayViewModel
+                    if (currentUserId == ev.CreatorId)
                     {
-                        DayNumber = 1,
-                        Places = new List<PlaceViewModel>
+                        userStatus = "owner";
+                    }
+                    else
+                    {
+                        var participant = await _eventService.GetParticipantAsync(id, currentUserId);
+                        if (participant != null)
                         {
-                            new PlaceViewModel
-                            {
-                                Name = "สวนลุม",
-                                Description = "เจอกันเวลา 9 โมงเช้า",
-                                Expenses = new List<ExpenseViewModel>
-                                {
-                                    new ExpenseViewModel { Name = "ค่าเดินทาง", Amount = 20 }
-                                }
-                            },
-                            new PlaceViewModel
-                            {
-                                Name = "วัดอรุณ",
-                                Description = "สวดมนต์เอาฤกษ์เอาชัย"
-                            }
+                            userStatus = participant.Status;
                         }
                     }
-                },
-
-                Attendees = new List<AttendeeViewModel>
-                {
-                    new AttendeeViewModel { Id=1, Name="Dearja", ProfileImage="pic.png", IsApproved=true },
-                    new AttendeeViewModel { Id=2, Name="Tom",    ProfileImage="pic.png", IsApproved=true },
-                    new AttendeeViewModel { Id=3, Name="Robin",  ProfileImage="pic.png", IsApproved=true },
-                    new AttendeeViewModel { Id=4, Name="Sam",    ProfileImage="pic.png", IsApproved=false },
-                },
-
-                JoinQuestions = new List<JoinQuestionViewModel>
-                {
-                    new JoinQuestionViewModel { Id=1, QuestionText="ทำไมถึงอยากร่วมทริป?" }
-                },
-
-                Additions = new List<AdditionViewModel>
-                {
-                    new AdditionViewModel
-                    {
-                        Question = "What will we eat the morning of the trip?",
-                        Answer = "Ramen"
-                    }
                 }
+            }
+
+            var allParticipantsFull = await _eventService.GetParticipantsAsync(id);
+            var approvedCount = allParticipantsFull.Count(p => p.Status == "approved");
+            var pendingCount  = allParticipantsFull.Count(p => p.Status == "pending");
+            var displayCount  = userStatus == "owner"
+                ? approvedCount + pendingCount
+                : approvedCount;
+
+            var host = await _eventService.GetUserByIdAsync(ev.CreatorId);
+
+            var attendeeViewModels = new List<AttendeeViewModel>();
+            foreach (var p in allParticipantsFull.Where(p => p.Status == "approved" || p.Status == "pending"))
+            {
+                var user = await _eventService.GetUserByIdAsync(p.UserId);
+                attendeeViewModels.Add(new AttendeeViewModel
+                {
+                    Id           = p.UserId,
+                    Name         = user?.Username ?? p.UserId,
+                    ProfileImage = user?.ProfileImgPath ?? "/images/pic.png",
+                    IsApproved   = p.Status == "approved"
+                });
+            }
+
+            var days = ev.Itinerary
+                .GroupBy(i => i.DayIndex)
+                .OrderBy(g => g.Key)
+                .Select(g => new DayViewModel
+                {
+                    DayNumber = g.Key,
+                    Places = g.OrderBy(i => i.PlaceIndex)
+                              .Select(i => new PlaceViewModel
+                              {
+                                  Name        = i.ActivityName,
+                                  Description = i.Note ?? "",
+                                  Expenses    = i.ExpenseItems.Select(e => new ExpenseViewModel
+                                  {
+                                      Name   = e.Name,
+                                      Amount = e.Amount
+                                  }).ToList()
+                              }).ToList()
+                }).ToList();
+
+            var locations = ev.Itinerary?
+            .OrderBy(i => i.DayIndex).ThenBy(i => i.PlaceIndex)
+            .Where(i => i.Latitude != 0 && i.Longitude != 0)
+            .Select(i => new LocationViewModel
+            {
+                PlaceName = i.ActivityName,
+                Latitude  = i.Latitude,
+                Longitude = i.Longitude
+            }).ToList() ?? new();
+
+            var joinQuestions = new List<JoinQuestionViewModel>();
+            if (!string.IsNullOrEmpty(ev.RecruitQuestion))
+            {
+                joinQuestions.Add(new JoinQuestionViewModel
+                {
+                    Id           = 1,
+                    QuestionText = ev.RecruitQuestion
+                });
+            }
+
+            var totalExpenses = ev.Itinerary
+            .SelectMany(i => i.ExpenseItems)
+            .Sum(e => e.Amount);
+
+            var model = new EventDetailViewModel
+            {
+                EventId          = id,
+                EventTitle       = ev.EventTitle,
+                Category         = ev.EventTag ?? new(),
+                HostName         = host?.Username ?? "",
+                HostProfileImage = host?.ProfileImgPath,
+                CoverImage       = ev.EventImgPath ?? "",
+                Detail           = ev.Detail ?? "",
+                TripRules        = ev.TripRules ?? "",
+                ClosingDate      = ev.OpenDate ?? DateTime.Now,
+                StartDate        = ev.StartDate,
+                EndDate          = ev.EndDate,
+                Location         = ev.Location ?? "",
+                RemainingSlots   = ev.AttendeesLimit - ev.Attendees,
+                AttendeeCount    = displayCount,
+                UserStatus       = userStatus,
+                TotalExpenses    = totalExpenses,
+                PackingList      = ev.PackingList ?? new(),
+                Days             = days,
+                Locations        = locations,
+                Attendees        = attendeeViewModels,
+                JoinQuestions    = joinQuestions,
+                Additions        = new()
             };
 
             return View(model);
         }
 
-        public JsonResult GetAttendees(int id)
+        // GET ATTENDEES (modal)
+
+        public async Task<IActionResult> GetAttendees(string id)
         {
-            var attendees = new[]
+            var currentUserId = HttpContext.Session.GetString("UserId")
+            ?? "69a714e4cbab5148e804d87d";
+
+            var ev = await _eventService.GetEventByIdAsync(id);
+            bool isOwner = currentUserId == ev?.CreatorId;
+
+            var allParticipants = await _eventService.GetParticipantsAsync(id);
+            var filtered = isOwner
+                ? allParticipants.Where(p => p.Status == "approved" || p.Status == "pending")
+                : allParticipants.Where(p => p.Status == "approved");
+
+            var attendeesList = new List<object>();
+            foreach (var p in filtered)
             {
-                new { Id=1, Name="Dearja", ProfileImage="/images/pic.png", IsApproved=true  },
-                new { Id=2, Name="Tom",    ProfileImage="/images/pic.png", IsApproved=true  },
-                new { Id=3, Name="Robin",  ProfileImage="/images/pic.png", IsApproved=true  },
-                new { Id=4, Name="Sam",    ProfileImage="/images/pic.png", IsApproved=false },
-            };
+                var user = await _eventService.GetUserByIdAsync(p.UserId);
+                attendeesList.Add(new
+                {
+                    id           = p.Id,          
+                    name         = user?.Username ?? p.UserId,
+                    profileImage = user?.ProfileImgPath ?? "/images/pic.png",
+                    isApproved   = p.Status == "approved",
+                    recruitAnswer = isOwner ? (p.RecruitAnswer ?? "") : ""
+                });
+            }
 
-            bool isOwner = false; // true
+            return Json(new { isOwner, attendees = attendeesList });
+        }
 
-            return Json(new { isOwner, attendees });
+        // JOIN -> ans q
+
+        [HttpPost]
+        public async Task<IActionResult> Join(string id, [FromBody] JoinRequestDto request)
+        {
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized();
+
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
+            if (ev.IsRegistrationClosed) return BadRequest("Registration is closed");
+
+            var existing = await _eventService.GetParticipantAsync(id, currentUserId);
+            if (existing != null) return BadRequest("Already joined");
+
+            var recruitAnswer = request.Answers.FirstOrDefault()?.Answer ?? "";
+            await _eventService.AddParticipantAsync(id, currentUserId, "pending", recruitAnswer);
+
+            var allParticipants = await _eventService.GetParticipantsAsync(id);
+            var pendingCount = allParticipants.Count(p => p.Status == "pending");
+            var limit = ev.AttendeesLimit;
+
+            var remaining = limit - ev.Attendees;
+            
+            var threshold = (int)Math.Ceiling(limit * 0.5);
+
+            if (limit > 0 && pendingCount == threshold)
+            {
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = ev.CreatorId,
+                    Title     = "Many requests are waiting!",
+                    Message   = $"Event: {ev.EventTitle}",
+                    Read      = false,
+                    Status    = "pending_alert",
+                    ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{id}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            else if (remaining > 0 && pendingCount == remaining)
+            {
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = ev.CreatorId,
+                    Title     = "Slots are fully requested!",
+                    Message   = $"Event: {ev.EventTitle}",
+                    Read      = false,
+                    Status    = "pending_full",
+                    ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{id}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            return Ok();
+        }
+
+        // LEAVE 
+
+        [HttpPost]
+        public async Task<IActionResult> Leave(string id)
+        {
+            // var currentUserId = Request.Cookies["userId"];
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized(); // mock
+
+            await _eventService.RemoveParticipantAsync(id, currentUserId);
+
+            return Ok();
+        }
+
+        // END REGISTRATION 
+
+        [HttpPost]
+        public async Task<IActionResult> EndRegistration(string id, [FromBody] EndRegistrationDto request)
+        {
+            // var currentUserId = "69a714e4cbab5148e804d87d";
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized(); // mock
+
+            var ev = await _eventService.GetEventByIdAsync(id);
+            if (ev == null) return NotFound();
+            if (currentUserId != ev.CreatorId) return Forbid();
+
+            await _eventService.CloseRegistrationAsync(id, request.Reason);
+
+            return Ok();
+        }
+
+        // APPROVE ATTENDEE 
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveAttendee(string id)
+        {
+            var participant = await _eventService.GetParticipantByIdAsync(id);
+            if (participant != null)
+            {
+                var ev = await _eventService.GetEventByIdAsync(participant.EventId);
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = participant.UserId,
+                    Title     = "Your request has been Approved.",
+                    Message = $"Event: {ev?.EventTitle ?? ""}",
+                    Read      = false,
+                    Status    = "approved",
+                    ImageUrl  = ev?.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{participant.EventId}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            await _eventService.UpdateParticipantStatusAsync(id, "approved");
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectAttendee(string id)
+        {
+            var participant = await _eventService.GetParticipantByIdAsync(id);
+            if (participant != null)
+            {
+                var ev = await _eventService.GetEventByIdAsync(participant.EventId);
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = participant.UserId,
+                    Title     = "Your request has been Rejected.",
+                    Message = $"Event: {ev?.EventTitle ?? ""}",
+                    Read      = false,
+                    Status    = "rejected",
+                    ImageUrl  = ev?.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{participant.EventId}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            await _eventService.UpdateParticipantStatusAsync(id, "rejected");
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAttendee(string id)
+        {
+            var participant = await _eventService.GetParticipantByIdAsync(id);
+            if (participant != null)
+            {
+                var ev = await _eventService.GetEventByIdAsync(participant.EventId);
+                await _notificationService.CreateNotificationAsync(new NotificationDocument
+                {
+                    UserId    = participant.UserId,
+                    Title     = "Your request has been Rejected.",
+                    Message = $"Event: {ev?.EventTitle ?? ""}",
+                    Read      = false,
+                    Status    = "rejected",
+                    ImageUrl  = ev?.EventImgPath ?? "/images/notification.png",
+                    Url       = $"/Event/Detail/{participant.EventId}",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+            await _eventService.UpdateParticipantStatusAsync(id, "rejected");
+            return Ok();
         }
 
         private static CreateEventInputModel MapEventToInputModel(EventDocument eventDocument)
@@ -474,5 +720,25 @@ namespace Travello.Controllers
 
             return false;
         }
+    }
+
+    // ================================================================
+    // DTOs
+    // ================================================================
+
+    public class JoinAnswerDto
+    {
+        public string QuestionId { get; set; }
+        public string Answer     { get; set; }
+    }
+
+    public class JoinRequestDto
+    {
+        public List<JoinAnswerDto> Answers { get; set; } = new();
+    }
+
+    public class EndRegistrationDto
+    {
+        public string Reason { get; set; }
     }
 }

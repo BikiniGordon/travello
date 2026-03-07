@@ -67,9 +67,7 @@
 
 
 
-/* =========================
-   3. TYPOGRAPHY CLASSES
-========================= */
+/* TYPOGRAPHY CLASSES */
 
 .text-sm {
     font-size: var(--text-sm);
@@ -177,7 +175,7 @@ body, .details {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
-    padding: 0 var(--space-paddingout);
+    padding: var(--space-lg) var(--space-paddingout);
 }
 
 .frist {
@@ -221,13 +219,16 @@ body, .details {
 
 .tag {
     display: flex;
-    /* display: inline-flex; */
-    align-self: flex-start;
     flex-direction: row;
-    padding: var(--space-xs);
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
 
+.tag p {
+    padding: var(--space-xs) var(--space-sm);
     border-radius: 50px;
-    background: #ffff;
+    background: #fff;
+    margin: 0;
 }
 
 .owner {
@@ -242,11 +243,13 @@ body, .details {
 .profile {
     width: 57px;
     height: 57px;
+    border-radius: 50px;
 }
 
 .cover {
     flex: 1;
-    height: 191px;
+    height: 30vh;
+    border-radius: 12px;
 }
 
 .title {
@@ -486,12 +489,12 @@ body, .details {
 }
 
 /*================================================================================================*/
-.places {
+/* .places {
     counter-reset: place-counter;
-}
+} */
 
 .place {
-    counter-increment: place-counter;
+    /* counter-increment: place-counter; */
     position: relative;
     display: flex;
     flex-direction: row;
@@ -499,13 +502,13 @@ body, .details {
 }
 
 .place-icon::before {
-    content: counter(place-counter);
+    content: none;
 }
 
 .place-icon {
     width: 35px;
     height: 40px;
-    background-image: url('images/pinpre.png');
+    background-image: url('/images/pinpre.png');
     background-size: contain;
     background-repeat: no-repeat;
 
@@ -684,16 +687,37 @@ body, .details {
 
     border-radius: 12px;
     border: 1px solid #D9D9D9;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 .mix {
     display: flex;
-    width: 57px;
+    width: 100%;
+    height: 100%;          /* ต้องมี height: 100% */
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 0;        /* เปลี่ยนจาก padding-bottom เป็น padding */
+}
+
+.photoo {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 6px;
 }
+
+.photoo .pic {
+    width: 57px;
+    height: 57px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 
 /* ==================================================================================================================== */
 
@@ -713,13 +737,90 @@ body, .details {
 
 .modal {
     background: #F5F6EE;
+    padding: var(--space-sm);
+    border-radius: 12px;
+    max-width: 480px;
+    width: 90%;
+    height: 380px;
+    overflow-y: auto;
+    scrollbar-width: none;       
+    -ms-overflow-style: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal2{
+    background: #F5F6EE;
     padding: var(--space-md);
     border-radius: 12px;
     max-width: 480px;
     width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;  /*scroll ได้ถ้าคนเยอะ*/
+    overflow-y: auto;
+    scrollbar-width: none;       
+    -ms-overflow-style: none;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal::-webkit-scrollbar {
+    display: none;
+}
+
+/* .attendee-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.attendee-answer {
+    color: #888;
+    font-size: var(--text-xs);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; */
+
+.attendee-clickable {
+    cursor: pointer;
+    flex-direction: column;  /* stack vertical */
+    align-items: stretch;
+}
+
+.attendee-clickable:hover {
+    flex-direction: column;
+    background: rgba(86, 47, 6, 0.05);
+    border-radius: 8px;
+}
+
+.attendee-main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+}
+
+.attendee-chevron {
+    color: #888;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.attendee-answer-box {
+    padding: var(--space-xs) var(--space-sm);
+    align-self: flex-start;
+    /* margin-top: 4px; */
+    /* background: rgba(86, 47, 6, 0.06); */
+    /* border-radius: 8px; */
+    /* border-left: 3px solid rgba(86, 47, 6, 0.3); */
+}
+
+.attendee-answer-text {
+    font-size: var(--text-xs);
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+    word-break: break-word;   /* ตัดคำถ้ายาว ไม่ overflow */
 }
 
 .modal-header {
@@ -752,7 +853,7 @@ body, .details {
 .attendee-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-md);
 }
 
 .attendee img {
@@ -764,7 +865,7 @@ body, .details {
 
 .attendee {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     gap: var(--space-sm);
 }
@@ -828,6 +929,7 @@ body, .details {
     position: sticky;
     bottom: 0;
     width: 100%;
+    z-index: 1000;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     
@@ -1069,4 +1171,38 @@ body, .details {
     background: #1a1a1a;
     color: #fff;
     min-width: 140px;
+}
+
+.mini-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    width: 60px;
+    height: 60px;
+}
+
+.mini-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50px;
+}
+
+.detail-map-container {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+    border: 1px solid #D9D9D9;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    position: relative;   
+    z-index: 0;
+}
+.btn-closed {
+    background: #9E9E9E;
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.85;
+    pointer-events: none;
 }
