@@ -65,9 +65,10 @@ namespace Travello.Services
                 return;
             }
 
-            var winnerOption = poll.Options
-                .OrderByDescending(option => option.Voters.Count)
-                .FirstOrDefault();
+            int topVoteCount = poll.Options.Count > 0 ? poll.Options.Max(option => option.Voters.Count) : 0;
+            var topOptions = poll.Options
+                .Where(option => option.Voters.Count == topVoteCount)
+                .ToList();
 
             var filter = Builders<BsonDocument>.Filter.Eq("_id", eventObjectId);
             var eventDocument = await _events
@@ -96,6 +97,7 @@ namespace Travello.Services
                         var itemDoc = item.AsBsonDocument;
                         voteResults.Add(new VoteResultDocument
                         {
+                            PollId = itemDoc.GetValue("poll_id", string.Empty).AsString,
                             Question = itemDoc.GetValue("question", string.Empty).AsString,
                             Answer = itemDoc.GetValue("answer", string.Empty).AsString
                         });
@@ -106,23 +108,38 @@ namespace Travello.Services
                     var itemDoc = existingVoteResultValue.AsBsonDocument;
                     voteResults.Add(new VoteResultDocument
                     {
+                        PollId = itemDoc.GetValue("poll_id", string.Empty).AsString,
                         Question = itemDoc.GetValue("question", string.Empty).AsString,
                         Answer = itemDoc.GetValue("answer", string.Empty).AsString
                     });
                 }
             }
 
-            var latestAnswer = winnerOption?.Text ?? string.Empty;
-            var existingResult = voteResults.FirstOrDefault(result => result.Question == poll.Question);
+            var latestAnswer = topVoteCount <= 0
+                ? "No result"
+                : topOptions.Count > 1
+                    ? $"Draw: {string.Join(", ", topOptions.Select(option => option.Text))}"
+                    : topOptions.FirstOrDefault()?.Text ?? string.Empty;
+            var normalizedQuestion = NormalizeQuestion(poll.Question);
+            var pollId = poll.Id ?? string.Empty;
+            var matchingResults = voteResults
+                .Where(result => IsSameResultEntry(result, pollId, normalizedQuestion))
+                .ToList();
 
-            if (existingResult != null)
+            if (matchingResults.Count > 0)
             {
-                existingResult.Answer = latestAnswer;
+                foreach (var existingResult in matchingResults)
+                {
+                    existingResult.PollId = pollId;
+                    existingResult.Question = poll.Question;
+                    existingResult.Answer = latestAnswer;
+                }
             }
             else
             {
                 voteResults.Add(new VoteResultDocument
                 {
+                    PollId = pollId,
                     Question = poll.Question,
                     Answer = latestAnswer
                 });
@@ -130,12 +147,36 @@ namespace Travello.Services
 
             var voteResultArray = new BsonArray(voteResults.Select(result => new BsonDocument
             {
+                { "poll_id", result.PollId ?? string.Empty },
                 { "question", result.Question },
                 { "answer", result.Answer }
             }));
 
             var update = Builders<BsonDocument>.Update.Set("vote_result", voteResultArray);
             await _events.UpdateOneAsync(filter, update);
+        }
+
+        private static bool IsSameResultEntry(VoteResultDocument result, string pollId, string normalizedQuestion)
+        {
+            var resultPollId = result.PollId?.Trim() ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(pollId) && string.Equals(resultPollId, pollId, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            var resultQuestion = NormalizeQuestion(result.Question);
+            return !string.IsNullOrWhiteSpace(normalizedQuestion)
+                && string.Equals(resultQuestion, normalizedQuestion, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string NormalizeQuestion(string? question)
+        {
+            if (string.IsNullOrWhiteSpace(question))
+            {
+                return string.Empty;
+            }
+
+            return question.Trim();
         }
     }
 }

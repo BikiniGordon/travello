@@ -99,6 +99,9 @@ public class EventDocument
 
 public class VoteResultDocument
 {
+    [BsonElement("poll_id")]
+    public string PollId { get; set; } = string.Empty;
+
     [BsonElement("question")]
     public string Question { get; set; } = string.Empty;
 

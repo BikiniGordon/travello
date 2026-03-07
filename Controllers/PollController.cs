@@ -12,12 +12,14 @@ namespace Travello.Controllers
         private readonly PollService _pollService;
         private readonly IHubContext<PollHub> _pollHub;
         private readonly IMongoCollection<UserModel> _usersCollection;
+        private readonly IMongoCollection<EventDocument> _eventsCollection;
 
         public PollController(PollService pollService, IHubContext<PollHub> pollHub, IMongoDatabase database)
         {
             _pollService = pollService;
             _pollHub = pollHub;
             _usersCollection = database.GetCollection<UserModel>("User");
+            _eventsCollection = database.GetCollection<EventDocument>("events");
         }
 
         [HttpGet]
@@ -28,24 +30,29 @@ namespace Travello.Controllers
 
             var polls = await _pollService.GetPollsByEventIdAsync(event_id);
 
-            var endedPollSaveTasks = polls
-                .Where(p => p.IsEnded)
-                .Select(p => _pollService.SaveVoteResultForEndedPollAsync(p));
-            await Task.WhenAll(endedPollSaveTasks);
-
             var result = polls.Select(p =>
             {
                 int totalVotes = p.Options.Sum(o => o.Voters.Count);
-                var winnerOption = p.Options.OrderByDescending(o => o.Voters.Count).FirstOrDefault();
-                int winnerPercent = totalVotes > 0 && winnerOption != null
-                    ? (int)Math.Round(winnerOption.Voters.Count * 100.0 / totalVotes)
+                int topVoteCount = p.Options.Count > 0 ? p.Options.Max(o => o.Voters.Count) : 0;
+                var topOptions = p.Options.Where(o => o.Voters.Count == topVoteCount).ToList();
+
+                bool hasVotes = totalVotes > 0 && topVoteCount > 0;
+                bool isDraw = hasVotes && topOptions.Count > 1;
+                string winnerLabel = !hasVotes
+                    ? "No result"
+                    : isDraw
+                        ? "Draw"
+                        : topOptions.FirstOrDefault()?.Text ?? string.Empty;
+
+                int winnerPercent = hasVotes
+                    ? (int)Math.Round(topVoteCount * 100.0 / totalVotes)
                     : 0;
 
                 return new
                 {
                     id = p.Id,
                     question = p.Question,
-                    winner = winnerOption?.Text ?? "",
+                    winner = winnerLabel,
                     percent = winnerPercent,
                     time_left = p.IsEnded ? "Ended" : GetTimeLeft(p.Deadline),
                     is_ended = p.IsEnded
@@ -65,13 +72,12 @@ namespace Travello.Controllers
             if (poll == null)
                 return Json(new { error = "Poll not found" });
 
-            if (poll.IsEnded)
-            {
-                await _pollService.SaveVoteResultForEndedPollAsync(poll);
-            }
-
             var userId = HttpContext.Session.GetString("UserId") ?? "";
             int totalVotes = poll.Options.Sum(o => o.Voters.Count);
+            var eventDocument = await _eventsCollection.Find(e => e.Id == poll.EventId).FirstOrDefaultAsync();
+            var canUpdateEventResult = !string.IsNullOrWhiteSpace(userId)
+                && eventDocument != null
+                && eventDocument.CreatedBy == userId;
 
             var allVoterIds = poll.Options
                 .SelectMany(option => option.Voters)
@@ -107,6 +113,7 @@ namespace Travello.Controllers
                 time_left = poll.IsEnded ? "Ended" : GetTimeLeft(poll.Deadline),
                 allow_multiple = poll.AllowMultiple,
                 anonymous = poll.Anonymous,
+                can_update_event_result = canUpdateEventResult,
                 options = poll.Options.Select(o => new
                 {
                     text = o.Text,
@@ -124,6 +131,51 @@ namespace Travello.Controllers
             };
 
             return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateEventResult([FromBody] UpdateEventResultRequest request)
+        {
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Json(new { success = false, error = "Not logged in" });
+            }
+
+            if (string.IsNullOrWhiteSpace(request.PollId))
+            {
+                return Json(new { success = false, error = "poll_id required" });
+            }
+
+            var poll = await _pollService.GetPollByIdAsync(request.PollId);
+            if (poll == null)
+            {
+                return Json(new { success = false, error = "Poll not found" });
+            }
+
+            var eventDocument = await _eventsCollection.Find(e => e.Id == poll.EventId).FirstOrDefaultAsync();
+            if (eventDocument == null)
+            {
+                return Json(new { success = false, error = "Event not found" });
+            }
+
+            if (eventDocument.CreatedBy != userId)
+            {
+                return Json(new { success = false, error = "Only the event owner can update into event." });
+            }
+
+            if (!poll.IsEnded)
+            {
+                return Json(new { success = false, error = "Poll must be ended before updating result." });
+            }
+
+            await _pollService.SaveVoteResultForEndedPollAsync(poll);
+            return Json(new
+            {
+                success = true,
+                message = "Poll result updated into event.",
+                event_id = poll.EventId
+            });
         }
 
         [HttpPost]
@@ -201,5 +253,10 @@ namespace Travello.Controllers
     {
         public string PollId { get; set; } = string.Empty;
         public int OptionIndex { get; set; }
+    }
+
+    public class UpdateEventResultRequest
+    {
+        public string PollId { get; set; } = string.Empty;
     }
 }

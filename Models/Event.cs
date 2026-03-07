@@ -73,6 +73,9 @@ namespace Travello.Models
 
     public class VoteResult
     {
+        [BsonElement("poll_id")]
+        public string PollId { get; set; }
+
         [BsonElement("question")]
         public string Question { get; set; }
 

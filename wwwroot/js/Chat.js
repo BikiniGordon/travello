@@ -2,6 +2,7 @@ let current_event_id = "";
 let current_chat_room_id = "";
 let currentPollId = ""; // Track which poll detail is open
 let pollDetailRequestSeq = 0; // Guards against out-of-order poll detail responses
+let canCurrentUserUpdateEventResult = false;
 
 // SignalR connection for real-time poll updates
 const pollConnection = new signalR.HubConnectionBuilder()
@@ -152,12 +153,17 @@ function openPollCard(poll_id) {
     const template = document.getElementById('poll-option-template');
     const questionElement = document.getElementById('detail-poll-question');
     const statusElem = document.getElementById('detail-poll-status');
+    const updateEventButton = document.getElementById('update-event-btn');
 
     // Reset immediately so old poll content does not flash while loading a new poll.
     optionsContainer.innerHTML = '';
     questionElement.innerText = 'Loading poll...';
     statusElem.textContent = '';
     statusElem.style.color = '';
+    canCurrentUserUpdateEventResult = false;
+    if (updateEventButton) {
+        updateEventButton.textContent = 'Update Event';
+    }
 
     fetch(`/Poll/GetPollDetail?poll_id=${poll_id}`)
         .then(response => response.json())
@@ -170,6 +176,10 @@ function openPollCard(poll_id) {
             // Clear inside callback to prevent race condition duplicates
             optionsContainer.innerHTML = '';
             questionElement.innerText = poll.question;
+            canCurrentUserUpdateEventResult = Boolean(poll.can_update_event_result);
+            if (updateEventButton) {
+                updateEventButton.textContent = "Update Event";
+            }
             
             if (poll.is_ended) {
                 statusElem.textContent = "Ended";
@@ -239,6 +249,41 @@ function votePoll(pollId, optionIndex) {
         }
     })
     .catch(err => console.error("Vote error:", err));
+}
+
+function updateEventResultFromPoll() {
+    if (!currentPollId) {
+        return;
+    }
+
+    if (!canCurrentUserUpdateEventResult) {
+        alert('Only the event owner can update into event.');
+        return;
+    }
+
+    fetch('/Poll/UpdateEventResult', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pollId: currentPollId })
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            const eventId = result.event_id || current_event_id;
+            if (eventId) {
+                window.location.href = `/Event/Detail/${eventId}`;
+                return;
+            }
+
+            return;
+        }
+
+        alert(result.error || 'Failed to update event result.');
+    })
+    .catch(err => {
+        console.error('Update event result error:', err);
+        alert('Failed to update event result.');
+    });
 }
 
 function backToAllPolls() {
@@ -463,4 +508,10 @@ function handleEnterPress(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeAddOptionButton();
+
+    const updateEventButton = document.getElementById('update-event-btn');
+    if (updateEventButton && updateEventButton.dataset.bound !== 'true') {
+        updateEventButton.addEventListener('click', updateEventResultFromPoll);
+        updateEventButton.dataset.bound = 'true';
+    }
 });
