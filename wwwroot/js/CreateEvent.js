@@ -168,7 +168,7 @@ function initializePhotoUpload() {
         photoPlaceholder.classList.add('has-preview');
 
         if (uploadButton) {
-            uploadButton.style.display = isLimitedEditMode ? 'flex' : 'none';
+            uploadButton.style.display = 'flex';
         }
         
     };
