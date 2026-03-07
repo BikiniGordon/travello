@@ -38,6 +38,7 @@ namespace Travello.Models
         public List<string> UserTag { get; set; } = new();
 
         [BsonElement("event_id")]
+        [BsonRepresentation(BsonType.ObjectId)]
         public List<string> EventId { get; set; } = new();
     }
 }
