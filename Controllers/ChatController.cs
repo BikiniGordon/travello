@@ -46,6 +46,7 @@ namespace Travello.Controllers
                     if (eventInfo != null && chat.chat_name != eventInfo.event_title)
                     {
                         chat.chat_name = eventInfo.event_title;
+                        var event_location = eventInfo.location;
                         await _chatService.UpdateChatNameAsync(chat.id!, eventInfo.event_title!);
                     }
                 }
