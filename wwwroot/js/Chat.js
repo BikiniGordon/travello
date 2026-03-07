@@ -30,6 +30,38 @@ pollConnection.on("PollCreated", function (pollId) {
 
 pollConnection.start().catch(err => console.error("PollHub connection error:", err));
 
+function animatePollSurface(element) {
+    if (!element) {
+        return;
+    }
+
+    element.classList.remove('poll-surface-enter');
+    void element.offsetWidth;
+    element.classList.add('poll-surface-enter');
+}
+
+function animateProgressBar(fillElement, targetPercent, delayMs = 0) {
+    if (!fillElement) {
+        return;
+    }
+
+    const safePercent = Math.max(0, Math.min(100, Number(targetPercent) || 0));
+    fillElement.style.width = '0%';
+
+    const applyTargetWidth = () => {
+        requestAnimationFrame(() => {
+            fillElement.style.width = `${safePercent}%`;
+        });
+    };
+
+    if (delayMs > 0) {
+        setTimeout(applyTargetWidth, delayMs);
+        return;
+    }
+
+    applyTargetWidth();
+}
+
 function openChatRoom(event_id, chat_name, chat_room_id){
     current_event_id = event_id;
     current_chat_room_id = chat_room_id;
@@ -70,7 +102,8 @@ function openPollRoom() {
     document.getElementById('chat-room').style.display = 'none';
     document.getElementById('setting-room').style.display = 'none';
     
-    document.getElementById('all-poll-room').style.display = 'flex';
+    const allPollRoom = document.getElementById('all-poll-room');
+    allPollRoom.style.display = 'flex';
 
     const emptyPollBox = document.getElementById('empty-poll');
     const pollBodyBox = document.getElementById('poll-body');
@@ -80,6 +113,7 @@ function openPollRoom() {
     emptyPollBox.style.display = 'none';
     pollBodyBox.style.display = 'flex';
     pollBodyBox.innerHTML = '';
+    animatePollSurface(pollBodyBox);
 
     // Fetch polls from API
     fetch(`/Poll/GetPollsByEventId?event_id=${current_event_id}`)
@@ -101,7 +135,7 @@ function openPollRoom() {
             emptyPollBox.style.display = 'none';
             pollBodyBox.style.display = 'flex';
 
-            data.forEach(poll => {
+            data.forEach((poll, index) => {
                 const cardClone = template.content.cloneNode(true);
 
                 // ยัดข้อความ
@@ -111,6 +145,8 @@ function openPollRoom() {
                 // Wire up click to open detail with real poll ID
                 const card = cardClone.querySelector('.poll-card');
                 card.setAttribute('onclick', `openPollCard('${poll.id}')`);
+                card.classList.add('poll-card-reveal');
+                card.style.animationDelay = `${Math.min(index * 70, 420)}ms`;
                 
                 // ตกแต่งเรื่องเวลา (ถ้าหมดเวลาแล้วให้เป็นสีเทา)
                 const timeElem = cardClone.querySelector('.poll-timeout');
@@ -123,7 +159,8 @@ function openPollRoom() {
 
                 // ยัดตัวเลขและขยับหลอดเปอร์เซ็นต์
                 cardClone.querySelector('.poll-percent').textContent = `${poll.percent}%`;
-                cardClone.querySelector('.progress-bar-fill').style.width = `${poll.percent}%`;
+                const progressFill = cardClone.querySelector('.progress-bar-fill');
+                animateProgressBar(progressFill, poll.percent, 100 + Math.min(index * 70, 420));
 
                 // แปะลงเว็บ
                 pollBodyBox.appendChild(cardClone);
@@ -147,7 +184,10 @@ function openPollCard(poll_id) {
     const requestSeq = ++pollDetailRequestSeq;
     // สลับหน้าจอ
     document.getElementById('all-poll-room').style.display = 'none';
-    document.getElementById('poll-select-card').style.display = 'flex';    
+    const pollSelectCard = document.getElementById('poll-select-card');
+    pollSelectCard.style.display = 'flex';
+    const pollDetailBody = document.getElementById('poll-detail-body');
+    animatePollSurface(pollDetailBody);
 
     const optionsContainer = document.getElementById('poll-options-container');
     const template = document.getElementById('poll-option-template');
@@ -193,10 +233,13 @@ function openPollCard(poll_id) {
                 const optionClone = template.content.cloneNode(true);
                 
                 optionClone.querySelector('.poll-option-text').textContent = opt.text;
-                optionClone.querySelector('.progress-bar-fill').style.width = `${opt.percent}%`;
+                const progressFill = optionClone.querySelector('.progress-bar-fill');
+                animateProgressBar(progressFill, opt.percent, 120 + Math.min(index * 70, 280));
                 
                 // Highlight if user voted for this option
                 const optionItem = optionClone.querySelector('.poll-option-item');
+                optionItem.classList.add('poll-option-reveal');
+                optionItem.style.animationDelay = `${Math.min(index * 65, 260)}ms`;
                 if (opt.voted) {
                     optionItem.querySelector('.poll-radio-circle').style.background = '#00B4D8';
                 }
@@ -296,7 +339,10 @@ function backToAllPolls() {
 function openCreatePoll(){
     resetCreatePollForm();
     document.getElementById('all-poll-room').style.display = 'none';
-    document.getElementById('create-poll-page').style.display = 'flex';
+    const createPollPage = document.getElementById('create-poll-page');
+    createPollPage.style.display = 'flex';
+    const createPollBody = document.getElementById('create-poll-body');
+    animatePollSurface(createPollBody);
     setupPollTimeDropdowns(); 
 
 }

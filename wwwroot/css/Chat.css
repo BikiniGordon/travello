@@ -1,5 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Thai:wght@100..900&display=swap');
 
+@keyframes pollSurfaceEnter {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pollCardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pollOptionReveal {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.poll-surface-enter {
+    animation: pollSurfaceEnter 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
     --text-xs: 12px;
     --text-sm: 18px;
@@ -571,6 +608,18 @@ body {
     box-sizing: border-box;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 12px;
     font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.poll-card:hover {
+    transform: translateY(-2px);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 18px;
+}
+
+.poll-card-reveal {
+    opacity: 0;
+    animation: pollCardReveal 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .poll-question {
@@ -630,7 +679,7 @@ body {
     height: 100%;
     background-color: #78B3FC; 
     border-radius: 10px;
-    transition: width 0.5s ease;
+    transition: width 0.75s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
 .poll-percent {
@@ -705,6 +754,11 @@ body {
     margin-bottom: 24px; /* ระยะห่างก่อนขึ้นตัวเลือกข้อถัดไป */
 }
 
+.poll-option-reveal {
+    opacity: 0;
+    animation: pollOptionReveal 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* ลบ margin-bottom ของตัวเลือกสุดท้ายทิ้ง จะได้ไม่เหลือที่ว่างเกิน */
 .poll-option-item:last-child {
     margin-bottom: 0;
@@ -770,13 +824,29 @@ body {
     height: 24px;
     border-radius: 50%;
     background-color: #387BFF;
-    background-size: cover;
+    transition: width 0.75s cubic-bezier(0.2, 0.9, 0.3, 1);
     background-position: center;
     background-repeat: no-repeat;
     border: 2px solid #F4F4F4; /* 🌟 สำคัญ! ขอบต้องสีเดียวกับพื้นหลัง .poll-detail-box มันถึงจะดูตัดซ้อนกัน */
     margin-left: -8px; /* ทำให้รูปซ้อนทับกันไปทางซ้าย */
 }
 
+
+@media (prefers-reduced-motion: reduce) {
+    .poll-surface-enter,
+    .poll-card-reveal,
+    .poll-option-reveal {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .progress-bar-fill,
+    .poll-option-item .progress-bar-fill,
+    .poll-card {
+        transition: none !important;
+    }
+}
 .voter-avatar:first-child {
     margin-left: 0;
 }
