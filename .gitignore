@@ -20,6 +20,8 @@ obj/
 *.userosscache
 *.sln.docstates
 
+wwwroot/uploads/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -415,15 +417,12 @@ FodyWeavers.xsd
 ## Visual studio for Mac
 ##
 
-<<<<<<< HEAD
-=======
 # Development settings
 appsettings.Development.json
 appsettings.Local.json
 .env
 .env.*
-!.env.example
->>>>>>> main
+!.env.exampl
 
 # globs
 Makefile.in
