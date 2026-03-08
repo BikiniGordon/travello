@@ -604,6 +604,41 @@ function parseGoogleMapsURL(url) {
     }
 }
 
+// Validates that a URL is a full Google Maps link and includes coordinates.
+function isValidFullGoogleMapsLink(url) {
+    if (!url || typeof url !== 'string') {
+        return false;
+    }
+
+    const trimmedUrl = url.trim();
+    if (trimmedUrl === '') {
+        return false;
+    }
+
+    try {
+        const parsedUrl = new URL(trimmedUrl);
+        const protocol = parsedUrl.protocol.toLowerCase();
+        if (protocol !== 'http:' && protocol !== 'https:') {
+            return false;
+        }
+
+        const host = parsedUrl.hostname.toLowerCase();
+        const isGoogleDomain = host === 'google.com' || host.endsWith('.google.com');
+        if (!isGoogleDomain) {
+            return false;
+        }
+
+        const path = parsedUrl.pathname.toLowerCase();
+        if (!path.includes('/maps')) {
+            return false;
+        }
+
+        return parseGoogleMapsURL(trimmedUrl) !== null;
+    } catch {
+        return false;
+    }
+}
+
 // Adds a marker to the map and centers the viewport on it.
 function addMapMarker(lat, lng, name, placeNumber = null) {
     if (!map) return;
@@ -832,6 +867,35 @@ function bindCreateEventFormSubmit() {
         }
     }
 
+    function validatePlannerGoogleMapLinks() {
+        setValidationMessage('PlannerJson', '');
+
+        const dayElements = document.querySelectorAll('.event-plan-day');
+        for (const dayElement of dayElements) {
+            const rowElements = dayElement.querySelectorAll('.planner-item');
+
+            for (const rowElement of rowElements) {
+                const placeInput = rowElement.querySelector('.planner-place-input');
+                const placeName = placeInput?.value?.trim() || '';
+
+                if (!placeName) {
+                    continue;
+                }
+
+                const googleMapUrl = (rowElement.dataset.googleMapUrl || '').trim();
+                if (!isValidFullGoogleMapsLink(googleMapUrl)) {
+                    setValidationMessage('PlannerJson', 'Each itinerary place must use a full Google Maps link (with coordinates).');
+                    if (placeInput) {
+                        placeInput.focus();
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     requiredFieldConfigs.forEach((config) => {
         const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
         config.input.addEventListener('blur', () => {
@@ -867,7 +931,8 @@ function bindCreateEventFormSubmit() {
         const attendeesValid = validateAttendeesLimitFormat();
         const dateOrderingValid = validateDateOrdering();
         const photoLinkValid = validatePhotoLinkFormat();
-        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid;
+        const plannerLinksValid = validatePlannerGoogleMapLinks();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid && plannerLinksValid;
 
         if (!isValid) {
             event.preventDefault();
@@ -894,6 +959,10 @@ function bindCreateEventFormSubmit() {
 
             if (!photoLinkValid && photoLinkInput) {
                 photoLinkInput.focus();
+            }
+
+            if (!plannerLinksValid) {
+                return;
             }
 
             return;
@@ -1284,6 +1353,11 @@ plannerDaysContainer.addEventListener('input', (event) => {
         }
 
         const inputValue = target.value.trim();
+
+        const plannerValidationMessage = document.querySelector('.field-validation-message[data-valmsg-for="PlannerJson"]');
+        if (plannerValidationMessage && plannerValidationMessage.textContent) {
+            plannerValidationMessage.textContent = '';
+        }
 
         if (inputValue.includes('google.com/maps')) {
             const location = parseGoogleMapsURL(inputValue);
