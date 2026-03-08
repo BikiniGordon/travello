@@ -47,12 +47,12 @@ namespace Travello.Models
         { 
             get 
             { 
-                // สร้างกระเป๋าเปล่าๆ รอไว้
+                // สร้างกระเป๋า
                 List<string> stringList = new List<string>();
                 
                 if (db_event_id != null) 
                 {
-                    // วนลูปหยิบ ObjectId มาแปลงเป็นข้อความทีละอัน แล้วยัดใส่กระเป๋า
+                    // วนลูปหยิบ ObjectId มาแปลงเป็นข้อความทีละอัน
                     foreach (var id in db_event_id) 
                     {
                         stringList.Add(id.ToString());
