@@ -1209,3 +1209,14 @@ body, .details {
     opacity: 0.85;
     pointer-events: none;
 }
+
+.qa-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: 12px;
+    border: 1px solid #D9D9D9;
+    background: rgba(86, 47, 6, 0.05);
+}
