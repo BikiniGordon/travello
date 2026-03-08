@@ -38,13 +38,13 @@
                             }
                         </div>
                     </div>
-                    <div class="owner">
-                        <img class="profile" src="@Model.HostProfileImage" alt="Host profile">
-                        <!-- <img class="profile" src="~/images/Ellipse 12.png" alt="Host profile"> -->
-                        <p class="text-md font-regular">Hosted by</p>
-                        <span class="text-md font-semibold">@Model.HostName</span>
-                        <!-- <span class="text-md font-semibold">Dearja</span> -->
-                    </div>
+                    <a href="@Url.Action("UserProfile", "Home", new { id = Model.HostId })" style="text-decoration: none; color: inherit;">
+                        <div class="owner">
+                            <img class="profile" src="@Model.HostProfileImage" alt="Host profile">
+                            <p class="text-md font-regular">Hosted by</p>
+                            <span class="text-md font-semibold">@Model.HostName</span>
+                        </div>
+                    </a>
                 </div>
                 <img class="cover" src="@Model.CoverImage">
                 <!-- <img class="cover" src="~/images/cover.png" alt="Event cover"> -->
@@ -225,14 +225,15 @@
                 <div class="attendee-list" id="attendeeList">
                     @foreach (var attendee in Model.Attendees)
                     {
-                        <div class="attendee">
-                            <img src="@attendee.ProfileImage" alt="@attendee.Name">
-                            <div>
-                                <strong>@attendee.Name</strong>
-                                <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div> 
-                                
+                        <a href="@Url.Action("UserProfile", "Home", new { id = attendee.Id })" style="text-decoration: none; color: inherit;">
+                            <div class="attendee">
+                                <img src="@attendee.ProfileImage" alt="@attendee.Name">
+                                <div>
+                                    <strong>@attendee.Name</strong>
+                                    <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div> 
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     }
                 </div>
             </div>

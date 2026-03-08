@@ -29,6 +29,7 @@
         color: #333 !important;
     }
 </style>
+<script src="~/js/profile.js"></script>
 <div class="My_profile">
     <div class="frame_1349">
             <div class="profile-card text-center shadow">
@@ -67,7 +68,10 @@
                                     <div class="tag_item">
                                         <span class="tag_icon">#</span>
                                         <span class="tag_text">@tag</span>
-                                        <button type="button" class="btn_close_tag">X</button>
+                                        @if (ViewBag.IsOwner == true)
+                                            {
+                                                <button type="button" class="btn_close_tag" onclick="deleteUserTag('@tag', this)">X</button>
+                                            }
                                     </div>
                                 }
                             }
@@ -76,11 +80,14 @@
                                 <span style="color: gray; font-size: 14px; margin-left: 10px;">Haven't added any tags yet</span>
                             }
                         </div>
-                        <div class="btn_edit_tag">
-                            <button type="button">
-                                <img src="~/images/Icon.png" class="edit-icon-img" alt="edit Icon">
-                            </button>
-                        </div>
+                        @if (ViewBag.IsOwner == true)
+                            {
+                                <div class="btn_edit_tag">
+                                    <a asp-controller="Profile" asp-action="EditProfile" style="...">
+                                        <img src="~/images/Icon.png" class="edit-icon-img" alt="edit Icon">
+                                    </a>
+                                </div>
+                            }
                     </div>
                 </div>
             </div>
@@ -95,14 +102,23 @@
                         <p style="font-size: 40px;">@post.EventTitle</p>
                         <div class="box_post_action">
                             <span>
-                                <button type="button" class="box_action text_action box_detail">DETAIL</button>
+                                <button type="button" 
+                                    class="box_action text_action box_detail" 
+                                    onclick="location.href='@Url.Action("Detail", "Event", new { id = post.EventId })'">
+                                DETAIL
+                            </button>
                             </span>
                             <span>
                                 <button type="button" class="box_action text_action box_chat">CHAT</button>
                             </span>
-                            <span>
-                                <button type="button" class="box_action text_action box_delete">DELETE</button>
-                            </span>
+                            @if (ViewBag.IsOwner == true)
+                                {
+                                    <span>
+                                        <button type="button" class="box_action text_action box_delete" onclick="openDeleteModal('@post.EventId')">
+                                            DELETE
+                                        </button>
+                                    </span>
+                                }
                         </div>
                     </div>
 
@@ -121,6 +137,26 @@
             <p style="font-size: 20px; color: gray;">You haven't created any events yet</p>
         </div>
     }
-    
+    <div class="modal-overlay" id="deleteModal" style="display: none;" onclick="if(event.target === this) closeDeleteModal()">
+        <div class="frame_1575">
+            <div class="frame_1701">
+                <div class="frame_1702">
+                    <div class="frame_1571">
+                        <p class="confirm">CONFIRM DELETION</p>
+                        <button type="button" class="btn_close_tag" onclick="closeDeleteModal()">X</button>
+                    </div>
+                </div>
+                <div class="frame_1572">
+                    <p class="paragraph_confirm">Reasons to inform attendees.</p>
+                    <div class="frame_1332">
+                        <input id="input_reasons" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="frame_1573">
+                <button type="button" class="btn_submit" onclick="submitDelete()">SUBMIT</button>
+            </div>
+        </div>
+    </div>
 </div>
     
