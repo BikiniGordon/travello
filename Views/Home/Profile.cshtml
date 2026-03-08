@@ -1,0 +1,162 @@
+@model List<Travello.Models.EventDetailViewModel>
+@{
+    ViewData["Title"] = "profile";
+
+    // แกะข้อมูล User ออกมาจาก ViewBag
+    var user = ViewBag.UserProfile as Travello.Models.EditProfileViewModel;
+
+    // calculate age
+    string genderText = string.IsNullOrEmpty(user?.gender) ? "Unknown" : user.gender;
+    string ageText = "";
+    if (user?.date_of_birth != null)
+    {
+        var today = DateTime.Today;
+        var bday = user.date_of_birth.Value;
+        int age = today.Year - bday.Year;
+        if (bday.Date > today.AddYears(-age)) age--; 
+        
+        ageText = $" , Age {age}";
+    }
+}
+<style>
+    .NavBar {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: none !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    }
+    
+    .Logo, .TLogo {
+        color: #333 !important;
+    }
+</style>
+<script src="~/js/profile.js"></script>
+<div class="My_profile">
+    <div class="frame_1349">
+            <div class="profile-card text-center shadow">
+                <div id="frame_photo_text">
+                    <div id="frame_photo">
+                        <img src="@(string.IsNullOrEmpty(user?.profile_img_path) ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" : user.profile_img_path)" class="rounded-circle profile-img" alt="Profile">
+                    </div>
+                    <div id="frame_text">
+                        <h2 class="text_name">@(string.IsNullOrEmpty(user?.username) ? "Unknown User" : user.username)</h2>
+                        <p class="text-secondary text-uppercase letter-spacing">
+                            @genderText@ageText
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class ="frame_1677">
+                <div class="box_aboutme">
+                    <h1 class="header_abountme">
+                        <span class="font_alex">A </span>BOUT ME
+                    </h1>
+                </div>
+                <div class="box_paragraph">
+                    <p class="paragraph_abountme">
+                        @(string.IsNullOrEmpty(user?.about_me) ? "You haven't written anything about yourself yet" : user.about_me)
+                    </p>
+                </div>
+                
+                <div class="box_tag">
+                    <h1 class="tag">TAG</h1>
+                    <div class="frame_tag_editer">
+                        <div class="box_element_tag">
+                            @if (user?.user_tag != null && user.user_tag.Any())
+                            {
+                                foreach (var tag in user.user_tag)
+                                {
+                                    <div class="tag_item">
+                                        <span class="tag_icon">#</span>
+                                        <span class="tag_text">@tag</span>
+                                        @if (ViewBag.IsOwner == true)
+                                            {
+                                                <button type="button" class="btn_close_tag" onclick="deleteUserTag('@tag', this)">X</button>
+                                            }
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color: gray; font-size: 14px; margin-left: 10px;">Haven't added any tags yet</span>
+                            }
+                        </div>
+                        @if (ViewBag.IsOwner == true)
+                            {
+                                <div class="btn_edit_tag">
+                                    <a asp-controller="Profile" asp-action="EditProfile" style="...">
+                                        <img src="~/images/Icon.png" class="edit-icon-img" alt="edit Icon">
+                                    </a>
+                                </div>
+                            }
+                    </div>
+                </div>
+            </div>
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var post in Model)
+        {
+            <div class="frame_1388">
+                <div class="event_post">
+                    <div class="head_post">
+                        <p style="font-size: 40px;">@post.EventTitle</p>
+                        <div class="box_post_action">
+                            <span>
+                                <button type="button" 
+                                    class="box_action text_action box_detail" 
+                                    onclick="location.href='@Url.Action("Detail", "Event", new { id = post.EventId })'">
+                                DETAIL
+                            </button>
+                            </span>
+                            <span>
+                                <button type="button" class="box_action text_action box_chat">CHAT</button>
+                            </span>
+                            @if (ViewBag.IsOwner == true)
+                                {
+                                    <span>
+                                        <button type="button" class="box_action text_action box_delete" onclick="openDeleteModal('@post.EventId')">
+                                            DELETE
+                                        </button>
+                                    </span>
+                                }
+                        </div>
+                    </div>
+
+                    <p class="paragraph_post">@post.Detail</p>
+                    
+                    <div class="photo_post">
+                        <img src="@post.CoverImage" class="photo_post_item" alt="Post Photo">
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="frame_1388" style="text-align: center; padding: 50px;">
+            <p style="font-size: 20px; color: gray;">You haven't created any events yet</p>
+        </div>
+    }
+    <div class="modal-overlay" id="deleteModal" style="display: none;" onclick="if(event.target === this) closeDeleteModal()">
+        <div class="frame_1575">
+            <div class="frame_1701">
+                <div class="frame_1702">
+                    <div class="frame_1571">
+                        <p class="confirm">CONFIRM DELETION</p>
+                        <button type="button" class="btn_close_tag" onclick="closeDeleteModal()">X</button>
+                    </div>
+                </div>
+                <div class="frame_1572">
+                    <p class="paragraph_confirm">Reasons to inform attendees.</p>
+                    <div class="frame_1332">
+                        <input id="input_reasons" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="frame_1573">
+                <button type="button" class="btn_submit" onclick="submitDelete()">SUBMIT</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
