@@ -1,6 +1,8 @@
 let current_event_id = null;
 let current_chat_room_id = null;
 let current_chat_room_location = null;
+let current_chat_room_start_date = null;
+let current_chat_room_end_date = null;
 let current_chat_room_event_image= null;
 let chat_socket = null;
 
@@ -10,13 +12,15 @@ async function openChatPage() {
     await loadChatRooms();
 }
 
-async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_event_image){
+async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image){
     //เอา event_id ไปหา chat เพื่อดึง
     // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
     current_event_id = event_id;
     current_chat_room_id = chat_room_id;
     current_chat_room_location = chat_room_location;
     current_chat_room_event_image = chat_room_event_image;
+    current_chat_room_start_date = chat_room_start_date;
+    current_chat_room_end_date = chat_room_end_date;
 
     document.getElementById('empty-room').style.display = 'none';
     document.getElementById('setting-room').style.display = 'none';
@@ -27,7 +31,8 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
 
     document.getElementById('chat-room-title').innerText = chat_name;
     document.getElementById('setting-event-title').innerText = chat_name;
-    document.getElementById('setting-event-status').innerText = 'Location : ' + current_chat_room_location;
+    document.getElementById('setting-event-location').innerText = 'Location : ' + current_chat_room_location;
+    document.getElementById('setting-event-date').innerText = current_chat_room_start_date + ' - ' + current_chat_room_end_date
     document.getElementById('event-image-setting').src = current_chat_room_event_image;
 
     if(chat_socket){
@@ -396,7 +401,7 @@ async function loadChatMessages() {
                 let messageContent = "";
 
                 if (msg.image_url && msg.image_url !== "") {
-                    messageContent = `<img src="${msg.image_url}" style="max-width: 100%; border-radius: 8px; margin-bottom: 4px; display: block;" />`;
+                    messageContent = `<img src="${msg.image_url}" onclick="window.open('${msg.image_url}', '_blank')" style="max-width: 100%; border-radius: 8px; margin-bottom: 4px; display: block; cursor: pointer" ;/>`;
                 }
 
         if (msg.document_url && msg.document_url !== "") {
@@ -444,10 +449,14 @@ async function loadChatMessages() {
                     `;
                 } else {
                     bubbleHtml = `
-                        <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px;  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
-                            <img class="talker" src="${msg.sender_img}" style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover"/>
-                            <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; max-width: 60%; word-wrap: break-word;">
-                                ${messageContent}
+                        <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px; font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
+                            <img class="talker" src="${msg.sender_img}" style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover; flex-shrink: 0;"/>
+                            
+                            <div class="message-column" style="display: flex; flex-direction: column; align-items: flex-start; max-width: 60%;">
+                                <p class="sender_name font-regular" style="font-size: 14px; padding-bottom: 4px; margin: 0;">${msg.sender_name}</p>
+                                <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; width: 60%; overflow-wrap: break-word;">
+                                    ${messageContent}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -734,7 +743,7 @@ async function loadChatRooms() {
                 let dateDisplay = (startDateStr && endDateStr) ? `${startDateStr} - ${endDateStr}` : 'ไม่มีกำหนดการ';
 
                 cardsHtml += `
-                    <div class="chat-card" onclick="openChatRoom('${room.event_id}', '${room.chat_name}', '${room.id}', '${room.event_location}', '${roomImg}')">
+                    <div class="chat-card" onclick="openChatRoom('${room.event_id}', '${room.chat_name}', '${room.id}', '${room.event_location}', '${startDateStr}', '${endDateStr}', '${roomImg}')">
                         <img class="event-image" src="${roomImg}" />
                         <div class="chat-info">
                             <h4 class="chat-info-header text-sm font-semibold">${room.chat_name}</h4>
