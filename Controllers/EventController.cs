@@ -279,6 +279,11 @@ namespace Travello.Controllers
                               {
                                   Name        = i.ActivityName,
                                   Description = i.Note ?? "",
+                                  GoogleMapUrl = !string.IsNullOrWhiteSpace(i.GoogleMapUrl)
+                                      ? i.GoogleMapUrl
+                                      : ((i.Latitude != 0 && i.Longitude != 0)
+                                          ? $"https://www.google.com/maps?q={i.Latitude},{i.Longitude}"
+                                          : null),
                                   Expenses    = i.ExpenseItems.Select(e => new ExpenseViewModel
                                   {
                                       Name   = e.Name,
