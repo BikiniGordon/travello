@@ -97,15 +97,26 @@ namespace Travello.Controllers
 
         
             var userCollection = _eventsCollection.Database.GetCollection<EditProfileViewModel>("User");
-            var userProfile = await userCollection.Find(u => u.user_id == userId).FirstOrDefaultAsync();
+            var userProfile = await userCollection.Find(u => u.user_id == userId)
+                .Project(u => new EditProfileViewModel 
+                {
+                    user_id = u.user_id,
+                    username = u.username,
+                    first_name = u.first_name,
+                    last_name = u.last_name,
+                    about_me = u.about_me,
+                    profile_img_path = u.profile_img_path,
+                    user_tag = u.user_tag 
+                })
+                .FirstOrDefaultAsync();
 
             
             ViewBag.UserProfile = userProfile;
             ViewBag.IsOwner = true;
 
     
-            var eventsDocCollection = _eventsCollection.Database.GetCollection<Event>("events");
-            var dbPosts = await eventsDocCollection.Find(e => e.CreatorId == userId).ToListAsync();
+            var eventsDocCollection = _eventsCollection.Database.GetCollection<EventDocument>("events");
+            var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == userId).ToListAsync();
 
             var viewModels = dbPosts.Select(db => new EventDetailViewModel
             {
@@ -132,13 +143,28 @@ namespace Travello.Controllers
 
             
             var userCollection = _database.GetCollection<EditProfileViewModel>("User");
-            var userProfile = await userCollection.Find(u => u.user_id == id).FirstOrDefaultAsync();
+            var userProfile = await userCollection.Find(u => u.user_id == id)
+                .Project(u => new EditProfileViewModel 
+                {
+                    user_id = u.user_id,
+                    username = u.username,
+                    first_name = u.first_name,
+                    last_name = u.last_name,
+                    about_me = u.about_me,
+                    profile_img_path = u.profile_img_path,
+                    user_tag = u.user_tag
+                })
+                .FirstOrDefaultAsync();
 
             if (userProfile == null) return NotFound("ไม่พบผู้ใช้งานนี้");
 
      
             ViewBag.UserProfile = userProfile;
             ViewBag.IsOwner = false; 
+            
+            var me = await userCollection.Find(u => u.user_id == currentUserId).FirstOrDefaultAsync();
+            ViewBag.MyJoinedEvents = me?.event_id ?? new List<string>();
+
             var eventsDocCollection = _database.GetCollection<EventDocument>("events");
             var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == id).ToListAsync();
 

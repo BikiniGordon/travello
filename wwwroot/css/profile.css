@@ -185,7 +185,7 @@
     justify-content: left;
 }
 .text_name {
-    font-size: 32px;
+    font-size: var(--text-xl);
 }
 #frame_text {
     display: flex;
@@ -231,6 +231,12 @@
     white-space: nowrap; 
     display: block;
 }
+.box_tag{
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
 
 .box_element_tag {
     display: flex;
@@ -354,12 +360,14 @@
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
+    gap: var(--space-md);
 }
 .head_post p {
     font-size: clamp(20px, 4vw, 36px) !important;
     margin: 0;
     flex: 1;               
-    min-width: 250px;      
+    min-width: 250px;
+    text-align: left;      
 }
 .box_post_action{
     margin-left: auto;
@@ -412,14 +420,16 @@
     font-weight: 350;
     font-style: Semilight;
     font-size: var(--space-sm);
-    line-height: 1.5;
+}
+.frame_photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    width: 100%;
 }
 .photo_post{
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-md);
-    width: 100%;
-    margin-top: var(--space-md);
+    display: flex; 
+    max-width: 500px;
     box-sizing: border-box;
 
 }

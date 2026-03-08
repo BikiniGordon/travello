@@ -194,7 +194,7 @@ namespace Travello.Controllers
                 var fullUserCollection = _userCollection.Database.GetCollection<CreateAccountViewModel>("User");
 
                 var user = await fullUserCollection.Find(u => u.username == username)
-                    // .Project(u => new { u.username, u.password, u.user_id, u.profile_img_path })
+                    .Project(u => new { u.username, u.password, u.user_id, u.profile_img_path })
                     .FirstOrDefaultAsync();
 
                 if (user != null)
@@ -222,9 +222,11 @@ namespace Travello.Controllers
 
                 return Json(new { success = false, message = "Invalid username or password." });
             }
-            catch (Exception)
+            // 🎯 แก้ไขตรงบรรทัดนี้ครับ! เติมคำว่า ex เข้าไปในวงเล็บ
+            catch (Exception ex) 
             {
-                return Json(new { success = false, message = "An error occurred." });
+                // 🎯 ให้มันพ่นข้อความ Error ที่แท้จริงออกมาโชว์ใน Popup หน้าเว็บเลย
+                return Json(new { success = false, message = $"ระบบขัดข้อง: {ex.Message}" });
             }
         }
 

@@ -289,12 +289,12 @@ namespace Travello.Controllers
 
             var locations = ev.Itinerary?
             .OrderBy(i => i.DayIndex).ThenBy(i => i.PlaceIndex)
-            .Where(i => i.Latitude.HasValue && i.Longitude.HasValue)
+            .Where(i => i.Latitude != 0 && i.Longitude != 0)
             .Select(i => new LocationViewModel
             {
                 PlaceName = i.ActivityName,
-                Latitude  = i.Latitude ?? 0,
-                Longitude = i.Longitude ?? 0
+                Latitude  = i.Latitude,
+                Longitude = i.Longitude
             }).ToList() ?? new();
 
             var joinQuestions = new List<JoinQuestionViewModel>();
@@ -751,6 +751,7 @@ namespace Travello.Controllers
                 {
                     continue;
                 }
+                
 
                 if (IsValidFullGoogleMapsUrl(row.GoogleMapUrl))
                 {

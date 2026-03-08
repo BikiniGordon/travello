@@ -53,7 +53,7 @@
                         </h1>
                     </div>
                     <div class="box_paragraph">
-                        <p class="paragraph_abountme">
+                        <p class="paragraph_abountme text-sm">
                             @(string.IsNullOrEmpty(user?.about_me) ? "You haven't written anything about yourself yet" : user.about_me)
                         </p>
                     </div>
@@ -68,7 +68,7 @@
                                     {
                                         <div class="tag_item">
                                             <span class="tag_icon">#</span>
-                                            <span class="tag_text">@tag</span>
+                                            <span class="tag_text ">@tag</span>
                                             @if (ViewBag.IsOwner == true)
                                                 {
                                                     <button type="button" class="btn_close_tag" onclick="deleteUserTag('@tag', this)">X</button>
@@ -109,24 +109,42 @@
                                     DETAIL
                                 </button>
                                 </span>
-                                <span>
-                                    <button type="button" class="box_action text_action box_chat">CHAT</button>
-                                </span>
                                 @if (ViewBag.IsOwner == true)
                                     {
+                                        <span>
+                                                <button type="button" class="box_action text_action box_chat"
+                                                        onclick="location.href='@Url.Action("Index", "Chat")'">
+                                                    CHAT
+                                                </button>
+                                        </span>
                                         <span>
                                             <button type="button" class="box_action text_action box_delete" onclick="openDeleteModal('@post.EventId')">
                                                 DELETE
                                             </button>
                                         </span>
                                     }
+                                else
+                                    {
+                                        var myJoinedEvents = ViewBag.MyJoinedEvents as List<string> ?? new List<string>();
+                                        if (myJoinedEvents.Contains(post.EventId))
+                                        {
+                                            <span>
+                                                <a href="@Url.Action("Index", "Chat")" class="box_action text_action box_chat" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                                    CHAT
+                                                </a>
+                                            </span>
+                                        }
+                                    }   
                             </div>
                         </div>
 
-                        <p class="paragraph_post">@post.Detail</p>
-                        
-                        <div class="photo_post">
-                            <img src="@post.CoverImage" class="photo_post_item" alt="Post Photo">
+                        <p class="paragraph_post text-sm">@post.Detail</p>
+                        <div class = "frame_photo">
+
+                            <div class="photo_post">
+                                <img src="@post.CoverImage" class="photo_post_item" alt="Post Photo">
+                            </div>
+
                         </div>
                     </div>
                 </div>
