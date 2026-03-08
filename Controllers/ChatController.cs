@@ -22,8 +22,6 @@ namespace Travello.Controllers
         public async Task<IActionResult> Index()             
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
-            // string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear
-            // string mockUserId = "69a9d2663daa971a33606eae"; // Dear_02
 
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
@@ -99,7 +97,6 @@ namespace Travello.Controllers
                 }
             }
 
-            // 🌟 จัดเรียงใหม่สุดขึ้นบนสุด
             myChats = myChats.OrderByDescending(chat => chat.last_message_time).ToList();
 
             return Json(new { success = true, data = myChats });

@@ -43,7 +43,7 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
 
     chat_socket.onmessage = function(event) {
         if (event.data === "NEW_MSG") {
-            loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที!
+            loadChatMessages();
             loadChatRooms();
         }
     };
@@ -100,69 +100,35 @@ function openPollRoom() {
     const pollBodyBox = document.getElementById('poll-body');
     const template = document.getElementById('poll-card-template');
 
-    // 🌟 4. ขึ้นข้อความ Loading รอระหว่างดึงข้อมูล (UX ที่ดี)
     emptyPollBox.style.display = 'none';
     pollBodyBox.style.display = 'flex';
 
-    // =======================================================
-    // 📡 5. ส่วนดึงข้อมูล (เลือกใช้ Mock Data หรือ Fetch API จริง)
-    // =======================================================
-    
-    /* // 🚀 โค้ดของจริง: เมื่อคุณทำ Controller ใน C# เสร็จแล้ว ให้เปิดคอมเมนต์โค้ดนี้
-    fetch(`/Poll/GetPollsByEventId?event_id=${event_id}`)
-        .then(response => response.json())
-        .then(data => renderPollCards(data))
-        .catch(error => console.error("Error fetching polls:", error));
-    */
-
-    // let mockData = [];
-    
-    // สมมติว่าถ้า event_id เป็น 1 หรือ "trip-01" จะมีโพลโชว์
-    // if (event_id === 1) { 
-    //     mockData = [
-    //         { question: "What will we eat the morning of the trip?", winner: "Ramen", time_left: "5 hours", percent: 40 },
-    //         { question: "Where should we stay on the second night?", winner: "Tent", time_left: "Ended", percent: 85 }
-    //     ];
-    // } 
-    // ถ้าเป็น event_id อื่นๆ mockData จะว่างเปล่า [] และไปเข้าเงื่อนไขแสดง Empty แทน
-
-    // renderPollCards(mockData); // ส่งข้อมูลไปให้ฟังก์ชันวาดการ์ด
-
-    // =======================================================
-    // 🎨 6. ฟังก์ชันซ้อน (Helper) สำหรับวาดการ์ดโพลลงจอ
-    // =======================================================
     function renderPollCards(data) {
 
         if (!data || data.length === 0) {
-            // กรณีไม่มีโพล: โชว์กล่อง Empty
             emptyPollBox.style.display = 'flex';
             pollBodyBox.style.display = 'none';
         } else {
-            // กรณีมีโพล: โชว์กล่องรายการ วนลูปวาดการ์ด
             emptyPollBox.style.display = 'none';
             pollBodyBox.style.display = 'flex';
 
             data.forEach(poll => {
                 const cardClone = template.content.cloneNode(true);
 
-                // ยัดข้อความ
                 cardClone.querySelector('.poll-question').textContent = poll.question;
                 cardClone.querySelector('.number-one').textContent = poll.winner;
                 
-                // ตกแต่งเรื่องเวลา (ถ้าหมดเวลาแล้วให้เป็นสีเทา)
                 const timeElem = cardClone.querySelector('.poll-timeout');
                 if (poll.time_left === "Ended") {
                     timeElem.textContent = "Poll ended";
-                    timeElem.style.color = "#888"; // สีเทา
+                    timeElem.style.color = "#888"; 
                 } else {
                     timeElem.textContent = `Poll end up in ${poll.time_left}`;
                 }
 
-                // ยัดตัวเลขและขยับหลอดเปอร์เซ็นต์
                 cardClone.querySelector('.poll-percent').textContent = `${poll.percent}%`;
                 cardClone.querySelector('.progress-bar-fill').style.width = `${poll.percent}%`;
 
-                // แปะลงเว็บ
                 pollBodyBox.appendChild(cardClone);
             });
         }
@@ -205,7 +171,6 @@ function openPollCard(event_id, poll_id, questionText) {
         
         const votersBox = optionClone.querySelector('.poll-voters');
         for(let i=0; i < opt.votersCount; i++){
-            // สร้าง div รูปโปรไฟล์ (ของจริงสามารถใช้แท็ก <img> ใส่ src ได้เลย)
             const avatar = document.createElement('div');
             avatar.className = 'voter-avatar';
             votersBox.appendChild(avatar);
@@ -278,42 +243,6 @@ async function sendMessage() {
 
     let bubbleContent = "";
     
-    // if (selectedFile) {
-    //     const tempImageUrl = URL.createObjectURL(selectedFile);
-    //     bubbleContent += `<img src="${tempImageUrl}" style="max-width: 100%; border-radius: 8px; margin-bottom: 4px; display: block;" />`;
-    // }
-
-    // if (selectedDoc) {
-    //     const tempDocUrl = URL.createObjectURL(selectedDoc);
-        
-    //     bubbleContent += `
-    //         <div onclick="const a = document.createElement('a'); a.href='${tempDocUrl}'; a.download='${selectedDoc.name}'; a.click();" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background-color: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 4px; border: 1px solid #e2e8f0; cursor: pointer; width: 100%; box-sizing: border-box; transition: 0.2s;">
-                
-    //             <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; pointer-events: none;">
-    //                 <svg style="flex-shrink: 0;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
-    //                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    //                     <polyline points="14 2 14 8 20 8"></polyline>
-    //                     <line x1="12" y1="18" x2="12" y2="12"></line>
-    //                     <line x1="9" y1="15" x2="15" y2="15"></line>
-    //                 </svg>                        
-                    
-    //                 <span style="font-size: 14px; font-weight: bold; color: #0284c7; word-break: break-all;">
-    //                     ${selectedDoc.name}
-    //                 </span>
-    //             </div>
-                
-    //             <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-    //                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    //                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    //                     <polyline points="7 10 12 15 17 10"></polyline>
-    //                     <line x1="12" y1="15" x2="12" y2="3"></line>
-    //                 </svg>
-    //             </div>
-                
-    //         </div>
-    //     `;
-    // }
-
     if (messageText) {
         const safeText = escapeHTML(messageText);
         const formattedText = makeLinksClickable(safeText);
@@ -321,14 +250,6 @@ async function sendMessage() {
     }
         
     const chatBody = document.getElementById('chat-body');
-
-    // const bubbleHtml = `
-    //     <div class="message-row" style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
-    //         <div class="message-bubble text-sm font-regular" style="background-color: #CEE7E6; color: #000; padding: 12px 16px; border-radius: 20px; border-top-right-radius: 4px; max-width: 60%; word-wrap: break-word;">
-    //             ${bubbleContent}
-    //         </div>
-    //     </div>
-    // `;
 
 if (bubbleContent !== "") {
         const bubbleHtml = `
@@ -341,9 +262,6 @@ if (bubbleContent !== "") {
         chatBody.insertAdjacentHTML('beforeend', bubbleHtml);
         chatBody.scrollTop = chatBody.scrollHeight;
     }
-    
-    // chatBody.insertAdjacentHTML('beforeend', bubbleHtml);
-    // chatBody.scrollTop = chatBody.scrollHeight;
 
     cancelAttachment();
     inputField.value = "";
@@ -375,7 +293,7 @@ if (bubbleContent !== "") {
 function handleEnterPress(event) {
     if (event.key === "Enter") {
         event.preventDefault();
-        sendMessage(); // สั่งให้ยิงฟังก์ชันส่งข้อความ
+        sendMessage(); 
         chatBody.scrollTop = chatBody.scrollHeight;
     }
 }
@@ -452,9 +370,10 @@ async function loadChatMessages() {
                         <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px; font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
                             <img class="talker" src="${msg.sender_img}" style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover; flex-shrink: 0;"/>
                             
-                            <div class="message-column" style="display: flex; flex-direction: column; align-items: flex-start; max-width: 60%;">
-                                <p class="sender_name font-regular" style="font-size: 14px; padding-bottom: 4px; margin: 0;">${msg.sender_name}</p>
-                                <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; width: 60%; overflow-wrap: break-word;">
+                            <div class="message-column" style="display: flex; flex-direction: column; align-items: flex-start; max-width: 60%; min-width: 0;">
+                                <p class="sender_name font-regular" style="font-size: 14px; padding-bottom: 4px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${msg.sender_name}</p>
+                                
+                                <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; word-wrap: break-word; max-width: 100%;">
                                     ${messageContent}
                                 </div>
                             </div>
@@ -523,15 +442,12 @@ function cancelAttachment() {
     const fileNameDisplay = document.getElementById('file-name-display');
     const messageInput = document.getElementById('message-input');
 
-    // เคลียร์ไฟล์
     imageInput.value = "";
     documentInput.value = "";
 
-    // ซ่อนกล่องพรีวิว
     fileNameDisplay.innerHTML = "";
     fileNameDisplay.style.display = "none";
 
-    // 🌟 เอาช่องพิมพ์ข้อความกลับมาโชว์!
     messageInput.style.display = "block";
     messageInput.disabled = false;
     messageInput.focus(); 
@@ -583,7 +499,7 @@ function takePhoto() {
             showPreviewText();
         }
         closeCamera();
-    }, 'image/jpeg', 0.85); // 0.85 คือคุณภาพรูป (ลดขนาดไฟล์ให้โหลดลื่นๆ)
+    }, 'image/jpeg', 0.85); 
 }
 
 async function loadFilesAndLinks() {
@@ -605,7 +521,6 @@ async function loadFilesAndLinks() {
                 })
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-            // 🌟 2. ดึง ID จาก HTML ของคุณมาใช้งาน
             const emptyState = document.getElementById('empty-poll-files-links');
             const listContainer = document.getElementById('files-list-container');
 
@@ -671,7 +586,6 @@ async function loadSettingImages() {
         if (result.success) {
             const allMessages = result.data;
 
-            // 🌟 1. คัดเอาเฉพาะแชทที่มีรูปภาพ และเรียงจากรูปใหม่สุดไปเก่าสุด
             const imageMessages = allMessages
                 .filter(msg => msg.image_url && msg.image_url !== "")
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -679,11 +593,9 @@ async function loadSettingImages() {
             const mediaGrid = document.getElementById('setting-media-grid');
             if (!mediaGrid) return;
 
-            mediaGrid.innerHTML = ""; // ล้างข้อมูลเก่าออกก่อน
+            mediaGrid.innerHTML = ""; 
 
-            // 🌟 2. วนลูปเอารูป "ทั้งหมด" ในแชทมาแสดง (ไม่จำกัดจำนวน)
             imageMessages.forEach(msg => {
-                // เปลี่ยน background-color ให้เป็นสีขาว/ใส เพื่อให้กลืนกับพื้นหลัง
                 mediaGrid.innerHTML += `
                     <div class="media-item" style="background-color: transparent; padding: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                         <img src="${msg.image_url}" onclick="window.open('${msg.image_url}', '_blank')" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: 0.2s;" />
@@ -691,7 +603,6 @@ async function loadSettingImages() {
                 `;
             });
             
-            // ไม่ต้องใส่ Loop สร้างกล่องเทาแล้วครับ ปล่อยว่างไปเลย
         }
     } catch (error) {
         console.error("Error loading images for settings:", error);
@@ -711,12 +622,6 @@ async function loadChatRooms() {
             result.data.forEach(room => {
                 let previewText = room.last_message_text ? room.last_message_text : "Start Chat!";
                 previewText = escapeHTML(previewText);
-
-                // if(room.image_url){
-                //     previewText = "Sent Photo";
-                // }else if(room.document_url){
-                //     previewText = "Sent Document"
-                // }
                 
                 let time_string = "";
                 if(room.last_message_time){
@@ -727,7 +632,6 @@ async function loadChatRooms() {
                     const datePart = `${msgDate.getDate()}/${msgDate.getMonth() + 1}/${msgDate.getFullYear()}`;
                     
                     time_string = `${datePart} ${timePart}`;
-                    previewText = previewText + " - " + time_string;
                 }
 
                 let roomImg = room.event_img_path ? room.event_img_path : '/images/default_chat_icon.png';
@@ -760,8 +664,12 @@ async function loadChatRooms() {
                             
                             <div class="info-row">
                                 <img class="path-icon" src="/images/path_icon.svg" />
-                                <p class="chat-info-description text-xs font-semibold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">
+                                <p class="chat-info-description text-xs font-semibold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;">
                                     ${previewText}
+                                </p>
+                                <span class="text-xs font-semibold" style="flex-shrink: 0; margin: 0; padding: 8px;">-</span>
+                                <p class="chat-info-description text-xs font-semibold" style="padding: 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">
+                                    ${time_string}
                                 </p>
                             </div>
                         </div>
@@ -769,7 +677,6 @@ async function loadChatRooms() {
                 `;
             });
 
-            // 🌟 3. เอาการ์ดทั้งหมดไปยัดลงในหน้าจอ
             if (chatListContainer) {
                 chatListContainer.innerHTML = cardsHtml;
             }

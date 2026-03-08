@@ -13,7 +13,6 @@
 
 <body onload="openChatPage()">
     <div id="current-user-data" data-user-id="@Context.Session.GetString("UserId")" style="display:none;"></div>
-    @* ดึง navbar มาด้วย *@
     <div id="chat-header">
         <h id="header-let" class="text-2xl font-regular">Let</h>
         <h id="header-chats" class="text-2xl font-regular ">CHATS !</h>
@@ -68,10 +67,6 @@
                 <h4 id="setting-event-title" class="text-md font-semibold"></h4>
                 <p id="setting-event-location" class="text-sm font-semilight"></p>
                 <p id="setting-event-date" class="text-sm font-semilight"></p>
-                @* <div id="setting-action-icon">
-                    <svg class="action-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-off-icon lucide-bell-off"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M17 17H4a1 1 0 0 1-.74-1.673C4.59 13.956 6 12.499 6 8a6 6 0 0 1 .258-1.742"/><path d="m2 2 20 20"/><path d="M8.668 3.01A6 6 0 0 1 18 8c0 2.687.77 4.653 1.707 6.05"/></svg>
-                    <img class="action-icon" src="~/images/leave_icon.svg"/>
-                </div> *@
             </div>
             <div id="setting-option">
                 <a href="#" onclick="openDetailPage()" id="setting-option-row" class="clickable-row">
@@ -99,7 +94,7 @@
             </div>
         </div>
 
-
+@*comment: This code from AI. I didn't wrote it my self*@
 
         <div id="all-poll-room">
             <div id="poll-header-container">
