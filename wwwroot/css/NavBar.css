@@ -147,6 +147,24 @@
     justify-content: center;
 }
 
+.NotiIconWrapper {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.NotiIconWrapper.unread-dot::after {
+    content: '';
+    position: absolute;
+    top: -2px;   
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff4d4d;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
 .ProfilePic {
     width: 36px;
     height: 36px;
