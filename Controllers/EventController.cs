@@ -331,7 +331,11 @@ namespace Travello.Controllers
                 Locations        = locations,
                 Attendees        = attendeeViewModels,
                 JoinQuestions    = joinQuestions,
-                Additions        = new()
+                Additions = ev.VoteResult?.Select(v => new AdditionViewModel
+                {
+                    Question = v.Question,
+                    Answer   = v.Answer
+                }).ToList() ?? new()
             };
 
             return View(model);
