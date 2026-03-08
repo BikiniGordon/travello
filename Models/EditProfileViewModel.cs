@@ -81,7 +81,6 @@ namespace Travello.Models
         }
         public string? profile_img_path { get; set; }
         
-        [BsonRepresentation(BsonType.ObjectId)]
         public List<string> user_tag { get; set; } = new List<string>();
 
         [BsonIgnore]

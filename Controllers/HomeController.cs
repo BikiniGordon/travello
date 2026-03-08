@@ -163,7 +163,8 @@ namespace Travello.Controllers
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
             var usersCollection = _database.GetCollection<EditProfileViewModel>("User"); 
-            string cleanTag = request.tag.Trim();
+
+            string cleanTag = request.tag.Trim().ToUpper();
 
             var update = Builders<EditProfileViewModel>.Update.Pull(u => u.user_tag, cleanTag);
             var result = await usersCollection.UpdateOneAsync(u => u.user_id == currentUserId, update);
