@@ -107,10 +107,10 @@ namespace Travello.Models
         public string? GoogleMapUrl { get; set; }
 
         [BsonElement("latitude")]
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
 
         [BsonElement("longitude")]
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         [BsonElement("note")]
         public string? Note { get; set; }
