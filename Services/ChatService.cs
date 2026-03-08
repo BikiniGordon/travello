@@ -13,6 +13,7 @@ namespace Travello.Services
         public ChatService(IMongoDatabase database)
         {
             // ชี้ไปที่ Collection ชื่อ "chat_rooms" ใน MongoDB
+        
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
             _messages = database.GetCollection<ChatMessageModel>("messages");
             _users = database.GetCollection<UserModel>("users");
@@ -34,6 +35,17 @@ namespace Travello.Services
             // สั่งอัปเดตลงตาราง chat_rooms โดยหาจาก Id ของห้องแชท
             await _chatRooms.UpdateOneAsync(chat => chat.id == chatid, update);
         }
+
+        public async Task UpdateLastMessageAsync(string chatid, string messageText, DateTime timestamp)
+        {
+            var updateDef = Builders<ChatRoomModel>.Update
+                .Set(r => r.last_message_text, messageText)
+                .Set(r => r.last_message_time, timestamp);
+
+
+            await _chatRooms.UpdateOneAsync(r => r.id == chatid, updateDef);
+        }
+
 
         public async Task SaveMessageAsync(ChatMessageModel newMessage)
         {
@@ -58,6 +70,8 @@ namespace Travello.Services
                 return new ChatHistoryResponse {
                     message_text = msg.message_text,
                     image_url = msg.image_url,
+                    document_url = msg.document_url, 
+                    document_name = msg.document_name,
                     timestamp = msg.timestamp,
                     sender_id = msg.sender_id,
                     sender_name = sender != null ? sender.username : "Unknown", 

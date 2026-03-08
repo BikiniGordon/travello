@@ -4,6 +4,8 @@ namespace Travello.DTOs
     {
         public string message_text { get; set; }
         public string image_url {get; set;}
+        public string document_url { get; set; }
+        public string document_name { get; set; }
         public DateTime timestamp { get; set; }
         public string sender_id { get; set; }
         public string sender_name { get; set; }

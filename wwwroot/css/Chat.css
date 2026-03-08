@@ -85,8 +85,12 @@ body {
     background-color: #CCD6D5;
     /* max-width: 1440px; */
     margin: 0;
+    overflow-x: hidden;
     /* width: 100%; */
+    min-height: 100vh;
+    height: auto;
     padding: 0;
+    
 }
 
 #chat-body, #setting-room {
@@ -105,16 +109,18 @@ body {
     width: 100%;
 }
 
-#chat-container{
+#chat-container {
     position: relative;   
     max-width: 1418px;      
     width: 100%;
     margin: 0 auto;      
-    height: 100vh;
+
+    /* 🌟 เปลี่ยนจาก 100vh เป็น calc() เพื่อหักลบความสูงของแถบ Navbar ด้านบนออก */
+    /* (ลองปรับตัวเลข 80px ให้เท่ากับความสูงจริงของ Navbar คุณดูนะครับ อาจจะ 60px, 70px หรือ 80px) */
+    height: calc(100vh - 80px); 
+
     min-height: 600px;
-    /* height: 860px; */
-    overflow: hidden;
-    
+    /* overflow: hidden; */
 }
 
 #chat-header{
@@ -139,11 +145,12 @@ body {
     /* border: solid black; */
     justify-self: center;
     width: 97%;
-    height: 100%;
+    height: 100vh;
     display: block;
     object-fit: cover;
     z-index: 1;
 }
+
 
 #white-overlay {
     position: absolute;
@@ -151,7 +158,7 @@ body {
     display: block;
     top: 0;                   
     width: 97%;    
-    height: 100%;    
+    height: 100vh;    
     background-color: #FFFFFF; 
     opacity: 50%;
     z-index: 2;         
@@ -287,6 +294,7 @@ body {
     display: flex;
     flex-direction: row;   
     align-items: center;   
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
     /* gap: 8px;             */
 }
 
@@ -431,15 +439,23 @@ body {
     right: 32px;
     display: flex;
     flex-direction: column;
-
     z-index: 4;
+    
+    overflow-y: auto; 
+    bottom: 32px;
+}
+
+.chat-list::-webkit-scrollbar {
+    display: none;
+}
+
+.setting-media-group::-webkit-scrollbar {
+    display: none; 
 }
 
 .media-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* แบ่งพื้นที่ 3 ส่วนเท่าๆ กัน */
-    border-top: 1px solid #333;  /* เส้นขอบบนสุด */
-    border-left: 1px solid #333; /* เส้นขอบซ้ายสุด */
     width: 100%;
     z-index: 4;
 }
@@ -448,9 +464,8 @@ body {
     width: 100%;
     aspect-ratio: 1 / 1; /* 🌟 พระเอกของงาน: บังคับให้เป็นสี่เหลี่ยมจัตุรัสเสมอ! */
     background-color: #dbdbdb; /* สีพื้นหลังสีเทา */
-    border-right: 1px solid #333; /* เส้นคั่นแนวตั้ง */
-    border-bottom: 1px solid #333; /* เส้นคั่นแนวนอน */
     box-sizing: border-box;
+    border: 1px solid #bbbbbb;  
     z-index: 4;
 }
 
@@ -642,6 +657,50 @@ body {
     min-width: 44px; 
     text-align: right; 
     flex-shrink: 0;
+}
+
+#files-and-links-room{
+    display: none; 
+    flex-direction: column;
+    position: absolute;
+    /* align-items: center; */
+    width: calc(100% - 712px); 
+    max-width: 706px; 
+    height: 778px; 
+    top: 48px;
+    right: 64px;
+    z-index: 5; 
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    overflow: hidden; 
+}
+
+#files-links-header-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 89px;
+    position: relative;
+    flex-shrink: 0;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+}
+
+#empty-poll-files-links{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    text-align: center; 
+}
+
+#files-list-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
 }
 
 #poll-select-card {
@@ -1012,6 +1071,8 @@ body {
     width: calc(100% - 712px); 
     max-width: 706px; 
     height: 778px; 
+    /* height: 100%; 
+    max-height: 100%; */
     top: 48px;
     right: 64px;
     z-index: 3;
@@ -1081,6 +1142,7 @@ body {
     overflow-y: auto; 
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     gap: 12px; 
 }
 
@@ -1205,6 +1267,7 @@ body {
     height: 70px;
     box-sizing: border-box;
     width: 100%;
+    flex-shrink: 0;
 }
 
 .input-actions {
@@ -1218,6 +1281,19 @@ body {
     height: 24px;
     cursor: pointer;
     flex-shrink: 0
+}
+
+.chat-link {
+    color: #007bff; /* สีน้ำเงินสไตล์ลิงก์ (ปรับเป็นสีฟ้าธีม Travello ของคุณได้นะ) */
+    text-decoration: underline; /* ขีดเส้นใต้ให้รู้ว่ากดได้ */
+    
+    /* 🌟 คำสั่งนี้สำคัญมาก! ป้องกันพวกลิงก์ยาวๆ ดันลูกโป่งแชทพัง */
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.chat-link:hover {
+    color: #0056b3; /* สีเข้มขึ้นตอนเอาเมาส์ชี้ */
 }
 
 #message-input {
@@ -1325,6 +1401,7 @@ body {
 
 @media (max-width: 768px) {
     
+
     #chat-header {
         display: none;
     }
@@ -1367,12 +1444,14 @@ body {
     #all-poll-room,
     #create-poll-page,
     #poll-select-card {
+        position: fixed;
         width: 100% !important;
         max-width: 100% !important;
-        top: 0 !important;
+        top: 56px !important;
+        left: 0;
         right: 0 !important;
         bottom: 0 !important;
-        height: 100% !important;
+        height: calc(100dvh - 56px) !important;
         border-radius: 0 !important; 
         z-index: 50 !important; /* ดันให้อยู่บนสุด ทับรายการแชทมิดเลย */
     }

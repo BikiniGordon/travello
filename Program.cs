@@ -4,23 +4,8 @@ using Travello.Models;
 using Travello.Services;
 using Travello.Hubs;
 using Travello.DTOs;
-
-void LoadDotEnv(string path)
-{
-    if (!File.Exists(path)) return;
-
-    foreach (var line in File.ReadAllLines(path))
-    {
-        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
-
-        var parts = line.Split('=', 2);
-        if (parts.Length != 2) continue;
-
-        var key = parts[0].Trim();
-        var value = parts[1].Trim();
-        Environment.SetEnvironmentVariable(key, value);
-    }
-}
+using System.Net.WebSockets;
+using System.Threading; // เผื่อไว้สำหรับ CancellationToken
 
 LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
@@ -89,6 +74,7 @@ builder.Services.AddScoped<ChatService>();
 var app = builder.Build();
 
 app.UseStaticFiles();
+app.UseWebSockets();
 app.UseRouting();
 app.UseSession();
 
@@ -103,6 +89,41 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapHub<ChatHub>("/chatHub");
+
+app.Map("/ws", async context =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        var roomId = context.Request.Query["chat_room_id"].ToString();
+        if (!string.IsNullOrEmpty(roomId))
+        {
+            // รับสาย
+            using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            
+            // เอาสายนี้ไปเก็บไว้ในห้องแชทที่ระบุ
+            Travello.Services.WebSocketManage.Rooms.AddOrUpdate(roomId, 
+                new List<WebSocket> { webSocket }, 
+                (key, existingList) => { existingList.Add(webSocket); return existingList; });
+
+            // ถือสายรอไว้เรื่อยๆ จนกว่าหน้าเว็บจะปิดหนี (ดักฟังข้อความขยะเพื่อดึงเวลาไว้)
+            var buffer = new byte[1024];
+            var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            while (!result.CloseStatus.HasValue)
+            {
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            }
+            
+            // ถ้าหน้าเว็บปิดทิ้ง ก็เอาสายนี้ออกจากห้องแชท
+            if (Travello.Services.WebSocketManage.Rooms.TryGetValue(roomId, out var sockets))
+            {
+                sockets.Remove(webSocket);
+            }
+            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+        }
+        else { context.Response.StatusCode = 400; }
+    }
+    else { context.Response.StatusCode = 400; }
+});
 
 app.Run();
 
