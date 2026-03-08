@@ -12,7 +12,6 @@
     <title>Detail</title>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Noto+Sans+Thai:wght@100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/styleDetail.css" />
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
@@ -38,13 +37,13 @@
                             }
                         </div>
                     </div>
-                    <a href="@Url.Action("UserProfile", "Home", new { id = Model.HostId })" style="text-decoration: none; color: inherit;">
-                        <div class="owner">
-                            <img class="profile" src="@Model.HostProfileImage" alt="Host profile">
-                            <p class="text-md font-regular">Hosted by</p>
-                            <span class="text-md font-semibold">@Model.HostName</span>
-                        </div>
-                    </a>
+                    <div class="owner">
+                        <img class="profile" src="@Model.HostProfileImage" alt="Host profile">
+                        <!-- <img class="profile" src="~/images/Ellipse 12.png" alt="Host profile"> -->
+                        <p class="text-md font-regular">Hosted by</p>
+                        <span class="text-md font-semibold">@Model.HostName</span>
+                        <!-- <span class="text-md font-semibold">Dearja</span> -->
+                    </div>
                 </div>
                 <img class="cover" src="@Model.CoverImage">
                 <!-- <img class="cover" src="~/images/cover.png" alt="Event cover"> -->
@@ -135,7 +134,18 @@
                                         <div class="place">
                                             <div class="place-icon">@placeCounter</div>
                                             <div class="place-content">
-                                                <p class="text-md font-semibold">@place.Name</p>
+                                                <div class="place-title-row">
+                                                    <p class="text-md font-semibold">@place.Name</p>
+                                                    @if (!string.IsNullOrWhiteSpace(place.GoogleMapUrl))
+                                                    {
+                                                        <a class="place-map-link" href="@place.GoogleMapUrl" target="_blank" rel="noopener noreferrer" aria-label="Open @place.Name on Google Maps" title="Open in Google Maps">
+                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                                                <path d="M12 22C9.25 18.7 5 14.84 5 10.5C5 6.36 8.36 3 12.5 3C16.64 3 20 6.36 20 10.5C20 14.84 15.75 18.7 13 22C12.74 22.31 12.26 22.31 12 22Z" stroke="currentColor" stroke-width="1.7"/>
+                                                                <circle cx="12.5" cy="10.5" r="2.8" stroke="currentColor" stroke-width="1.7"/>
+                                                            </svg>
+                                                        </a>
+                                                    }
+                                                </div>
                                                 <p class="text-sm font-regular">@place.Description</p>
                                                 @foreach (var exp in place.Expenses)
                                                 {
@@ -227,15 +237,14 @@
                 <div class="attendee-list" id="attendeeList">
                     @foreach (var attendee in Model.Attendees)
                     {
-                        <a href="@Url.Action("UserProfile", "Home", new { id = attendee.Id })" style="text-decoration: none; color: inherit;">
-                            <div class="attendee">
-                                <img src="@attendee.ProfileImage" alt="@attendee.Name">
-                                <div>
-                                    <strong>@attendee.Name</strong>
-                                    <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div> 
-                                </div>
+                        <div class="attendee">
+                            <img src="@attendee.ProfileImage" alt="@attendee.Name">
+                            <div>
+                                <strong>@attendee.Name</strong>
+                                <div class="text-xs">@(attendee.IsApproved ? "Joined" : "Pending")</div> 
+                                
                             </div>
-                        </a>
+                        </div>
                     }
                 </div>
             </div>
@@ -343,7 +352,6 @@
     <script src="~/js/NavBar.js" asp-append-version="true"></script>
     <script src="~/js/modal.js"></script>
     <script src="~/js/actionBar.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="~/js/detailMap.js"></script>
     <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
 
