@@ -194,7 +194,7 @@ namespace Travello.Controllers
                 var fullUserCollection = _userCollection.Database.GetCollection<CreateAccountViewModel>("User");
 
                 var user = await fullUserCollection.Find(u => u.username == username)
-                    // .Project(u => new { u.username, u.password, u.user_id, u.profile_img_path })
+                    .Project(u => new { u.username, u.password, u.user_id, u.profile_img_path })
                     .FirstOrDefaultAsync();
 
                 if (user != null)
