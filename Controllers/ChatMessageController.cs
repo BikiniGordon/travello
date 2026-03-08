@@ -8,6 +8,7 @@ using Travello.Models;
 using Travello.Services; 
 using Travello.DTOs;
 using MongoDB.Driver;
+using System.Reflection.Metadata;
 
 namespace Travello.Controllers
 {
@@ -16,10 +17,12 @@ namespace Travello.Controllers
         private readonly ChatService _chatService;
         private readonly IWebHostEnvironment _env;
         private readonly IMongoCollection<ChatRoomModel> _chatRooms;
+        private readonly IMongoCollection<User> _user;
 
         public ChatMessageController(ChatService chatService, IWebHostEnvironment env, IMongoDatabase database)
         {
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _user = database.GetCollection<User>("User");
             _chatService = chatService;
             _env = env;
         }
@@ -43,11 +46,14 @@ namespace Travello.Controllers
         public async Task<IActionResult> SendMessage([FromForm] ChatMessageModel newMessage, IFormFile imageFile, IFormFile documentFile)
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
+            var current_user_obj = await _user
+                .Find(user => user.Id == currentUserId)
+                .FirstOrDefaultAsync();
             var current_chat_room_id = newMessage.chat_room_id;
             var current_chat_room_obj = await _chatRooms
                 .Find(chat_room => chat_room.id == current_chat_room_id)
                 .FirstOrDefaultAsync();
-            Console.WriteLine(current_chat_room_obj);
+            Console.WriteLine(current_chat_room_obj); 
             // Console.WriteLine(currentUserId);
 
             if (imageFile != null && imageFile.Length > 0)
@@ -91,7 +97,9 @@ namespace Travello.Controllers
                 !string.IsNullOrEmpty(newMessage.image_url) || 
                 !string.IsNullOrEmpty(newMessage.document_url)))
             { 
-                newMessage.sender_id = "69a9afc35f16b10cdb2b5079";
+                newMessage.sender_id = currentUserId;
+                newMessage.sender_img = current_user_obj.ProfileImgPath;
+                Console.WriteLine(newMessage.sender_img);
                 newMessage.timestamp = DateTime.UtcNow;
                 
                 await _chatService.SaveMessageAsync(newMessage);

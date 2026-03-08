@@ -1,4 +1,6 @@
 @model IEnumerable<Travello.Models.ChatRoomModel>
+@using Microsoft.AspNetCore.Http
+
 
 @{
     ViewData["Title"] = "Chat";
@@ -10,6 +12,7 @@
 
 
 <body onload="openChatPage()">
+    <div id="current-user-data" data-user-id="@Context.Session.GetString("UserId")" style="display:none;"></div>
     @* ดึง navbar มาด้วย *@
     <div id="chat-header">
         <h id="header-let" class="text-2xl font-regular">Let</h>

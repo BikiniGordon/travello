@@ -9,31 +9,32 @@ namespace Travello.Controllers
     public class ChatController : Controller
     {
         private readonly ChatService _chatService;
-        private readonly IMongoCollection<UserModel> _usersCollection;
+        private readonly IMongoCollection<User> _usersCollection;
         private readonly IMongoCollection<Event> _eventsCollection;
 
         public ChatController(ChatService chatService, IMongoDatabase database)
         {
             _chatService = chatService;
-            _usersCollection = database.GetCollection<UserModel>("User");
+            _usersCollection = database.GetCollection<User>("User");
             _eventsCollection = database.GetCollection<Event>("events"); 
         }
 
         public async Task<IActionResult> Index()             
         {
-            string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            // string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear
             // string mockUserId = "69a9d2663daa971a33606eae"; // Dear_02
 
             var currentUser = await _usersCollection
-                .Find(user => user.id == mockUserId)
+                .Find(user => user.Id == currentUserId)
                 .FirstOrDefaultAsync();
 
-            if (currentUser == null || currentUser.event_id == null || !currentUser.event_id.Any())
+            if (currentUser == null || currentUser.EventId == null || !currentUser.EventId.Any())
             {
                 return View(new List<ChatRoomModel>());
             }
 
-            List<string> myEventIds = currentUser.event_id;
+            List<string> myEventIds = currentUser.EventId;
             List<ChatRoomModel> myChats = await _chatService.GetUserChatsAsync(myEventIds);
 
             foreach (var chat in myChats)
@@ -65,18 +66,18 @@ namespace Travello.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyChatRooms()
         {
-            string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear (ใช้ User ID เดียวกับ Index)
+            string currentUserId = HttpContext.Session.GetString("UserId");
             
             var currentUser = await _usersCollection
-                .Find(user => user.id == mockUserId)
+                .Find(user => user.Id == currentUserId)
                 .FirstOrDefaultAsync();
 
-            if (currentUser == null || currentUser.event_id == null || !currentUser.event_id.Any())
+            if (currentUser == null || currentUser.EventId == null || !currentUser.EventId.Any())
             {
                 return Json(new { success = true, data = new List<ChatRoomModel>() });
             }
 
-            List<string> myEventIds = currentUser.event_id;
+            List<string> myEventIds = currentUser.EventId;
             List<ChatRoomModel> myChats = await _chatService.GetUserChatsAsync(myEventIds);
 
             foreach (var chat in myChats)

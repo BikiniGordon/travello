@@ -388,7 +388,8 @@ async function loadChatMessages() {
             
             chatBody.innerHTML = ""; 
 
-            const my_user_id = "69a9afc35f16b10cdb2b5079";
+            const currentUserDataElement = document.getElementById('current-user-data');
+            const my_user_id = currentUserDataElement ? currentUserDataElement.getAttribute('data-user-id') : null;
 
             result.data.forEach(msg => {
                 let bubbleHtml = "";
@@ -444,7 +445,7 @@ async function loadChatMessages() {
                 } else {
                     bubbleHtml = `
                         <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px;  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
-                            <img class="talker" src=${msg.sender_img} style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover"/>
+                            <img class="talker" src="${msg.sender_img}" style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover"/>
                             <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; max-width: 60%; word-wrap: break-word;">
                                 ${messageContent}
                             </div>

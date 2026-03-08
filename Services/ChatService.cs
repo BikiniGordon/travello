@@ -8,7 +8,7 @@ namespace Travello.Services
     {
         private readonly IMongoCollection<ChatRoomModel> _chatRooms;
         private readonly IMongoCollection<ChatMessageModel> _messages;
-        private readonly IMongoCollection<UserModel> _users;
+        private readonly IMongoCollection<User> _users;
 
         public ChatService(IMongoDatabase database)
         {
@@ -16,7 +16,7 @@ namespace Travello.Services
         
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
             _messages = database.GetCollection<ChatMessageModel>("messages");
-            _users = database.GetCollection<UserModel>("users");
+            _users = database.GetCollection<User>("User");
         }
 
         // ฟังก์ชันดึงห้องแชทตาม List ของ event_id ที่ user เข้าร่วม
@@ -62,10 +62,10 @@ namespace Travello.Services
 
             // 2. ดึงข้อมูล User
             var senderIds = messages.Select(m => m.sender_id).Distinct().ToList();
-            var users = await _users.Find(u => senderIds.Contains(u.id)).ToListAsync();
+            var users = await _users.Find(u => senderIds.Contains(u.Id)).ToListAsync();
 
             var chatHistory = messages.Select(msg => {
-                var sender = users.FirstOrDefault(u => u.id == msg.sender_id);
+                var sender = users.FirstOrDefault(u => u.Id == msg.sender_id);
 
                 return new ChatHistoryResponse {
                     message_text = msg.message_text,
@@ -74,8 +74,8 @@ namespace Travello.Services
                     document_name = msg.document_name,
                     timestamp = msg.timestamp,
                     sender_id = msg.sender_id,
-                    sender_name = sender != null ? sender.username : "Unknown", 
-                    sender_img = sender != null ? sender.profile_img_path : "/images/chat_img_background.svg" 
+                    sender_name = sender != null ? sender.Username : "Unknown", 
+                    sender_img = sender != null ? sender.ProfileImgPath : "/images/chat_img_background.svg" 
                 };
             }).ToList();
 
