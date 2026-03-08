@@ -124,8 +124,6 @@ FodyWeavers.xsd
 appsettings.Development.json
 appsettings.Local.json
 .env
-.env.*
-!.env.exampl
 
 # globs
 Makefile.in
