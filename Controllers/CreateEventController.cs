@@ -290,8 +290,8 @@ namespace Travello.Controllers
                     chat_name = eventDocument.EventTitle,
                     event_location = eventDocument.Location,
                     last_message_id = null,
-                    start_date = eventDocument.StartDate,
-                    end_date = eventDocument.EndDate,
+                    start_date = eventDocument.StartDate.GetValueOrDefault(),
+                    end_date = eventDocument.EndDate.GetValueOrDefault(),
                     event_img_path = eventDocument.EventImgPath
                 };
                 await _chatRoomsCollection.InsertOneAsync(newChatRoom);
