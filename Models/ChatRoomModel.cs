@@ -1,9 +1,9 @@
-using System.Runtime.CompilerServices;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Travello.Models
 {
+    [BsonIgnoreExtraElements]
     public class ChatRoomModel
     {
         [BsonId]
@@ -15,6 +15,7 @@ namespace Travello.Models
         public string? chat_name { get; set; } //เดี๋ยวปรับเป็นชื่อ event ดึงชื่อมาจาก class event
         [BsonRepresentation(BsonType.ObjectId)]
         public string? last_message_id { get; set; }
+        public string? last_message_text { get; set; }
     }
 }
 

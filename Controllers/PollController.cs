@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
-using Travello.Hubs;
 using Travello.Models;
 using Travello.Services;
 
@@ -10,14 +8,12 @@ namespace Travello.Controllers
     public class PollController : Controller
     {
         private readonly PollService _pollService;
-        private readonly IHubContext<PollHub> _pollHub;
         private readonly IMongoCollection<UserModel> _usersCollection;
         private readonly IMongoCollection<EventDocument> _eventsCollection;
 
-        public PollController(PollService pollService, IHubContext<PollHub> pollHub, IMongoDatabase database)
+        public PollController(PollService pollService, IMongoDatabase database)
         {
             _pollService = pollService;
-            _pollHub = pollHub;
             _usersCollection = database.GetCollection<UserModel>("User");
             _eventsCollection = database.GetCollection<EventDocument>("events");
         }
@@ -204,9 +200,6 @@ namespace Travello.Controllers
 
             await _pollService.CreatePollAsync(poll);
 
-            // Broadcast to all clients viewing this event's polls
-            await _pollHub.Clients.Group($"poll_{request.EventId}").SendAsync("PollCreated", poll.Id);
-
             return Json(new { success = true, poll_id = poll.Id });
         }
 
@@ -218,13 +211,6 @@ namespace Travello.Controllers
                 return Json(new { success = false, error = "Not logged in" });
 
             await _pollService.VoteAsync(request.PollId, request.OptionIndex, userId);
-
-            // Get the poll to find its event_id for broadcasting
-            var poll = await _pollService.GetPollByIdAsync(request.PollId);
-            if (poll != null)
-            {
-                await _pollHub.Clients.Group($"poll_{poll.EventId}").SendAsync("PollUpdated", request.PollId);
-            }
 
             return Json(new { success = true });
         }

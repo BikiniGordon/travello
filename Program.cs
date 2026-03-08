@@ -2,7 +2,6 @@ using MongoDB.Driver;
 using Microsoft.Extensions.Options;
 using Travello.Models;
 using Travello.Services;
-using Travello.Hubs;
 
 void LoadDotEnv(string path)
 {
@@ -79,9 +78,6 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
 //Chat--------------------------------------------------------
-
-
-builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatService>();
 
 //Poll---------------------------------------------------------
@@ -110,8 +106,5 @@ app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapHub<ChatHub>("/chatHub");
-app.MapHub<PollHub>("/pollHub");
 
 app.Run();
