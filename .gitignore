@@ -21,7 +21,6 @@ obj/
 *.sln.docstates
 
 wwwroot/uploads/
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
