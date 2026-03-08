@@ -1,0 +1,562 @@
+/* รูปโปรไฟล์ */
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+
+:root {
+    /* Desktop font scale / */
+    --text-xs: 12px;
+    --text-sm: 18px;
+    --text-md: 20px;
+    --text-lg: 24px;
+    --text-xl: 32px;
+    --text-2xl: 40px;
+    --text-3xl: 56px;
+    --text-4xl: 64px;
+
+    /* / Spacing scale / */
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-paddingout: 72px;
+    }
+
+    @media (max-width: 1025px) {
+        :root {
+
+        --text-sm: 17px;
+        --text-md: 19px;
+        --text-lg: 22px;
+        --text-xl: 28px;
+        --text-2xl: 36px;
+        --text-3xl: 48px;
+        --text-4xl: 56px;
+
+        --space-xs: 6px;
+        --space-sm: 12px;
+        --space-md: 20px;
+        --space-lg: 28px;
+        --space-xl: 40px;
+        --space-2xl: 56px;
+        --space-paddingout: 32px;
+    }
+
+    }
+
+    @media (max-width: 768px) {
+
+    :root {
+
+        --text-sm: 16px;
+        --text-md: 18px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --text-2xl: 32px;
+        --text-3xl: 40px;
+        --text-4xl: 48px;
+
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 32px;
+        --space-2xl: 48px;
+        --space-paddingout: 16px;
+    }
+
+    }
+
+
+
+    /* / =========================
+    
+    TYPOGRAPHY CLASSES
+    ========================= */
+
+    .text-sm  { font-size: var(--text-sm); line-height: 1.2;}
+    .text-md  { font-size: var(--text-md); line-height: 1.2;}
+    .text-xl  { font-size: var(--text-xl); line-height: 1.2;}
+    .text-lg  { font-size: var(--text-lg); line-height: 1.2;}
+    .text-2xl { font-size: var(--text-2xl); line-height: 1.2;}
+    .text-3xl { font-size: var(--text-3xl); line-height: 1.2;}
+
+    .font-semilight  { font-weight: 350; }
+    .font-regular    { font-weight: 400; }
+    .font-medium     { font-weight: 500; }
+    .font-semibold   { font-weight: 600; }
+    .font-bold       { font-weight: 700; } 
+
+
+    .text-brown {
+    color: #562F06;
+    }
+
+    h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    } 
+
+.My_profile { 
+    display: flex;
+    flex-wrap: wrap; 
+    flex-direction: column;
+    background-color: #F5F6EE;
+    min-height: 100vh;
+    padding-top: var(--space-2xl);
+
+}
+.NavBar {
+    display: flex;
+    width: 100%;
+    /* max-width: 1440px;  */
+    /* padding: var(--space-sm) var(--space-md); */
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    box-shadow: -2px -2px 4px 0 rgba(192, 192, 192, 0.25) inset, 2px 2px 4px 0 rgba(0, 0, 0, 0.25) inset;
+    backdrop-filter: blur(20px);
+    z-index: 10;
+
+}
+.frame_1678 {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    gap: var(--space-2xl);
+    padding-left: var(--space-paddingout);
+    padding-right: var(--space-paddingout);
+    flex: 1;
+    min-width: 0;
+}
+.frame_1349 {
+    width: 100%; 
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: nowrap;   
+    justify-content: center; 
+    gap: var(--space-xl);
+}
+.profile-card {
+    background-color: #e2e0d6;
+    border-radius: 50px; 
+    width: 355px;
+    max-width: 355px;
+    max-height: 355px; 
+    height: auto; 
+    border: solid 1px #D9D9D9;
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.1);
+}
+
+#frame_photo_text { 
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    display: flex;             
+    flex-direction: column;    
+    align-items: center;      
+    justify-content: center;   
+    gap: var(--space-md);
+}
+
+.profile-img {
+    width: 135px;
+    height: 135px;
+    object-fit: cover;
+    border-radius: 50%
+}
+
+#frame_photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+
+}
+ฺิ
+.letter-spacing {
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+}
+
+.frame_1349 {
+    padding: var(--space-xl);
+    width: 100%; 
+    max-width: 100%;
+    display: flex;
+    justify-content: left;
+}
+.text_name {
+    font-size: 32px;
+}
+#frame_text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-family: 'Segoe UI', Tahoma;
+    text-align: center;
+    width: 100%;
+}
+
+.frame_1677 {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    gap: var(--space-lg);
+    flex: 1;
+    min-width: 0;
+}
+
+.font_alex {
+  font-family: "Alex Brush", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.5em;
+  line-height: 1;
+}
+.header_abountme {
+  font-family: 'Segoe UI', Tahoma;
+  align-items: baseline;
+  font-weight: 600;
+  font-style: normal;
+  font-size: var(--space-lg);
+  gap: 5px;
+}
+.tag{
+    font-family: 'Segoe UI', Tahoma;
+    font-weight: 600;
+    font-style: normal;
+    font-size: var(--space-md);
+}
+.box_aboutme {
+    white-space: nowrap; 
+    display: block;
+}
+
+.box_element_tag {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 12px;      
+    margin-top: 10px;
+}
+
+
+.tag_item {
+    display: inline-flex;  
+    align-items: center;  
+    justify-content: center;
+    min-height: 60.2px;
+    height: auto;         
+    width: auto;
+    padding: 0 12px;
+    background-color: #efede4;
+    border: 1px solid #d9d9d9;
+    border-radius: 38px;  
+    gap: 8px;
+}
+
+.tag_text {
+    line-height: 1;       
+    font-weight: 400;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+
+.btn_close_tag {
+    background: #fff;       
+    border: 1px solid #ccc;
+    border-radius: 50%;     
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+
+.btn_close_tag:hover {
+    background-color: #ffefef;
+    color: #ff0000;
+    border-color: #ff0000;
+}
+.frame_tag_editer {
+    position: relative; 
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+}
+.btn_edit_tag {
+    position: absolute;
+    right: 0;
+    bottom: 0; 
+    width: 32px;
+    height: 32px;
+    background: #efede4;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+
+.btn_edit_tag button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+
+.edit-icon-img {
+    width: 18px;  
+    height: 18px;
+    object-fit: contain; 
+}
+.frame_1388{
+    width: 100%; 
+    display: flex;
+    flex-direction: column; 
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: var(--space-lg);
+    gap: var(--space-md);
+}
+.event_post{
+    border: 3px solid #562F06;
+    border-radius: 15px;
+    width: 100%;
+    min-height: 400px; 
+    height: auto; 
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    box-sizing: border-box; 
+}
+.head_post{
+    font-family: 'Segoe UI', Tahoma;
+    font-weight: 700;
+    font-style: bold;
+    flex-direction: row;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.head_post p {
+    font-size: clamp(20px, 4vw, 36px) !important;
+    margin: 0;
+    flex: 1;               
+    min-width: 250px;      
+}
+.box_post_action{
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+    min-width: fit-content; 
+}
+.box_action{
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+    display: inline-flex;
+    align-items: center; 
+    justify-content: center;
+    background-color: #807775;
+    border: 1px solid #807775;
+    border-radius: 15px;
+
+}
+.box_action:hover {
+    background-color: #ffffff;
+    color: #ff0000;
+    border-color: #ff0000;
+}
+.box_detail{
+    background-color: #807775;
+    border: 1px solid #807775;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.box_chat{
+    background-color: #74A274;
+    border: 1px solid #74A274;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.box_delete{
+    background-color: #CB5B5B;
+    border: 1px solid #CB5B5B;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.box_join{
+    background-color: #2C2D23;
+    border: 1px solid #2C2D23;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.text_action{
+    font-size: var(--space-md);
+    color: white;
+}
+.paragraph_post{
+    font-family: 'Segoe UI', Tahoma;
+    font-weight: 350;
+    font-style: Semilight;
+    font-size: var(--space-sm);
+    line-height: 1.5;
+}
+.photo_post{
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    width: 100%;
+    margin-top: var(--space-md);
+    box-sizing: border-box;
+
+}
+.photo_post_item{
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 15px;   
+    object-fit: cover;    
+    display: block;
+    min-width: 0;          
+}
+/* 1. ฉากหลังสีเทาดำโปร่งใส */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* 2. ตัวกล่อง Popup สีขาว */
+.frame_1575 {
+    background-color: #ffffff;
+    width: 450px; 
+    border-radius: 20px; 
+    /* ใช้ตัวแปร space-lg (32px) และ space-xl (48px) แทน padding เดิม */
+    padding: var(--space-lg) var(--space-xl); 
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15); 
+    box-sizing: border-box;
+}
+
+/* 3. ส่วน Header (คำว่า Confirm Deletion และปุ่ม X) */
+.frame_1571 {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    position: relative; 
+    /* ใช้ตัวแปร space-lg (32px) ดันระยะห่างด้านล่าง */
+    margin-bottom: var(--space-lg); 
+}
+
+.confirm {
+    /* ใช้ตัวแปร text-sm (18px) */
+    font-size: var(--text-sm); 
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    position: relative;
+    /* ใช้ตัวแปร space-xs (8px) ดันเส้นใต้ */
+    padding-bottom: var(--space-xs); 
+}
+
+/* เส้นขีดเส้นใต้สีดำสั้นๆ */
+.confirm::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background-color: #333;
+}
+
+/* 4. ปุ่ม X (ปิด Popup) */
+.frame_1571 .btn_close_tag {
+    position: absolute;
+    right: 0; 
+    background: transparent;
+    border: none;
+    /* ใช้ตัวแปร text-lg (24px) */
+    font-size: var(--text-lg); 
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+    margin-top: -5px;
+}
+
+.frame_1571 .btn_close_tag:hover {
+    color: #000;
+}
+
+/* 5. ส่วนหัวข้อ Input */
+.paragraph_confirm {
+    /* ใช้ตัวแปร text-sm (18px) */
+    font-size: var(--text-sm); 
+    font-weight: bold;
+    color: #333;
+    /* ใช้ตัวแปร space-sm (16px) */
+    margin-bottom: var(--space-sm); 
+}
+
+/* 6. กล่อง Input กรอกข้อมูล */
+#input_reasons {
+    width: 100%;
+    height: 45px;
+    border: 1px solid #b3b3b3;
+    border-radius: 5px;
+    /* ใช้ตัวแปร space-sm (16px) ด้านข้าง */
+    padding: 0 var(--space-sm); 
+    /* ใช้ตัวแปร text-sm (18px) */
+    font-size: var(--text-sm); 
+    box-sizing: border-box;
+    outline: none;
+    transition: border 0.3s;
+}
+
+#input_reasons:focus {
+    border-color: #000;
+}
+
+/* 7. ปุ่ม SUBMIT ด้านล่าง */
+.frame_1573 {
+    /* ใช้ตัวแปร space-md (24px) */
+    margin-top: var(--space-md); 
+}
+
+.btn_submit {
+    width: 100%;
+    height: 50px;
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px; 
+    /* ใช้ตัวแปร text-sm (18px) */
+    font-size: var(--text-sm); 
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn_submit:hover {
+    background-color: #333333; 
+}
