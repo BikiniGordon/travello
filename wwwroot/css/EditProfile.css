@@ -45,6 +45,7 @@
     transition: top 0.5s ease-in-out;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     z-index: 9999;
+    pointer-events: none;
 }
 
 .notification.success { background-color: #00b64cd7; }

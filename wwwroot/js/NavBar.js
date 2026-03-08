@@ -104,8 +104,7 @@ if (loginForm) {
                 window.location.href = destination;
                 return;
             }
-
-            window.location.reload();
+            window.location.href = '/';
         } else {
             alert(result.message);
         }
