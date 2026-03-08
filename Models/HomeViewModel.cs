@@ -24,6 +24,7 @@ namespace Travello.Models
 
         public int attendees { get; set; }
         public int attendees_limit { get; set; }
+        public bool isRegistrationClosed { get; set; }
 
         [BsonIgnore]
         public int event_attendees_remaining => attendees_limit - attendees;
