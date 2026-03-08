@@ -248,8 +248,10 @@ body, .details {
 
 .cover {
     flex: 1;
-    height: 30vh;
+    height: 220px;
     border-radius: 12px;
+    object-fit: cover;
+    object-position: center;
 }
 
 .title {
