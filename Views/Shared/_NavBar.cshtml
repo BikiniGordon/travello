@@ -76,7 +76,7 @@
                             <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal()">Log In</a>
                         } else {
                             <div class="DropdownHeader">Hi, @Context.Session.GetString("Username")</div>
-                            <a href="@Url.Action("Profile", "Home")" class="DropdownItem drop1">My Profile</a>
+                            <a class="DropdownItem drop1">My Profile</a>
                             <a href="@Url.Action("EditProfile", "User")" class="DropdownItem drop2">Edit Profile</a>
                             <a href="@Url.Action("Logout", "User")" class="DropdownItem">Log out</a>
                         }
@@ -125,7 +125,7 @@
                                 <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal()">Log In</a>
                             } else {
                                 <div class="DropdownHeader">Hi, @Context.Session.GetString("Username")</div>
-                                <a href="@Url.Action("Profile", "Home")" class="DropdownItem drop1">My Profile</a>
+                                <a class="DropdownItem drop1">My Profile</a>
                                 <a href="@Url.Action("EditProfile", "User")" class="DropdownItem drop2">Edit Profile</a>
                                 <a href="@Url.Action("Logout", "User")" class="DropdownItem">Log out</a>
                             }
