@@ -27,7 +27,7 @@ namespace Travello.Controllers
             int page_size = 9;
 
             var filterBuilder = Builders<EventModel>.Filter;
-            var filter = filterBuilder.Where(x => x.attendees_limit > x.attendees);
+            var filter = filterBuilder.Where(x => x.attendees_limit > x.attendees && !x.isRegistrationClosed);
 
             if (!string.IsNullOrEmpty(searchLocation))
             {

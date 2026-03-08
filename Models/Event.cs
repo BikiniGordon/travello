@@ -66,6 +66,9 @@ namespace Travello.Models
 
         [BsonElement("closingReason")]
         public string? ClosingReason { get; set; }
+
+        [BsonElement("vote_result")]
+        public List<VoteResult> VoteResult { get; set; } = new();
     }
 
     public class LocationData
@@ -128,5 +131,17 @@ namespace Travello.Models
         [BsonElement("amount")]
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal Amount { get; set; }
+    }
+
+    public class VoteResult
+    {
+        [BsonElement("poll_id")]
+        public string PollId { get; set; } = "";
+
+        [BsonElement("question")]
+        public string Question { get; set; } = "";
+
+        [BsonElement("answer")]
+        public string Answer { get; set; } = "";
     }
 }
