@@ -14,11 +14,13 @@ namespace Travello.Controllers
     public class CreateEventController : Controller
     {
         private readonly IMongoCollection<EventDocument> _eventsCollection;
+        private readonly IMongoCollection<ChatRoomModel> _chatRoomsCollection;
         private readonly IImageUploadService _imageUploadService;
 
         public CreateEventController(IMongoDatabase database, IImageUploadService imageUploadService)
         {
             _eventsCollection = database.GetCollection<EventDocument>("events");
+            _chatRoomsCollection = database.GetCollection<ChatRoomModel>("chat_rooms");
             _imageUploadService = imageUploadService;
         }
 
@@ -280,7 +282,22 @@ namespace Travello.Controllers
             try
             {
                 await _eventsCollection.InsertOneAsync(eventDocument);
-                return RedirectToAction("Detail", "Event", new { id = eventDocument.Id });
+                TempData["CreateEventSuccess"] = "Event created successfully.";
+
+                var newChatRoom = new ChatRoomModel
+                {
+                    event_id = eventDocument.Id,
+                    chat_name = eventDocument.EventTitle,
+                    event_location = eventDocument.Location,
+                    last_message_id = null,
+                    start_date = eventDocument.StartDate.GetValueOrDefault(),
+                    end_date = eventDocument.EndDate.GetValueOrDefault(),
+                    event_img_path = eventDocument.EventImgPath
+                };
+                await _chatRoomsCollection.InsertOneAsync(newChatRoom);
+
+
+                return RedirectToAction(nameof(Index), "CreateEvent");
             }
             catch
             {

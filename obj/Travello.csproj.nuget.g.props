@@ -5,11 +5,19 @@
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
     <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+<<<<<<< HEAD
     <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\Asus GL552VX-DM212D\.nuget\packages\</NuGetPackageFolders>
+=======
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\jiray\.nuget\packages\</NuGetPackageFolders>
+>>>>>>> 878ce6e9756f38773c3710988dd8f05db650badd
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">7.0.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+<<<<<<< HEAD
     <SourceRoot Include="C:\Users\Asus GL552VX-DM212D\.nuget\packages\" />
+=======
+    <SourceRoot Include="C:\Users\jiray\.nuget\packages\" />
+>>>>>>> 878ce6e9756f38773c3710988dd8f05db650badd
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "c:\\Users\\Asus GL552VX-DM212D\\Desktop\\project web app\\travello\\Travello.csproj": {}
   },
   "projects": {
@@ -15,6 +16,22 @@
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Asus GL552VX-DM212D\\AppData\\Roaming\\NuGet\\NuGet.Config"
+=======
+    "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj",
+        "projectName": "Travello",
+        "projectPath": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\Travello.csproj",
+        "packagesPath": "C:\\Users\\jiray\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jiray\\Documents\\Webapp\\Webapp Project\\travello\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\jiray\\AppData\\Roaming\\NuGet\\NuGet.Config"
+>>>>>>> 878ce6e9756f38773c3710988dd8f05db650badd
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -50,7 +67,11 @@
             },
             "MongoDB.Driver": {
               "target": "Package",
+<<<<<<< HEAD
               "version": "[3.7.0, )"
+=======
+              "version": "[3.6.0, )"
+>>>>>>> 878ce6e9756f38773c3710988dd8f05db650badd
             }
           },
           "imports": [

@@ -172,8 +172,10 @@
                             <div class="inputadd">
                                 @foreach (var qa in Model.Additions)
                                 {
+                                    <div class="qa-card">
                                     <p class="text-md font-semibold">@qa.Question</p>
-                                    <p class="text-md font-semibold">FINAL ANS : @qa.Answer</p>
+                                    <p class="text-md font-semibold text-brown">Poll results : @qa.Answer</p>
+                                    </div>
                                 }
                             </div>
                         </div>
