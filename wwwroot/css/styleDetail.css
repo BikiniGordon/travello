@@ -244,11 +244,12 @@ body, .details {
     width: 57px;
     height: 57px;
     border-radius: 50px;
+    object-fit: cover;
 }
 
 .cover {
     flex: 1;
-    height: 220px;
+    height: 300px;
     border-radius: 12px;
     object-fit: cover;
     object-position: center;
