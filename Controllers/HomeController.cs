@@ -79,6 +79,7 @@ namespace Travello.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
+                Response.Headers["Vary"] = "X-Requested-With";
                 return PartialView("_DataWrapper", events);
             }
 
