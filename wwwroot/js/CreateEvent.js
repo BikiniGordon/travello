@@ -443,11 +443,19 @@ let draggedElement = null;
 let draggedType = null;
 let draggedSourceDay = null;
 
-// Leaflet Map initialization
-let map;
-let placeMarkersLayer;
-let defaultMapMarker;
+// Static map preview state
+let mapContainerElement;
+let staticMapCanvasElement;
+let staticMapCaptionElement;
+let staticMapMarkerElement;
+let staticMapMarkerIconElement;
+let staticMapMarkerLabelElement;
+let staticMapRenderVersion = 0;
+const mapTileCache = new Map();
 const defaultLocation = { lat: 13.7298889, lng: 100.7756574 }; // KMITL
+const STATIC_MAP_ZOOM = 13;
+const STATIC_MAP_FALLBACK_WIDTH = 900;
+const STATIC_MAP_FALLBACK_HEIGHT = 560;
 
 // Recalculates sequential place numbers across all planner rows.
 function recalculatePlaceNumbers() {
@@ -479,13 +487,12 @@ function recalculatePlaceNumbers() {
 
 // Rebuilds map markers so they match planner rows and order.
 function syncMapMarkers(zoomToFirst = false) {
-    if (!map || !placeMarkersLayer) {
+    if (!mapContainerElement) {
         return;
     }
 
-    placeMarkersLayer.clearLayers();
+    let latestMarker = null;
     let placeMarkerCount = 0;
-    let firstMarkerCoords = null;
 
     const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
     allRows.forEach((row) => {
@@ -501,38 +508,167 @@ function syncMapMarkers(zoomToFirst = false) {
             return;
         }
 
-        // Store first marker coordinates
-        if (placeMarkerCount === 0) {
-            firstMarkerCoords = { lat, lng };
-        }
+        latestMarker = {
+            lat,
+            lng,
+            name: row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location',
+            placeNumber
+        };
 
-        const markerLabel = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
-        const customIcon = L.icon({
-            iconUrl: getSVGDataURL(createMapMarkerSVG(placeNumber)),
-            iconSize: [35, 41],
-            iconAnchor: [17.5, 41],
-            popupAnchor: [0, -41]
-        });
-
-        L.marker([lat, lng], { icon: customIcon })
-            .bindPopup(markerLabel)
-            .addTo(placeMarkersLayer);
         placeMarkerCount++;
     });
 
-    if (defaultMapMarker) {
-        if (placeMarkerCount > 0) {
-            if (map.hasLayer(defaultMapMarker)) {
-                map.removeLayer(defaultMapMarker);
+    if (latestMarker) {
+        renderStaticMapPreview(latestMarker.lat, latestMarker.lng, latestMarker.name, placeMarkerCount, latestMarker.placeNumber);
+    } else {
+        renderStaticMapPreview(defaultLocation.lat, defaultLocation.lng, 'KMITL, Bangkok, Thailand', 0, 0);
+    }
+}
+
+function convertLatLngToWorldPixels(lat, lng, zoom) {
+    const latRad = (lat * Math.PI) / 180;
+    const scale = (2 ** zoom) * 256;
+
+    return {
+        worldX: ((lng + 180) / 360) * scale,
+        worldY: ((1 - Math.log(Math.tan(latRad) + (1 / Math.cos(latRad))) / Math.PI) / 2) * scale
+    };
+}
+
+function buildTileUrl(zoom, tileX, tileY) {
+    const tileCount = 2 ** zoom;
+    if (tileY < 0 || tileY >= tileCount) {
+        return null;
+    }
+
+    const wrappedX = ((tileX % tileCount) + tileCount) % tileCount;
+    return `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${tileY}.png`;
+}
+
+function loadTileImage(tileUrl) {
+    if (mapTileCache.has(tileUrl)) {
+        return mapTileCache.get(tileUrl);
+    }
+
+    const tilePromise = new Promise((resolve, reject) => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = tileUrl;
+    });
+
+    mapTileCache.set(tileUrl, tilePromise);
+    return tilePromise;
+}
+
+async function renderMapTilesToCanvas(lat, lng, zoom = STATIC_MAP_ZOOM) {
+    if (!staticMapCanvasElement) {
+        return;
+    }
+
+    const renderVersion = ++staticMapRenderVersion;
+    const canvas = staticMapCanvasElement;
+    const context = canvas.getContext('2d');
+    if (!context) {
+        return;
+    }
+
+    const cssWidth = Math.max(1, Math.round(canvas.clientWidth || STATIC_MAP_FALLBACK_WIDTH));
+    const cssHeight = Math.max(1, Math.round(canvas.clientHeight || STATIC_MAP_FALLBACK_HEIGHT));
+    const pixelRatio = window.devicePixelRatio || 1;
+
+    canvas.width = Math.max(1, Math.round(cssWidth * pixelRatio));
+    canvas.height = Math.max(1, Math.round(cssHeight * pixelRatio));
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+    context.fillStyle = '#f2f2f2';
+    context.fillRect(0, 0, cssWidth, cssHeight);
+
+    const { worldX, worldY } = convertLatLngToWorldPixels(lat, lng, zoom);
+    const viewportStartX = worldX - cssWidth / 2;
+    const viewportStartY = worldY - cssHeight / 2;
+    const tileSize = 256;
+
+    const minTileX = Math.floor(viewportStartX / tileSize);
+    const maxTileX = Math.floor((viewportStartX + cssWidth - 1) / tileSize);
+    const minTileY = Math.floor(viewportStartY / tileSize);
+    const maxTileY = Math.floor((viewportStartY + cssHeight - 1) / tileSize);
+
+    const drawTasks = [];
+
+    for (let tileY = minTileY; tileY <= maxTileY; tileY += 1) {
+        for (let tileX = minTileX; tileX <= maxTileX; tileX += 1) {
+            const tileUrl = buildTileUrl(zoom, tileX, tileY);
+            if (!tileUrl) {
+                continue;
             }
-        } else if (!map.hasLayer(defaultMapMarker)) {
-            defaultMapMarker.addTo(map);
+
+            const destinationX = Math.round(tileX * tileSize - viewportStartX);
+            const destinationY = Math.round(tileY * tileSize - viewportStartY);
+
+            drawTasks.push(
+                loadTileImage(tileUrl)
+                    .then((image) => ({ image, destinationX, destinationY }))
+                    .catch(() => null)
+            );
         }
     }
 
-    // Zoom to first marker if requested and exists
-    if (zoomToFirst && firstMarkerCoords) {
-        map.setView([firstMarkerCoords.lat, firstMarkerCoords.lng], 16);
+    const resolvedTiles = await Promise.all(drawTasks);
+    if (renderVersion !== staticMapRenderVersion) {
+        return;
+    }
+
+    let drawnCount = 0;
+    resolvedTiles.forEach((tile) => {
+        if (!tile) {
+            return;
+        }
+
+        context.drawImage(tile.image, tile.destinationX, tile.destinationY, tileSize, tileSize);
+        drawnCount += 1;
+    });
+
+    if (drawnCount === 0) {
+        context.fillStyle = '#5f5f5f';
+        context.font = '600 20px Segoe UI';
+        context.textAlign = 'center';
+        context.fillText('Map preview unavailable', cssWidth / 2, cssHeight / 2);
+    }
+}
+
+function buildGoogleMapsLink(lat, lng) {
+    return `https://www.google.com/maps?q=${lat},${lng}`;
+}
+
+function renderStaticMapPreview(lat, lng, markerName, markerCount, markerNumber = 0) {
+    if (!staticMapCanvasElement) {
+        return;
+    }
+
+    void renderMapTilesToCanvas(lat, lng, STATIC_MAP_ZOOM);
+
+    const safeMarkerName = markerName || 'Selected location';
+    if (staticMapMarkerIconElement) {
+        staticMapMarkerIconElement.innerHTML = createMapMarkerSVG(markerNumber);
+    }
+
+    if (staticMapMarkerElement) {
+        staticMapMarkerElement.title = safeMarkerName;
+        staticMapMarkerElement.setAttribute('aria-label', safeMarkerName);
+    }
+
+    if (staticMapMarkerLabelElement) {
+        staticMapMarkerLabelElement.textContent = safeMarkerName;
+    }
+
+    if (staticMapCaptionElement) {
+        if (markerCount > 1) {
+            staticMapCaptionElement.textContent = `${markerName} + ${markerCount - 1} more location(s)`;
+        } else {
+            staticMapCaptionElement.textContent = markerName || 'Selected location';
+        }
     }
 }
 
@@ -604,22 +740,44 @@ function parseGoogleMapsURL(url) {
     }
 }
 
+// Validates that a URL is a full Google Maps link and includes coordinates.
+function isValidFullGoogleMapsLink(url) {
+    if (!url || typeof url !== 'string') {
+        return false;
+    }
+
+    const trimmedUrl = url.trim();
+    if (trimmedUrl === '') {
+        return false;
+    }
+
+    try {
+        const parsedUrl = new URL(trimmedUrl);
+        const protocol = parsedUrl.protocol.toLowerCase();
+        if (protocol !== 'http:' && protocol !== 'https:') {
+            return false;
+        }
+
+        const host = parsedUrl.hostname.toLowerCase();
+        const isGoogleDomain = host === 'google.com' || host.endsWith('.google.com');
+        if (!isGoogleDomain) {
+            return false;
+        }
+
+        const path = parsedUrl.pathname.toLowerCase();
+        if (!path.includes('/maps')) {
+            return false;
+        }
+
+        return parseGoogleMapsURL(trimmedUrl) !== null;
+    } catch {
+        return false;
+    }
+}
+
 // Adds a marker to the map and centers the viewport on it.
 function addMapMarker(lat, lng, name, placeNumber = null) {
-    if (!map) return;
-
-    const customIcon = L.icon({
-        iconUrl: getSVGDataURL(createMapMarkerSVG(placeNumber)),
-        iconSize: [35, 41],
-        iconAnchor: [17.5, 41],
-        popupAnchor: [0, -41]
-    });
-
-    L.marker([lat, lng], { icon: customIcon })
-        .bindPopup(name)
-        .addTo(map);
-
-    map.setView([lat, lng], 16);
+    renderStaticMapPreview(lat, lng, name, 1);
 }
 
 // Handles create-event form validation and payload serialization.
@@ -832,6 +990,35 @@ function bindCreateEventFormSubmit() {
         }
     }
 
+    function validatePlannerGoogleMapLinks() {
+        setValidationMessage('PlannerJson', '');
+
+        const dayElements = document.querySelectorAll('.event-plan-day');
+        for (const dayElement of dayElements) {
+            const rowElements = dayElement.querySelectorAll('.planner-item');
+
+            for (const rowElement of rowElements) {
+                const placeInput = rowElement.querySelector('.planner-place-input');
+                const placeName = placeInput?.value?.trim() || '';
+
+                if (!placeName) {
+                    continue;
+                }
+
+                const googleMapUrl = (rowElement.dataset.googleMapUrl || '').trim();
+                if (!isValidFullGoogleMapsLink(googleMapUrl)) {
+                    setValidationMessage('PlannerJson', 'Each itinerary place must use a full Google Maps link (with coordinates).');
+                    if (placeInput) {
+                        placeInput.focus();
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     requiredFieldConfigs.forEach((config) => {
         const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
         config.input.addEventListener('blur', () => {
@@ -867,7 +1054,8 @@ function bindCreateEventFormSubmit() {
         const attendeesValid = validateAttendeesLimitFormat();
         const dateOrderingValid = validateDateOrdering();
         const photoLinkValid = validatePhotoLinkFormat();
-        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid;
+        const plannerLinksValid = validatePlannerGoogleMapLinks();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid && plannerLinksValid;
 
         if (!isValid) {
             event.preventDefault();
@@ -894,6 +1082,10 @@ function bindCreateEventFormSubmit() {
 
             if (!photoLinkValid && photoLinkInput) {
                 photoLinkInput.focus();
+            }
+
+            if (!plannerLinksValid) {
+                return;
             }
 
             return;
@@ -1004,33 +1196,51 @@ function bindCreateEventFormSubmit() {
     }
 }
 
-// Initializes the Leaflet map, tile layer, and default marker.
+// Initializes static map preview container.
 function initializeMap() {
-    const mapContainer = document.getElementById('eventMap');
-    if (!mapContainer) {
+    mapContainerElement = document.getElementById('eventMap');
+    if (!mapContainerElement) {
         console.error('Map container not found');
         return;
     }
 
-    map = L.map('eventMap').setView([defaultLocation.lat, defaultLocation.lng], 18);
+    mapContainerElement.innerHTML = `
+        <div class="static-map-preview" style="display:flex; flex-direction:column; gap:10px; width:100%; height:100%;">
+            <div style="position:relative; width:100%; height:100%; min-height:300px; border-radius:14px; border:1px solid #d6d6d6; overflow:hidden; background:#f3f3f3;">
+                <canvas id="eventStaticMapCanvas" aria-label="Event map preview" style="display:block; width:100%; height:100%;"></canvas>
+                <button id="eventStaticMarker" type="button" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -100%); background:transparent; border:none; padding:0; margin:0; cursor:pointer;">
+                    <span id="eventStaticMarkerLabel" style="display:none; position:absolute; left:50%; bottom:46px; transform:translateX(-50%); background:rgba(30,30,30,0.9); color:#fff; border-radius:999px; padding:6px 10px; font:500 13px 'Segoe UI',sans-serif; white-space:nowrap;"></span>
+                    <span id="eventStaticMarkerIcon" style="display:block; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));"></span>
+                </button>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span id="eventStaticMapCaption" class="text-sm font-regular" style="color:#4b4b4b; padding:10px;">Map preview</span>
+            </div>
+        </div>
+    `;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
-    }).addTo(map);
+    staticMapCanvasElement = document.getElementById('eventStaticMapCanvas');
+    staticMapCaptionElement = document.getElementById('eventStaticMapCaption');
+    staticMapMarkerElement = document.getElementById('eventStaticMarker');
+    staticMapMarkerIconElement = document.getElementById('eventStaticMarkerIcon');
+    staticMapMarkerLabelElement = document.getElementById('eventStaticMarkerLabel');
 
-    const customIcon = L.icon({
-        iconUrl: getSVGDataURL(createMapMarkerSVG()),
-        iconSize: [35, 41],
-        iconAnchor: [17.5, 41],
-        popupAnchor: [0, -41]
-    });
+    if (staticMapMarkerElement && staticMapMarkerLabelElement) {
+        const showMarkerLabel = () => {
+            staticMapMarkerLabelElement.style.display = 'block';
+        };
 
-    defaultMapMarker = L.marker([defaultLocation.lat, defaultLocation.lng], { icon: customIcon })
-        .bindPopup('KMITL, Bangkok, Thailand')
-        .addTo(map);
+        const hideMarkerLabel = () => {
+            staticMapMarkerLabelElement.style.display = 'none';
+        };
 
-    placeMarkersLayer = L.layerGroup().addTo(map);
+        staticMapMarkerElement.addEventListener('mouseenter', showMarkerLabel);
+        staticMapMarkerElement.addEventListener('focus', showMarkerLabel);
+        staticMapMarkerElement.addEventListener('mouseleave', hideMarkerLabel);
+        staticMapMarkerElement.addEventListener('blur', hideMarkerLabel);
+    }
+
+    renderStaticMapPreview(defaultLocation.lat, defaultLocation.lng, 'KMITL, Bangkok, Thailand', 0, 0);
 }
 
 // Builds planner place icon markup, with or without a number.
@@ -1285,6 +1495,11 @@ plannerDaysContainer.addEventListener('input', (event) => {
 
         const inputValue = target.value.trim();
 
+        const plannerValidationMessage = document.querySelector('.field-validation-message[data-valmsg-for="PlannerJson"]');
+        if (plannerValidationMessage && plannerValidationMessage.textContent) {
+            plannerValidationMessage.textContent = '';
+        }
+
         if (inputValue.includes('google.com/maps')) {
             const location = parseGoogleMapsURL(inputValue);
             if (location) {
@@ -1293,9 +1508,7 @@ plannerDaysContainer.addEventListener('input', (event) => {
                 currentRow.dataset.markerName = location.name;
                 currentRow.dataset.googleMapUrl = inputValue;
                 target.value = location.name;
-                if (map) {
-                    map.setView([location.lat, location.lng], 16);
-                }
+                addMapMarker(location.lat, location.lng, location.name);
             }
         } else {
             const hasStoredMarker = currentRow.dataset.markerLat && currentRow.dataset.markerLng;

@@ -1,37 +1,130 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http; 
+using Microsoft.AspNetCore.Hosting;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Travello.Models;
-using Travello.Services; // 🌟 อย่าลืม using Services ด้วยนะครับ
+using Travello.Services; 
+using Travello.DTOs;
+using MongoDB.Driver;
+using System.Reflection.Metadata;
 
 namespace Travello.Controllers
 {
     public class ChatMessageController : Controller
     {
         private readonly ChatService _chatService;
+        private readonly IWebHostEnvironment _env;
+        private readonly IMongoCollection<ChatRoomModel> _chatRooms;
+        private readonly IMongoCollection<User> _user;
 
-        public ChatMessageController(ChatService chatService)
+        public ChatMessageController(ChatService chatService, IWebHostEnvironment env, IMongoDatabase database)
         {
+            _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _user = database.GetCollection<User>("User");
             _chatService = chatService;
+            _env = env;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMessages(string chat_room_id, string sender_id)
+        public async Task<IActionResult> GetMessages(string chat_room_id)
         {
-            return Json(new { message = "เดี๋ยวมาทำต่อ" });
+            List<ChatHistoryResponse> chatHistory = await _chatService.GetChatHistoryAsync(chat_room_id); //ดึงประวัติมา เราต้องเอาไปออก last_message ตรง chat-card
+
+            // var current_chat_room = await _chatRooms
+            //     .Find(chat_room => chat_room.id == chat_room_id)
+            //     .FirstOrDefaultAsync();
+
+            // current_chat_room.last_message_id = chatHistory[chatHistory.Count - 1];
+
+        
+            return Json(new { success = true, data = chatHistory });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage([FromBody] ChatMessageModel newMessage)
+        public async Task<IActionResult> SendMessage([FromForm] ChatMessageModel newMessage, IFormFile imageFile, IFormFile documentFile)
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
-            Console.WriteLine(currentUserId);
-            if (newMessage != null && !string.IsNullOrEmpty(newMessage.message_text))
+            var current_user_obj = await _user
+                .Find(user => user.Id == currentUserId)
+                .FirstOrDefaultAsync();
+            var current_chat_room_id = newMessage.chat_room_id;
+            var current_chat_room_obj = await _chatRooms
+                .Find(chat_room => chat_room.id == current_chat_room_id)
+                .FirstOrDefaultAsync();
+            Console.WriteLine(current_chat_room_obj); 
+            // Console.WriteLine(currentUserId);
+
+            if (imageFile != null && imageFile.Length > 0)
             {
-                newMessage.sender_id = "69a9afc35f16b10cdb2b5079";
+                string uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "chats");
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(fileStream);
+                }
+
+                newMessage.image_url = "/uploads/chats/" + uniqueFileName;
+                current_chat_room_obj.image_url = "/uploads/chats/" + uniqueFileName;
+            }
+
+            if (documentFile != null && documentFile.Length > 0)
+            {
+                // แยกเก็บไว้ในโฟลเดอร์ documents เพื่อความเป็นระเบียบ
+                string docUploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "documents");
+                if (!Directory.Exists(docUploadsFolder)) Directory.CreateDirectory(docUploadsFolder);
+
+                string uniqueDocName = Guid.NewGuid().ToString() + "_" + documentFile.FileName;
+                string docFilePath = Path.Combine(docUploadsFolder, uniqueDocName);
+
+                using (var fileStream = new FileStream(docFilePath, FileMode.Create))
+                {
+                    await documentFile.CopyToAsync(fileStream);
+                }
+
+                newMessage.document_url = "/uploads/documents/" + uniqueDocName;
+                current_chat_room_obj.document_url = "/uploads/documents/" + uniqueDocName;
+                newMessage.document_name = documentFile.FileName; 
+            }
+
+            if (newMessage != null && (
+                !string.IsNullOrEmpty(newMessage.message_text) || 
+                !string.IsNullOrEmpty(newMessage.image_url) || 
+                !string.IsNullOrEmpty(newMessage.document_url)))
+            { 
+                newMessage.sender_id = currentUserId;
+                newMessage.sender_img = current_user_obj.ProfileImgPath;
+                Console.WriteLine(newMessage.sender_img);
                 newMessage.timestamp = DateTime.UtcNow;
                 
                 await _chatService.SaveMessageAsync(newMessage);
+
+                string previewText = newMessage.message_text;
+
+                if (string.IsNullOrEmpty(previewText)) 
+                {
+                    if (!string.IsNullOrEmpty(newMessage.image_url)) 
+                    {
+                        previewText = "Sent Photo";
+                    } 
+                    else if (!string.IsNullOrEmpty(newMessage.document_url)) 
+                    {
+                        previewText = "Sent File";
+                    }
+                }
+
+                await _chatService.UpdateLastMessageAsync(
+                    newMessage.chat_room_id, 
+                    previewText,             
+                    newMessage.timestamp
+                );
+
+                await Travello.Services.WebSocketManage.BroadcastToRoom(newMessage.chat_room_id, "NEW_MSG");
                 
                 return Json(new { success = true });
             }

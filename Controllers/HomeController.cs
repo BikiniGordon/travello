@@ -25,7 +25,7 @@ namespace Travello.Controllers
             int page_size = 9;
 
             var filterBuilder = Builders<EventModel>.Filter;
-            var filter = filterBuilder.Where(x => x.attendees_limit > x.attendees);
+            var filter = filterBuilder.Where(x => x.attendees_limit > x.attendees && !x.isRegistrationClosed);
 
             if (!string.IsNullOrEmpty(searchLocation))
             {
@@ -35,12 +35,13 @@ namespace Travello.Controllers
 
             if (searchDate.HasValue)
             {
-                DateTime dateOnly = DateTime.SpecifyKind(searchDate.Value.Date, DateTimeKind.Unspecified);
-                DateTime searchDayStart = searchDate.Value.Date;
-                DateTime searchDayEnd = searchDate.Value.Date.AddDays(1).AddTicks(-1);
+                var pureDate = searchDate.Value.Date; 
+    
+                DateTime searchDayStart = DateTime.SpecifyKind(pureDate, DateTimeKind.Utc);
+                DateTime searchDayEnd = searchDayStart.AddDays(1);
 
-                filter &= filterBuilder.Lte(x => x.start_date, searchDayEnd);
-                filter &= filterBuilder.Gte(x => x.end_date, searchDayStart);
+                filter &= filterBuilder.Lt(x => x.start_date, searchDayEnd);
+                filter &= filterBuilder.Gt(x => x.end_date, searchDayStart);
             }
 
             if (selectedTags != null && selectedTags.Length > 0)

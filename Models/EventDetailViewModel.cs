@@ -24,6 +24,7 @@ namespace Travello.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string? GoogleMapUrl { get; set; }
         public List<ExpenseViewModel> Expenses { get; set; } = new();
     }
 

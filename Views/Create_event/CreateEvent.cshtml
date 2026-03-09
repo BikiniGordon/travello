@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
@@ -225,6 +224,7 @@
                 <section class="form-section event-plan-section">
                     <label class="text-lg font-semibold text-dark">EVENT PLAN</label>
                     <span class="text-sm font-regular text-muted">*Only full Google Maps link allowed. Ex: https://google.com/maps/XXXXXX</span>
+                    <span class="text-sm font-regular text-error field-validation-message" data-valmsg-for="PlannerJson"></span>
                     <div class="event-plan-detail">
                         <div id="eventPlannerDays"></div>
 
@@ -252,10 +252,7 @@
         </div>
         </form>
     </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="~/js/CreateEvent.js" asp-append-version="true"></script>
-    <script src="~/js/NavBar.js" asp-append-version="true"></script>
-    <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
     <script>
         document.addEventListener('DOMContentLoaded', initializeMap);
     </script>

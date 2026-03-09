@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Globalization;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Travello.Models;
 using Travello.Services;
@@ -132,6 +134,9 @@ namespace Travello.Controllers
                 ModelState.AddModelError(nameof(input.TripRules), "Trip rules are required.");
             }
 
+            var plannerRows = ParsePlannerRows(input.PlannerJson);
+            ValidatePlannerRowsGoogleMaps(plannerRows, ModelState);
+
             DateTime? startDate = ParseDateTimeToUtc(input.StartDate, input.StartTime);
             DateTime? explicitEndDate = ParseDateTimeToUtc(input.EndDate, input.EndTime);
             DateTime? openDate = ParseDateToUtc(input.OpenDate);
@@ -207,7 +212,6 @@ namespace Travello.Controllers
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            var plannerRows = ParsePlannerRows(input.PlannerJson);
             var packingList = ParsePackingList(input.PackingListJson);
 
             DateTime? itineraryEndDate = plannerRows
@@ -256,6 +260,7 @@ namespace Travello.Controllers
 
             var eventDocument = new EventDocument
             {
+                Id = ObjectId.GenerateNewId().ToString(),
                 EventTitle = input.EventTitle,
                 Detail = input.Detail,
                 Location = locationName,
@@ -283,7 +288,11 @@ namespace Travello.Controllers
                 {
                     event_id = eventDocument.Id,
                     chat_name = eventDocument.EventTitle,
-                    last_message_id = null
+                    event_location = eventDocument.Location,
+                    last_message_id = null,
+                    start_date = eventDocument.StartDate.GetValueOrDefault(),
+                    end_date = eventDocument.EndDate.GetValueOrDefault(),
+                    event_img_path = eventDocument.EventImgPath
                 };
                 await _chatRoomsCollection.InsertOneAsync(newChatRoom);
 
@@ -390,6 +399,60 @@ namespace Travello.Controllers
             }
 
             return parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps;
+        }
+
+        private static void ValidatePlannerRowsGoogleMaps(IEnumerable<PlannerRowInputModel> plannerRows, ModelStateDictionary modelState)
+        {
+            foreach (var row in plannerRows ?? Enumerable.Empty<PlannerRowInputModel>())
+            {
+                if (string.IsNullOrWhiteSpace(row?.PlaceName))
+                {
+                    continue;
+                }
+
+                if (IsValidFullGoogleMapsUrl(row.GoogleMapUrl))
+                {
+                    continue;
+                }
+
+                modelState.AddModelError(nameof(CreateEventInputModel.PlannerJson), "Each itinerary place must use a full Google Maps link (with coordinates).");
+                return;
+            }
+        }
+
+        private static bool IsValidFullGoogleMapsUrl(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            if (!Uri.TryCreate(value.Trim(), UriKind.Absolute, out var parsedUri))
+            {
+                return false;
+            }
+
+            if (parsedUri.Scheme != Uri.UriSchemeHttp && parsedUri.Scheme != Uri.UriSchemeHttps)
+            {
+                return false;
+            }
+
+            var host = parsedUri.Host.ToLowerInvariant();
+            var isGoogleHost = host == "google.com" || host.EndsWith(".google.com", StringComparison.Ordinal);
+            if (!isGoogleHost)
+            {
+                return false;
+            }
+
+            if (!parsedUri.AbsolutePath.Contains("/maps", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            var absoluteUrl = parsedUri.AbsoluteUri;
+            var hasAtCoordinates = Regex.IsMatch(absoluteUrl, @"@-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?", RegexOptions.CultureInvariant);
+            var hasBangCoordinates = Regex.IsMatch(absoluteUrl, @"!3d-?\d+(?:\.\d+)?!4d-?\d+(?:\.\d+)?", RegexOptions.CultureInvariant);
+            return hasAtCoordinates || hasBangCoordinates;
         }
     }
 }
