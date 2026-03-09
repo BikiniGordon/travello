@@ -165,7 +165,8 @@
                 </div>
             </div>
             <div class="creat-new-poll-container">
-                <button id="update-event-btn" class="text-md font-semibold">Update Event</button>
+                <button id="update-event-btn" class="text-md font-semibold" onclick="updateEventResultFromPoll()">Update Event</button>
+                <div id="update-event-error" style="color: red; margin-top: 8px; display: none;"></div>
             </div>
             <template id="poll-option-template">
                 <div class="poll-option-item">

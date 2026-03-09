@@ -510,8 +510,19 @@ function updateEventResultFromPoll() {
         return;
     }
 
+    const errorDiv = document.getElementById('update-event-error');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+    }
+
     if (!canCurrentUserUpdateEventResult) {
-        alert('Only the event owner can update into event.');
+        if (errorDiv) {
+            errorDiv.textContent = 'Only the event owner can update into event.';
+            errorDiv.style.display = 'block';
+        } else {
+            alert('Only the event owner can update into event.');
+        }
         return;
     }
 
@@ -528,15 +539,23 @@ function updateEventResultFromPoll() {
                 window.location.href = `/Event/Detail/${eventId}`;
                 return;
             }
-
             return;
         }
-
-        alert(result.error || 'Failed to update event result.');
+        if (errorDiv) {
+            errorDiv.textContent = result.error || 'Failed to update event result.';
+            errorDiv.style.display = 'block';
+        } else {
+            alert(result.error || 'Failed to update event result.');
+        }
     })
     .catch(err => {
         console.error('Update event result error:', err);
-        alert('Failed to update event result.');
+        if (errorDiv) {
+            errorDiv.textContent = 'Failed to update event result.';
+            errorDiv.style.display = 'block';
+        } else {
+            alert('Failed to update event result.');
+        }
     });
 }
 
