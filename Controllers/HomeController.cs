@@ -8,12 +8,12 @@ namespace Travello.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IMongoCollection<EventModel> _eventsCollection;
-        private readonly IMongoDatabase _database;
         public IActionResult Privacy()
         {
             return View();
         }
+        private readonly IMongoCollection<EventModel> _eventsCollection;
+        private readonly IMongoDatabase _database;
         
 
         public HomeController(IMongoDatabase database)
