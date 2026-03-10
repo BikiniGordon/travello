@@ -31,7 +31,6 @@ namespace Travello.Controllers
             {
                 TempData["AuthPromptMessage"] = "Please log in before creating an event.";
                 TempData["OpenLoginModal"] = "true";
-                TempData["PostLoginRedirect"] = Url.Action("Index", "CreateEvent");
                 return RedirectToAction("Index", "Home");
             }
 

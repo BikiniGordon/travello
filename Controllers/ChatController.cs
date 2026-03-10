@@ -11,62 +11,23 @@ namespace Travello.Controllers
         private readonly ChatService _chatService;
         private readonly IMongoCollection<User> _usersCollection;
         private readonly IMongoCollection<Event> _eventsCollection;
-        private readonly IMongoCollection<EventDocument> _eventDocumentsCollection;
-        private readonly IMongoCollection<EventParticipant> _participantsCollection;
-        private readonly IMongoCollection<ChatRoomModel> _chatRoomsCollection;
 
         public ChatController(ChatService chatService, IMongoDatabase database)
         {
             _chatService = chatService;
             _usersCollection = database.GetCollection<User>("User");
-            _eventsCollection = database.GetCollection<Event>("events");
-            _eventDocumentsCollection = database.GetCollection<EventDocument>("events");
-            _participantsCollection = database.GetCollection<EventParticipant>("event_participants");
-            _chatRoomsCollection = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _eventsCollection = database.GetCollection<Event>("events"); 
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()             
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(currentUserId))
-            {
-                return RedirectToAction("CreateAccount", "User");
-            }
+            // string mockUserId = "69a9afc35f16b10cdb2b5079"; // Dear
+            // string mockUserId = "69a9d2663daa971a33606eae"; // Dear_02
 
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
                 .FirstOrDefaultAsync();
-
-            if (currentUser != null)
-            {
-                var participantEventIds = await _participantsCollection
-                    .Find(participant => participant.UserId == currentUserId)
-                    .Project(participant => participant.EventId)
-                    .ToListAsync();
-
-                var ownedEventIds = await _eventDocumentsCollection
-                    .Find(eventDocument => eventDocument.CreatedBy == currentUserId)
-                    .Project(eventDocument => eventDocument.Id)
-                    .ToListAsync();
-
-                var mergedEventIds = (currentUser.EventId ?? new List<string>())
-                    .Concat(participantEventIds)
-                    .Concat(ownedEventIds.Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id!))
-                    .Where(id => !string.IsNullOrWhiteSpace(id))
-                    .Distinct()
-                    .ToList();
-
-                var hasMembershipChanges = currentUser.EventId == null
-                    || currentUser.EventId.Count != mergedEventIds.Count
-                    || currentUser.EventId.Except(mergedEventIds).Any();
-
-                if (hasMembershipChanges)
-                {
-                    var update = Builders<User>.Update.Set(user => user.EventId, mergedEventIds);
-                    await _usersCollection.UpdateOneAsync(user => user.Id == currentUserId, update);
-                    currentUser.EventId = mergedEventIds;
-                }
-            }
 
             if (currentUser == null || currentUser.EventId == null || !currentUser.EventId.Any())
             {
@@ -100,14 +61,13 @@ namespace Travello.Controllers
                 }
             }
             myChats = myChats.OrderByDescending(chat => chat.last_message_time).ToList();
-            return View(myChats);
+            return View(myChats); 
         }
-
         [HttpGet]
         public async Task<IActionResult> GetMyChatRooms()
         {
             string currentUserId = HttpContext.Session.GetString("UserId");
-
+            
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
                 .FirstOrDefaultAsync();
@@ -139,7 +99,7 @@ namespace Travello.Controllers
                 }
             }
 
-            // Order by latest message time
+            // 🌟 จัดเรียงใหม่สุดขึ้นบนสุด
             myChats = myChats.OrderByDescending(chat => chat.last_message_time).ToList();
 
             return Json(new { success = true, data = myChats });

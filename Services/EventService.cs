@@ -77,11 +77,6 @@ namespace Travello.Services
             };
 
             await _participants.InsertOneAsync(participant);
-
-            // Keep user's event_id in sync so chat/poll rooms are visible after join.
-            var userFilter = Builders<User>.Filter.Eq(user => user.Id, userId);
-            var addEventUpdate = Builders<User>.Update.AddToSet(user => user.EventId, eventId);
-            await _users.UpdateOneAsync(userFilter, addEventUpdate);
         }
         
         // PARTICIPANT — REMOVE (LEAVE)
@@ -93,11 +88,6 @@ namespace Travello.Services
                 Builders<EventParticipant>.Filter.Eq(p => p.UserId,  userId)
             );
             await _participants.DeleteOneAsync(filter);
-
-            // Remove event from user's event_id so chat list is cleaned up after leaving.
-            var userFilter = Builders<User>.Filter.Eq(user => user.Id, userId);
-            var removeEventUpdate = Builders<User>.Update.Pull(user => user.EventId, eventId);
-            await _users.UpdateOneAsync(userFilter, removeEventUpdate);
         }
 
         // PARTICIPANT — UPDATE STATUS

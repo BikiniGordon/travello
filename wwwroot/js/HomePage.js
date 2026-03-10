@@ -94,57 +94,19 @@ window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
     
     if (urlParams.toString() !== "") {
-        if(document.getElementById('LocationSearch')) 
-            document.getElementById('LocationSearch').value = urlParams.get('searchLocation') || '';
-        if(document.getElementById('DateSearch')) 
-            document.getElementById('DateSearch').value = urlParams.get('searchDate') || '';
-
-        activeTags = urlParams.getAll('selectedTags');
+        
+        if(document.getElementById('LocationSearch')) document.getElementById('LocationSearch').value = '';
+        if(document.getElementById('DateSearch')) document.getElementById('DateSearch').value = '';
 
         document.querySelectorAll('.Tag').forEach(tag => {
-            const tagName = tag.getAttribute('data-tag');
-            if (activeTags.includes(tagName)) {
-                tag.classList.add('active-tag-style');
-            }
+            tag.classList.remove('active-tag-style');
         });
+        
+        activeTags = [];
+
+        window.history.replaceState({}, document.title, window.location.pathname);
+        window.scrollTo(0, 0);
+
+        updateGallery(1, '', '', '');
     }
 };
-
-window.onpopstate = function (event) {
-    const url = window.location.pathname + window.location.search;
-    syncContentFromUrl(url);
-};
-
-async function syncContentFromUrl(url) {
-    try {
-        const response = await fetch(url, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-
-        if (response.ok) {
-            const html = await response.text();
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-
-            document.querySelector('.EventRow').innerHTML = tempDiv.querySelector('#EventTarget').innerHTML;
-            document.querySelector('.Pagination').innerHTML = tempDiv.querySelector('#PaginationTarget').innerHTML;
-            
-            const params = new URLSearchParams(window.location.search);
-            
-            document.getElementById('LocationSearch').value = params.get('searchLocation') || '';
-            document.getElementById('DateSearch').value = params.get('searchDate') || '';
-            
-            activeTags = params.getAll('selectedTags');
-            document.querySelectorAll('.Tag').forEach(tagEl => {
-                const tagValue = tagEl.getAttribute('data-tag');
-                if (activeTags.includes(tagValue)) {
-                    tagEl.classList.add('active-tag-style');
-                } else {
-                    tagEl.classList.remove('active-tag-style');
-                }
-            });
-        }
-    } catch (err) {
-        console.error("Back navigation sync failed:", err);
-    }
-}
