@@ -222,9 +222,11 @@ namespace Travello.Controllers
 
                 return Json(new { success = false, message = "Invalid username or password." });
             }
-            catch (Exception)
+            // 🎯 แก้ไขตรงบรรทัดนี้ครับ! เติมคำว่า ex เข้าไปในวงเล็บ
+            catch (Exception ex) 
             {
-                return Json(new { success = false, message = "An error occurred." });
+                // 🎯 ให้มันพ่นข้อความ Error ที่แท้จริงออกมาโชว์ใน Popup หน้าเว็บเลย
+                return Json(new { success = false, message = $"ระบบขัดข้อง: {ex.Message}" });
             }
         }
 
