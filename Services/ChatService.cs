@@ -9,6 +9,8 @@ namespace Travello.Services
         private readonly IMongoCollection<ChatRoomModel> _chatRooms;
         private readonly IMongoCollection<ChatMessageModel> _messages;
         private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<PollModel> _pollCollection;
+
 
         public ChatService(IMongoDatabase database)
         {
@@ -16,6 +18,7 @@ namespace Travello.Services
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
             _messages = database.GetCollection<ChatMessageModel>("messages");
             _users = database.GetCollection<User>("User");
+            _pollCollection = database.GetCollection<PollModel>("polls");
         }
 
         public async Task<List<ChatRoomModel>> GetUserChatsAsync(List<string> userEventIds)
@@ -68,10 +71,36 @@ namespace Travello.Services
                     timestamp = msg.timestamp,
                     sender_id = msg.sender_id,
                     sender_name = sender != null ? sender.Username : "Unknown", 
-                    sender_img = sender != null ? sender.ProfileImgPath : "/images/chat_img_background.svg" 
+                    sender_img = sender != null ? sender.ProfileImgPath : "/images/chat_img_background.svg" ,
+                    poll_id = msg.poll_id
                 };
             }).ToList();
 
+            foreach (var chat in chatHistory)
+            {
+                if (!string.IsNullOrEmpty(chat.poll_id))
+                {
+                    chat.poll_data = await _pollCollection
+                        .Find(p => p.Id == chat.poll_id)
+                        .FirstOrDefaultAsync();
+                }
+                if (chat.poll_data != null)
+                {
+                    foreach (var option in chat.poll_data.Options)
+                    {
+                        if (option.Voters != null && option.Voters.Count > 0)
+                        {
+                            var votersData = await _users
+                                .Find(u => option.Voters.Contains(u.Id)) 
+                                .ToListAsync();
+
+                            option.voter_profiles = votersData
+                                .Select(u => string.IsNullOrEmpty(u.ProfileImgPath) ? "/images/chat_img_background.svg" : u.ProfileImgPath)
+                                .ToList();
+                        }
+                    }
+                }
+            }
             return chatHistory;
         }
     }

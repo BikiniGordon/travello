@@ -19,6 +19,8 @@ namespace Travello.Models
         public string? image_url { get; set; }
         public string? document_url { get; set; }
         public string? document_name { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? poll_id { get; set; }
         public DateTime timestamp { get; set; } = DateTime.UtcNow; 
     }
 }

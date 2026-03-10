@@ -3,7 +3,7 @@ let current_chat_room_id = null;
 let current_chat_room_location = null;
 let current_chat_room_start_date = null;
 let current_chat_room_end_date = null;
-let current_chat_room_event_image= null;
+let current_chat_room_event_image = null;
 let chat_socket = null;
 let currentPollId = ""; // Track which poll detail is open
 let pollDetailRequestSeq = 0; // Guards against out-of-order poll detail responses
@@ -310,7 +310,7 @@ function startPollDetailAutoRefresh() {
 }
 
 
-async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location = '', chat_room_event_image = ''){
+async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location = '', chat_room_event_image = '') {
     current_event_id = event_id;
     current_chat_room_id = chat_room_id;
     current_chat_room_location = chat_room_location;
@@ -327,39 +327,38 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
     document.getElementById('setting-room').style.display = 'none';
     document.getElementById('all-poll-room').style.display = 'none';
     document.getElementById('files-and-links-room') && (document.getElementById('files-and-links-room').style.display = 'none');
-    document.getElementById('chat-room').style.display = 'flex';    
+    document.getElementById('chat-room').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
     document.getElementById('chat-room-title').innerText = chat_name;
     document.getElementById('setting-event-title').innerText = chat_name;
     document.getElementById('setting-event-status').innerText = chat_room_location ? ('Location : ' + chat_room_location) : event_id;
-    if(document.getElementById('event-image-setting') && chat_room_event_image) {
+    if (document.getElementById('event-image-setting') && chat_room_event_image) {
         document.getElementById('event-image-setting').src = chat_room_event_image;
     }
 
-    if(chat_socket){
+    if (chat_socket) {
         chat_socket.close();
     }
 
-    // If you have a websocket server, connect here
-    // chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
+    chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
 
-    // chat_socket.onmessage = function(event) {
-    //     if (event.data === "NEW_MSG") {
-    //         loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที!
-    //         loadChatRooms();
-    //     }
-    // };
+    chat_socket.onmessage = function (event) {
+        if (event.data === "NEW_MSG") {
+            loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที!
+            loadChatRooms();
+        }
+    };
 
-    // chat_socket.onopen = function() { console.log("WebSocket Connected"); };
-    // chat_socket.onerror = function(error) { console.error("WebSocket Error:", error); };
+    chat_socket.onopen = function () { console.log("WebSocket Connected"); };
+    chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
 
     await loadChatMessages();
     await loadChatRooms();
-    if(typeof loadSettingImages === 'function') await loadSettingImages();
+    if (typeof loadSettingImages === 'function') await loadSettingImages();
 
     setTimeout(() => {
-        const chatBody = document.getElementById('chat-body'); 
+        const chatBody = document.getElementById('chat-body');
         if (chatBody) {
             chatBody.scrollTop = chatBody.scrollHeight;
         }
@@ -379,7 +378,7 @@ async function openChatPage() {
     await loadChatRooms();
 }
 
-async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image){
+async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
     //เอา event_id ไปหา chat เพื่อดึง
     // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
     current_event_id = event_id;
@@ -393,7 +392,7 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
     document.getElementById('setting-room').style.display = 'none';
     document.getElementById('all-poll-room').style.display = 'none';
     document.getElementById('files-and-links-room').style.display = 'none';
-    document.getElementById('chat-room').style.display = 'flex';    
+    document.getElementById('chat-room').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
     document.getElementById('chat-room-title').innerText = chat_name;
@@ -402,32 +401,32 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
     document.getElementById('setting-event-date').innerText = current_chat_room_start_date + ' - ' + current_chat_room_end_date
     document.getElementById('event-image-setting').src = current_chat_room_event_image;
 
-    if(chat_socket){
+    if (chat_socket) {
         chat_socket.close();
     }
 
     chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
 
-    chat_socket.onmessage = function(event) {
+    chat_socket.onmessage = function (event) {
         if (event.data === "NEW_MSG") {
             loadChatMessages();
             loadChatRooms();
         }
     };
 
-    chat_socket.onopen = function() { console.log("WebSocket Connected"); };
-    chat_socket.onerror = function(error) { console.error("WebSocket Error:", error); };
+    chat_socket.onopen = function () { console.log("WebSocket Connected"); };
+    chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
 
     await loadChatMessages();
     await loadChatRooms();
     await loadSettingImages();
 
     setTimeout(() => {
-            const chatBody = document.getElementById('chat-body'); 
-            if (chatBody) {
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }
-        }, 100);
+        const chatBody = document.getElementById('chat-body');
+        if (chatBody) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    }, 100);
 }
 
 function openDetailPage() {
@@ -438,7 +437,7 @@ function openDetailPage() {
     }
 }
 
-function openSettingChatRoom(){
+function openSettingChatRoom() {
     document.getElementById('chat-room').style.display = 'none';
     document.getElementById('empty-room').style.display = 'none';
     document.getElementById('setting-room').style.display = 'flex';
@@ -446,7 +445,7 @@ function openSettingChatRoom(){
     document.getElementById('setting-event-title').innerText = chat_name;
 }
 
-function backChatRoom(){
+function backChatRoom() {
 
     document.getElementById('chat-room').style.display = 'flex';
     document.getElementById('empty-room').style.display = 'none';
@@ -460,7 +459,7 @@ function openPollRoom() {
     document.getElementById('empty-room').style.display = 'none';
     document.getElementById('chat-room').style.display = 'none';
     document.getElementById('setting-room').style.display = 'none';
-    
+
     const allPollRoom = document.getElementById('all-poll-room');
     allPollRoom.style.display = 'flex';
 
@@ -473,7 +472,7 @@ function closeChatRoomMobile() {
     document.getElementById('chat-room').style.display = 'none';
 }
 
-function backSettingRoom(){
+function backSettingRoom() {
     document.getElementById('setting-room').style.display = 'flex';
     document.getElementById('all-poll-room').style.display = 'none';
     stopPollRoomAutoRefresh();
@@ -501,13 +500,13 @@ function votePoll(pollId, optionIndex) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pollId: pollId, optionIndex: optionIndex })
     })
-    .then(res => res.json())
-    .then(result => {
-        if (result.success) {
-            fetchAndRenderPollDetail(pollId, false, false); // Refresh immediately after local vote
-        }
-    })
-    .catch(err => console.error("Vote error:", err));
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                fetchAndRenderPollDetail(pollId, false, false); // Refresh immediately after local vote
+            }
+        })
+        .catch(err => console.error("Vote error:", err));
 }
 
 function updateEventResultFromPoll() {
@@ -536,32 +535,32 @@ function updateEventResultFromPoll() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pollId: currentPollId })
     })
-    .then(res => res.json())
-    .then(result => {
-        if (result.success) {
-            const eventId = result.event_id || current_event_id;
-            if (eventId) {
-                window.location.href = `/Event/Detail/${eventId}`;
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                const eventId = result.event_id || current_event_id;
+                if (eventId) {
+                    window.location.href = `/Event/Detail/${eventId}`;
+                    return;
+                }
                 return;
             }
-            return;
-        }
-        if (errorDiv) {
-            errorDiv.textContent = result.error || 'Failed to update event result.';
-            errorDiv.style.display = 'block';
-        } else {
-            alert(result.error || 'Failed to update event result.');
-        }
-    })
-    .catch(err => {
-        console.error('Update event result error:', err);
-        if (errorDiv) {
-            errorDiv.textContent = 'Failed to update event result.';
-            errorDiv.style.display = 'block';
-        } else {
-            alert('Failed to update event result.');
-        }
-    });
+            if (errorDiv) {
+                errorDiv.textContent = result.error || 'Failed to update event result.';
+                errorDiv.style.display = 'block';
+            } else {
+                alert(result.error || 'Failed to update event result.');
+            }
+        })
+        .catch(err => {
+            console.error('Update event result error:', err);
+            if (errorDiv) {
+                errorDiv.textContent = 'Failed to update event result.';
+                errorDiv.style.display = 'block';
+            } else {
+                alert('Failed to update event result.');
+            }
+        });
 }
 
 function backToAllPolls() {
@@ -575,7 +574,7 @@ function backToAllPolls() {
     startPollRoomAutoRefresh();
 }
 
-function openCreatePoll(){
+function openCreatePoll() {
     resetCreatePollForm();
     stopPollRoomAutoRefresh();
     stopPollDetailAutoRefresh();
@@ -647,7 +646,7 @@ function addPollOptionInput() {
     const optionWrapper = document.createElement('div');
     optionWrapper.className = 'poll-option-input-wrapper';
     optionWrapper.innerHTML = `
-        <input type="text" class="poll-form-input text-md font-semibold" placeholder="Option ${nextOptionNumber}">
+        <input type="text" class="poll-form-input text-md font-regular" placeholder="Option ${nextOptionNumber}">
     `;
 
     optionsGroup.insertBefore(optionWrapper, addOptionButton);
@@ -664,7 +663,7 @@ function initializeAddOptionButton() {
     addOptionButton.dataset.bound = 'true';
 }
 
-function backAllPollRoom(){
+function backAllPollRoom() {
     document.getElementById('all-poll-room').style.display = 'flex';
     document.getElementById('create-poll-page').style.display = 'none';
     fetchAndRenderPollList(true);
@@ -730,24 +729,24 @@ function submitCreatePoll() {
             anonymous: anonymous
         })
     })
-    .then(res => res.json())
-    .then(result => {
-        if (result.success) {
-            document.getElementById('create-poll-page').style.display = 'none';
-            openPollRoom();
-        } else {
-            alert(result.error || 'Failed to create poll');
-        }
-    })
-    .catch(err => console.error("Create poll error:", err));
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                document.getElementById('create-poll-page').style.display = 'none';
+                openPollRoom();
+            } else {
+                alert(result.error || 'Failed to create poll');
+            }
+        })
+        .catch(err => console.error("Create poll error:", err));
 }
 
 async function sendMessage() {
     const inputField = document.getElementById('message-input');
     const messageText = inputField.value.trim();
 
-    const fileInput = document.getElementById('image-input'); 
-    const selectedFile = fileInput.files[0]; 
+    const fileInput = document.getElementById('image-input');
+    const selectedFile = fileInput.files[0];
 
     const documentInput = document.getElementById('document-input');
     const selectedDoc = documentInput.files[0];
@@ -759,23 +758,23 @@ async function sendMessage() {
     formData.append("message_text", messageText);
 
     if (selectedFile) {
-        formData.append("imageFile", selectedFile); 
+        formData.append("imageFile", selectedFile);
     }
     else if (selectedDoc) {
-        formData.append("documentFile", selectedDoc); 
+        formData.append("documentFile", selectedDoc);
     }
 
     let bubbleContent = "";
-    
+
     if (messageText) {
         const safeText = escapeHTML(messageText);
         const formattedText = makeLinksClickable(safeText);
         bubbleContent += `<span>${formattedText}</span>`;
     }
-        
+
     const chatBody = document.getElementById('chat-body');
 
-if (bubbleContent !== "") {
+    if (bubbleContent !== "") {
         const bubbleHtml = `
             <div class="message-row" style="display: flex; justify-content: flex-end; margin-bottom: 16px; font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
                 <div class="message-bubble text-sm font-regular" style="background-color: #CEE7E6; color: #000; padding: 12px 16px; border-radius: 20px; border-top-right-radius: 4px; max-width: 60%; word-wrap: break-word;">
@@ -789,18 +788,18 @@ if (bubbleContent !== "") {
 
     cancelAttachment();
     inputField.value = "";
-    
+
     const fileNameDisplay = document.getElementById('file-name-display');
     if (fileNameDisplay) fileNameDisplay.innerText = "";
 
     try {
         const response = await fetch('http://localhost:5123/ChatMessage/SendMessage', {
             method: 'POST',
-            body: formData 
+            body: formData
         });
 
         const result = await response.json();
-        
+
         if (!result.success) {
             console.error("ERROR SAVE TO DB");
         } else {
@@ -817,7 +816,7 @@ if (bubbleContent !== "") {
 function handleEnterPress(event) {
     if (event.key === "Enter") {
         event.preventDefault();
-        sendMessage(); 
+        sendMessage();
         chatBody.scrollTop = chatBody.scrollHeight;
     }
 }
@@ -832,8 +831,8 @@ async function loadChatMessages() {
         if (result.success) {
             const chatBody = document.getElementById('chat-body');
             chatBody.scrollTop = chatBody.scrollHeight;
-            
-            chatBody.innerHTML = ""; 
+
+            chatBody.innerHTML = "";
 
             const currentUserDataElement = document.getElementById('current-user-data');
             const my_user_id = currentUserDataElement ? currentUserDataElement.getAttribute('data-user-id') : null;
@@ -846,66 +845,166 @@ async function loadChatMessages() {
                     messageContent = `<img src="${msg.image_url}" onclick="window.open('${msg.image_url}', '_blank')" style="max-width: 100%; border-radius: 8px; margin-bottom: 4px; display: block; cursor: pointer" ;/>`;
                 }
 
-        if (msg.document_url && msg.document_url !== "") {
-            const fileName = msg.document_name ? msg.document_name : "Download File";
-            messageContent += `
-                <div onclick="window.open('${msg.document_url}', '_blank')" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background-color: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 4px; border: 1px solid #e2e8f0; cursor: pointer; width: 100%; box-sizing: border-box; transition: 0.2s;">
-                    
-                    <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; pointer-events: none;">
-                        <svg style="flex-shrink: 0;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="12" y1="18" x2="12" y2="12"></line>
-                            <line x1="9" y1="15" x2="15" y2="15"></line>
-                        </svg>                        
-                        
-                        <span style="font-size: 14px; font-weight: bold; color: #0284c7; word-break: break-all;">
-                            ${fileName}
-                        </span>
-                    </div>
-                    
-                    <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                    </div>
-                    
-                </div>
-            `;
-        }
-
-                if (msg.message_text && msg.message_text !== "null" && msg.message_text.trim() !== "") {
-                    const safeText = escapeHTML(msg.message_text);
-                    messageContent += `<span>${makeLinksClickable(safeText)}</span>`;
+                if (msg.document_url && msg.document_url !== "") {
+                    const fileName = msg.document_name ? msg.document_name : "Download File";
+                    messageContent += `
+                        <div onclick="window.open('${msg.document_url}', '_blank')" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background-color: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 4px; border: 1px solid #e2e8f0; cursor: pointer; width: 100%; box-sizing: border-box; transition: 0.2s;">
+                            
+                            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; pointer-events: none;">
+                                <svg style="flex-shrink: 0;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                                </svg>                        
+                                
+                                <span style="font-size: 14px; font-weight: bold; color: #0284c7; word-break: break-all;">
+                                    ${fileName}
+                                </span>
+                            </div>
+                            
+                            <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </div>
+                            
+                        </div>
+                    `;
                 }
 
-                if (msg.sender_id === my_user_id) {
-                    bubbleHtml = `
-                    <div class="message-row" style="display: flex; justify-content: flex-end; margin-bottom: 16px;  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
-                        <div class="message-bubble text-sm font-regular" style="background-color: #CEE7E6; color: #000; padding: 12px 16px; border-radius: 20px; border-top-right-radius: 4px; max-width: 60%; word-wrap: break-word;">
-                            ${messageContent}
-                        </div>
-                    </div>
-                    `;
-                } else {
-                    bubbleHtml = `
-                        <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px; font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
-                            <img class="talker" src="${msg.sender_img}" style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover; flex-shrink: 0;"/>
+                if (msg.poll_id != null && msg.poll_data != null) {
+
+                    // 🌟 1. ลอจิกคำนวณเวลาด้วย JS (ชัวร์ 100% ว่าขึ้นแน่นอน)
+                    let timeLeftText = "";
+                    let timeStyle = "color: #ef4444;"; // สีแดง
+                    let deadlineStr = msg.poll_data.deadline || msg.poll_data.Deadline;
+                    let isEnded = msg.poll_data.is_ended || msg.poll_data.IsEnded || msg.poll_data.time_left === "Ended";
+
+                    if (isEnded) {
+                        timeLeftText = "Poll ended";
+                        timeStyle = "color: #888;"; // สีเทา
+                    } else if (deadlineStr) {
+                        let deadlineDate = new Date(deadlineStr);
+                        let now = new Date();
+                        let diffMs = deadlineDate - now;
+
+                        if (diffMs <= 0) {
+                            timeLeftText = "Poll ended";
+                            timeStyle = "color: #888;";
+                        } else {
+                            let mins = Math.floor(diffMs / 60000);
+                            let hours = Math.floor(mins / 60);
+                            let days = Math.floor(hours / 24);
+
+                            if (days > 0) {
+                                timeLeftText = `Poll end up in ${days} day${days > 1 ? 's' : ''}`;
+                            } else if (hours > 0) {
+                                timeLeftText = `Poll end up in ${hours} hour${hours > 1 ? 's' : ''}`;
+                            } else {
+                                timeLeftText = `Poll end up in ${mins} minute${mins > 1 ? 's' : ''}`;
+                            }
+                        }
+                    } else if (msg.poll_data.time_left) {
+                        timeLeftText = `Poll end up in ${msg.poll_data.time_left}`;
+                    } else {
+                        timeLeftText = "Poll ends soon";
+                    }
+
+                    // 🌟 2. คำนวณ % คนโหวต
+                    let totalVotes = 0;
+                    if (msg.poll_data.options) {
+                        msg.poll_data.options.forEach(opt => {
+                            totalVotes += (opt.voters ? opt.voters.length : 0);
+                        });
+                    }
+
+                    let pollOptionsHtml = "";
+                    if (msg.poll_data.options) {
+                        msg.poll_data.options.forEach((opt, index) => {
+                            let voteCount = opt.voters ? opt.voters.length : 0;
+                            let percent = totalVotes === 0 ? 0 : (voteCount / totalVotes) * 100;
+
+                            let avatarsHtml = "";
+                            let profiles = opt.voter_profiles || [];
                             
-                            <div class="message-column" style="display: flex; flex-direction: column; align-items: flex-start; max-width: 60%; min-width: 0;">
-                                <p class="sender_name font-regular" style="font-size: 14px; padding-bottom: 4px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${msg.sender_name}</p>
-                                
-                                <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; word-wrap: break-word; max-width: 100%;">
-                                    ${messageContent}
+                            if (profiles.length > 0) {
+                                let displayVoters = profiles.slice(0, 3);
+                                displayVoters.forEach(profilePath => {
+                                    avatarsHtml += `<img src="${profilePath}" class="voter-img" />`;
+                                });
+                            }
+
+                            pollOptionsHtml += `
+                                <div class="poll-option" onclick="votePoll('${msg.poll_id}', ${index})">
+                                    <div class="poll-option-top">
+                                        <div class="poll-radio-group">
+                                            <div class="poll-radio"></div>
+                                            <span class="poll-label text-sm font-semibold">${opt.text}</span>
+                                        </div>
+                                        <div class="poll-voter-avatars">
+                                            ${avatarsHtml}
+                                        </div>
+                                    </div>
+                                    <div class="poll-progress-bg">
+                                        <div class="poll-progress-fill chat-poll-fill" data-percent="${percent}" style="width: 0%;"></div>
+                                    </div>
                                 </div>
+                            `;
+                        });
+                    }
+
+                    let deadlineRaw = msg.poll_data.deadline || msg.poll_data.Deadline;
+
+                    bubbleHtml = `
+                        <div class="message-row poll-message-row" style="display: flex; justify-content: center; width: 100%; margin-bottom: 24px; margin-top: 16px;">
+                            <div class="poll-container">
+                                <h4 class="poll-title text-lg font-regular">${msg.poll_data.question}</h4>
+                                <p class="poll-timer text-sm font-regular live-poll-timer" data-deadline="${deadlineRaw}" style="${timeStyle}">${timeLeftText}</p>
+                                ${pollOptionsHtml}
                             </div>
                         </div>
                     `;
                 }
-                
+                else {
+                    if (msg.message_text && msg.message_text !== "null" && msg.message_text.trim() !== "") {
+                        const safeText = escapeHTML(msg.message_text);
+                        messageContent += `<span>${makeLinksClickable(safeText)}</span>`;
+                    }
+
+                    if (msg.sender_id === my_user_id) {
+                        bubbleHtml = `
+                        <div class="message-row" style="display: flex; justify-content: flex-end; margin-bottom: 16px;  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
+                            <div class="message-bubble text-sm font-regular" style="background-color: #CEE7E6; color: #000; padding: 12px 16px; border-radius: 20px; border-top-right-radius: 4px; max-width: 60%; word-wrap: break-word;">
+                                ${messageContent}
+                            </div>
+                        </div>
+                        `;
+                    } else {
+                        bubbleHtml = `
+                            <div class="message-row other-message" style="display: flex; gap: 15px; margin-bottom: 16px; font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;">
+                                <img class="talker" src="${msg.sender_img}" style="width: 49px; height: 49px; border-radius: 50px; object-fit: cover; flex-shrink: 0;"/>
+                                
+                                <div class="message-column" style="display: flex; flex-direction: column; align-items: flex-start; max-width: 60%; min-width: 0;">
+                                    <p class="sender_name font-regular" style="font-size: 14px; padding-bottom: 4px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${msg.sender_name}</p>
+                                    
+                                    <div class="message-bubble text-sm font-regular" style="background-color: #fff; border: 1px solid #e5e7eb; padding: 12px 20px; border-radius: 20px; border-top-left-radius: 4px; word-wrap: break-word; max-width: 100%;">
+                                        ${messageContent}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                }
                 chatBody.insertAdjacentHTML('beforeend', bubbleHtml);
+            });
+            const allFills = chatBody.querySelectorAll('.chat-poll-fill');
+            allFills.forEach((fill, idx) => {
+                const targetPercent = fill.getAttribute('data-percent');
+                animateProgressBar(fill, targetPercent, 100 + (idx * 50));
             });
 
             chatBody.scrollTop = chatBody.scrollHeight;
@@ -917,8 +1016,8 @@ async function loadChatMessages() {
 
 function makeLinksClickable(text) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    
-    return text.replace(urlRegex, function(url) {
+
+    return text.replace(urlRegex, function (url) {
         return `<a href="${url}" target="_blank" class="chat-link">${url}</a>`;
     });
 }
@@ -931,15 +1030,15 @@ function showPreviewText() {
 
     let fileName = "";
     let fileIcon = "";
-    
+
     if (imageInput.files && imageInput.files.length > 0) {
         fileName = imageInput.files[0].name;
         fileIcon = "Photo : ";
-    } 
+    }
     else if (documentInput.files && documentInput.files.length > 0) {
         fileName = documentInput.files[0].name;
         fileIcon = "File : ";
-    } 
+    }
 
     if (fileName !== "") {
         fileNameDisplay.innerHTML = `
@@ -953,8 +1052,8 @@ function showPreviewText() {
                 </svg>
             </div>
         `;
-        fileNameDisplay.style.display = "block"; 
-        messageInput.style.display = "none";     
+        fileNameDisplay.style.display = "block";
+        messageInput.style.display = "none";
     } else {
         cancelAttachment();
     }
@@ -974,7 +1073,7 @@ function cancelAttachment() {
 
     messageInput.style.display = "block";
     messageInput.disabled = false;
-    messageInput.focus(); 
+    messageInput.focus();
 }
 
 let currentStream = null;
@@ -984,7 +1083,7 @@ async function openWebRTC() {
             video: { facingMode: 'environment' }
         });
         currentStream = stream;
-        
+
         const videoElement = document.getElementById('camera-stream');
         videoElement.srcObject = stream;
 
@@ -1023,7 +1122,7 @@ function takePhoto() {
             showPreviewText();
         }
         closeCamera();
-    }, 'image/jpeg', 0.85); 
+    }, 'image/jpeg', 0.85);
 }
 
 async function loadFilesAndLinks() {
@@ -1041,7 +1140,7 @@ async function loadFilesAndLinks() {
                 .filter(msg => {
                     const hasDoc = msg.document_url && msg.document_url !== "";
                     const hasLink = msg.message_text && /(https?:\/\/[^\s]+)/.test(msg.message_text);
-                    return hasDoc || hasLink; 
+                    return hasDoc || hasLink;
                 })
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
@@ -1053,11 +1152,11 @@ async function loadFilesAndLinks() {
                 listContainer.style.display = "none";
             } else {
                 emptyState.style.display = "none";
-                listContainer.style.display = "flex"; 
+                listContainer.style.display = "flex";
 
                 filteredMessages.forEach(msg => {
                     const timeString = new Date(msg.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                    const senderName = msg.sender_name ? msg.sender_name : "Unknown"; 
+                    const senderName = msg.sender_name ? msg.sender_name : "Unknown";
 
                     if (msg.document_url && msg.document_url !== "") {
                         const docName = msg.document_name ? msg.document_name : "Document File";
@@ -1117,7 +1216,7 @@ async function loadSettingImages() {
             const mediaGrid = document.getElementById('setting-media-grid');
             if (!mediaGrid) return;
 
-            mediaGrid.innerHTML = ""; 
+            mediaGrid.innerHTML = "";
 
             imageMessages.forEach(msg => {
                 mediaGrid.innerHTML += `
@@ -1126,7 +1225,7 @@ async function loadSettingImages() {
                     </div>
                 `;
             });
-            
+
         }
     } catch (error) {
         console.error("Error loading images for settings:", error);
@@ -1140,17 +1239,17 @@ async function loadChatRooms() {
 
         if (result.success) {
             let cardsHtml = "";
-            const chatListContainer = document.getElementById('chat-list'); 
+            const chatListContainer = document.getElementById('chat-list');
             const chatBody = document.getElementById('chat-body');
 
             result.data.forEach(room => {
                 let previewText = room.last_message_text ? room.last_message_text : "Start Chat!";
                 previewText = escapeHTML(previewText);
-                
+
                 let time_string = "";
-                if(room.last_message_time){
+                if (room.last_message_time) {
                     const msgDate = new Date(room.last_message_time);
-                    const timePart = msgDate.toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'});
+                    const timePart = msgDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                     const datePart = `${msgDate.getDate()}/${msgDate.getMonth() + 1}/${msgDate.getFullYear()}`;
                     time_string = `${datePart} ${timePart}`;
                 }
@@ -1211,4 +1310,39 @@ function escapeHTML(text) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+
+// 🌟 ฟังก์ชันนับเวลาถอยหลังแบบ Real-time ทำงานทุก 1 นาที
+setInterval(() => {
+    // หาโพลทุกอันในแชทที่มีคลาส live-poll-timer
+    const timers = document.querySelectorAll('.live-poll-timer');
+
+    timers.forEach(timer => {
+        const deadlineStr = timer.getAttribute('data-deadline');
+        if (!deadlineStr || deadlineStr === "undefined") return;
+
+        const deadlineDate = new Date(deadlineStr);
+        const now = new Date();
+        const diffMs = deadlineDate - now;
+
+        // ถ้าหมดเวลาแล้ว
+        if (diffMs <= 0) {
+            timer.textContent = "Poll ended";
+            timer.style.color = "#888"; // เปลี่ยนเป็นสีเทา
+            return;
+        }
+
+        // คำนวณเวลาที่เหลือใหม่
+        let mins = Math.floor(diffMs / 60000);
+        let hours = Math.floor(mins / 60);
+        let days = Math.floor(hours / 24);
+
+        if (days > 0) {
+            timer.textContent = `Poll end up in ${days} day${days > 1 ? 's' : ''}`;
+        } else if (hours > 0) {
+            timer.textContent = `Poll end up in ${hours} hour${hours > 1 ? 's' : ''}`;
+        } else {
+            timer.textContent = `Poll end up in ${mins} minute${mins > 1 ? 's' : ''}`;
+        }
+    });
+}, 60000); // 60000 มิลลิวินาที = 1 นาที (ถ้าอยากให้วิ่งทุกวินาทีเปลี่ยนเป็น 1000 ครับ)
 

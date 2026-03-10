@@ -30,8 +30,7 @@ namespace Travello.Models
         public DateTime? last_message_time { get; set; }
         public string? image_url { get; set; }
         public string? document_url { get; set; }
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string? poll_id { get; set; }
+
     }
 }
 

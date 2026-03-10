@@ -1,3 +1,4 @@
+using System.Net.Cache;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Travello.Models;
@@ -10,12 +11,16 @@ namespace Travello.Controllers
         private readonly PollService _pollService;
         private readonly IMongoCollection<UserModel> _usersCollection;
         private readonly IMongoCollection<EventDocument> _eventsCollection;
+        private readonly IMongoCollection<ChatRoomModel> _chatRoomsCollection;
+        private readonly IMongoCollection<ChatMessageModel> _messagesCollection;
 
         public PollController(PollService pollService, IMongoDatabase database)
         {
             _pollService = pollService;
             _usersCollection = database.GetCollection<UserModel>("User");
             _eventsCollection = database.GetCollection<EventDocument>("events");
+            _chatRoomsCollection = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _messagesCollection = database.GetCollection<ChatMessageModel>("messages");
         }
 
         [HttpGet]
@@ -200,6 +205,36 @@ namespace Travello.Controllers
 
             await _pollService.CreatePollAsync(poll);
 
+            try 
+            {
+                var chatRoom = await _chatRoomsCollection.Find(c => c.event_id == request.EventId).FirstOrDefaultAsync();
+                
+                if (chatRoom != null)
+                {
+                    var newChatMessage = new ChatMessageModel
+                    {
+                        chat_room_id = chatRoom.id,
+                        sender_id = userId,
+                        message_text = poll.Question, 
+                        timestamp = DateTime.UtcNow,
+                        poll_id = poll.Id
+                    };
+
+                    await _messagesCollection.InsertOneAsync(newChatMessage);
+
+                    var update = Builders<ChatRoomModel>.Update.Set(r => r.last_message_id, newChatMessage.Id);
+                    await _chatRoomsCollection.UpdateOneAsync(r => r.id == chatRoom.id, update);
+
+                    await Travello.Services.WebSocketManage.BroadcastToRoom(chatRoom.id, "NEW_MSG");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending poll message to chat: {ex.Message}");
+            }
+
+            // -------------------------------------------------------------------
+
             return Json(new { success = true, poll_id = poll.Id });
         }
 
@@ -210,7 +245,39 @@ namespace Travello.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Json(new { success = false, error = "Not logged in" });
 
+            // 1. เซฟผลโหวตลง DB
             await _pollService.VoteAsync(request.PollId, request.OptionIndex, userId);
+
+            try 
+            {
+                // 🌟 2. ดึงข้อมูลโพลนั้นออกมา เพื่อเอา EventId
+                var poll = await _pollService.GetPollByIdAsync(request.PollId);
+                
+                if (poll != null)
+                {
+                    // 🌟 3. เอา poll.EventId ไปค้นหาห้องแชทแทน
+                    var chatRoom = await _chatRoomsCollection.Find(c => c.event_id == poll.EventId).FirstOrDefaultAsync();
+                    
+                    if (chatRoom != null)
+                    {
+                        var updateMsg = Builders<ChatMessageModel>.Update.Set(m => m.timestamp, DateTime.UtcNow);
+                        await _messagesCollection.UpdateManyAsync(m => m.poll_id == poll.Id, updateMsg);
+
+                        var pollMessage = await _messagesCollection.Find(m => m.poll_id == poll.Id).FirstOrDefaultAsync();
+                        if (pollMessage != null)
+                        {
+                            var updateRoom = Builders<ChatRoomModel>.Update.Set(r => r.last_message_id, pollMessage.Id);
+                            await _chatRoomsCollection.UpdateOneAsync(r => r.id == chatRoom.id, updateRoom);
+                        }
+
+                        await Travello.Services.WebSocketManage.BroadcastToRoom(chatRoom.id, "NEW_MSG");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating chat after vote: {ex.Message}");
+            }
 
             return Json(new { success = true });
         }
@@ -223,7 +290,6 @@ namespace Travello.Controllers
             if (diff.TotalMinutes >= 1) return $"{(int)diff.TotalMinutes} min";
             return "< 1 min";
         }
-    }
 
     public class CreatePollRequest
     {
@@ -245,4 +311,7 @@ namespace Travello.Controllers
     {
         public string PollId { get; set; } = string.Empty;
     }
+
+    
+}
 }
