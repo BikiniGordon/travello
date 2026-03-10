@@ -11,10 +11,8 @@ LoadDotEnv(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSession(options => {
-    options.IdleTimeout = TimeSpan.FromHours(2); // ตั้งเวลาหมดอายุ Session (เช่น 2 ชั่วโมง)
-});
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
@@ -64,31 +62,24 @@ builder.Services.AddSingleton(serviceProvider =>
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
-
 //Chat--------------------------------------------------------
+
+
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatService>();
 
-//Poll---------------------------------------------------------
-builder.Services.AddScoped<PollService>();
 
 //-------------------------------------------------------------
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-// app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseWebSockets();
 app.UseRouting();
 app.UseSession();
+
+app.UseSession();
+
 app.UseAuthorization();
 
 app.MapStaticAssets();

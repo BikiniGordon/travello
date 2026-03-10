@@ -15,11 +15,15 @@ namespace Travello.Controllers
         private readonly IMongoCollection<EventModel> _eventsCollection;
         private readonly IMongoDatabase _database;
         
+<<<<<<< HEAD
         // private readonly IMongoCollection<EventModel> _eventsCollection;
+=======
+>>>>>>> 9956cd191524d6bee5ad02a0b2b419a380ff3b4d
 
         public HomeController(IMongoDatabase database)
         {
             _eventsCollection = database.GetCollection<EventModel>("events");
+            _database = database;
         }
 
         public async Task<IActionResult> Index(int page = 1, string? searchLocation = null, DateTime? searchDate = null, string[]? selectedTags = null) 
@@ -37,13 +41,12 @@ namespace Travello.Controllers
 
             if (searchDate.HasValue)
             {
-                var pureDate = searchDate.Value.Date; 
-    
-                DateTime searchDayStart = DateTime.SpecifyKind(pureDate, DateTimeKind.Utc);
-                DateTime searchDayEnd = searchDayStart.AddDays(1);
+                DateTime dateOnly = DateTime.SpecifyKind(searchDate.Value.Date, DateTimeKind.Unspecified);
+                DateTime searchDayStart = searchDate.Value.Date;
+                DateTime searchDayEnd = searchDate.Value.Date.AddDays(1).AddTicks(-1);
 
-                filter &= filterBuilder.Lt(x => x.start_date, searchDayEnd);
-                filter &= filterBuilder.Gt(x => x.end_date, searchDayStart);
+                filter &= filterBuilder.Lte(x => x.start_date, searchDayEnd);
+                filter &= filterBuilder.Gte(x => x.end_date, searchDayStart);
             }
 
             if (selectedTags != null && selectedTags.Length > 0)
@@ -81,7 +84,6 @@ namespace Travello.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                Response.Headers["Vary"] = "X-Requested-With";
                 return PartialView("_DataWrapper", events);
             }
 

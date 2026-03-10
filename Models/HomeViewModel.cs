@@ -16,10 +16,7 @@ namespace Travello.Models
         
         public string location { get; set; } = null!;
         
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime? start_date { get; set; } = null!;
-        
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)] 
+        public DateTime? start_date { get; set; } = null!; 
         public DateTime? end_date { get; set; } = null!; 
         
         public List<string> event_tag { get; set; } = new List<string>(); 

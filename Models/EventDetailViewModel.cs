@@ -24,7 +24,6 @@ namespace Travello.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string? GoogleMapUrl { get; set; }
         public List<ExpenseViewModel> Expenses { get; set; } = new();
     }
 
@@ -75,6 +74,7 @@ namespace Travello.Models
         public int AttendeeCount { get; set; }
         public string UserStatus { get; set; } // none | pending | approved | rejected | owner
         public decimal TotalExpenses { get; set; }
+        public string HostId { get; set; }
 
         public List<string> PackingList { get; set; } = new();
         public List<DayViewModel> Days { get; set; } = new();
