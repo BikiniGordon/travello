@@ -1140,6 +1140,8 @@ async function loadChatRooms() {
         if (result.success) {
             let cardsHtml = "";
             const chatListContainer = document.getElementById('chat-list'); 
+            const chatBody = document.getElementById('chat-body');
+
             result.data.forEach(room => {
                 let previewText = room.last_message_text ? room.last_message_text : "Start Chat!";
                 previewText = escapeHTML(previewText);
@@ -1191,6 +1193,8 @@ async function loadChatRooms() {
             if (chatListContainer) {
                 chatListContainer.innerHTML = cardsHtml;
             }
+
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
     } catch (error) {
         console.error("Error loading chat rooms:", error);
