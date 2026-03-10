@@ -71,7 +71,10 @@ namespace Travello.Controllers
                 .Project(new BsonDocument { { "tagLower", new BsonDocument("$toLower", "$event_tag") } })
                 .Group(new BsonDocument { { "_id", "$tagLower" }, { "count", new BsonDocument("$sum", 1) } })
                 .Match(new BsonDocument("_id", new BsonDocument("$nin", new BsonArray(categories.Select(c => c.ToLower())))))
-                .Sort(new BsonDocument("count", -1))
+                .Sort(new BsonDocument { 
+                    { "count", -1 }, 
+                    { "_id", 1 } 
+                })
                 .Limit(5)
                 .ToListAsync();
 
