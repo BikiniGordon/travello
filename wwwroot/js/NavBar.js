@@ -1,4 +1,4 @@
-let pendingRedirectAfterLogin = null;
+window.pendingRedirectAfterLogin = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('menuBtn');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!isAuthenticated) {
                 event.preventDefault();
-                pendingRedirectAfterLogin = createEventUrl || null;
+                window.pendingRedirectAfterLogin = createEventUrl || null;
                 openLoginModal();
                 return;
             }
@@ -62,11 +62,14 @@ function toggleProfileMenu(e) {
     }
 }
 
-function openLoginModal() {
+function openLoginModal(fromCreateEvent = false) {
     const modal = document.getElementById("loginModal");
     if (modal) {
         modal.style.display = "flex";
         document.querySelectorAll('.ProfileDropdownContent').forEach(d => d.classList.remove('show'));
+        if (!fromCreateEvent) {
+            window.pendingRedirectAfterLogin = null;
+        }
     }
 }
 
@@ -98,9 +101,9 @@ if (loginForm) {
         const result = await response.json();
 
         if (result.success) {
-            if (pendingRedirectAfterLogin) {
-                const destination = pendingRedirectAfterLogin;
-                pendingRedirectAfterLogin = null;
+            if (window.pendingRedirectAfterLogin) {
+                const destination = window.pendingRedirectAfterLogin;
+                window.pendingRedirectAfterLogin = null;
                 window.location.href = destination;
                 return;
             }

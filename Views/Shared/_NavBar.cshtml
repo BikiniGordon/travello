@@ -73,7 +73,7 @@
                     <div class="ProfileDropdownContent">
                         @if (Context.Session.GetString("Username") == null) {
                             <a href="@Url.Action("CreateAccount", "User")" class="DropdownItem">Create Account</a>
-                            <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal()">Log In</a>
+                            <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal(false)">Log In</a>
                         } else {
                             <div class="DropdownHeader">Hi, @Context.Session.GetString("Username")</div>
                             <a class="DropdownItem drop1">My Profile</a>
@@ -122,7 +122,7 @@
                         <div class="ProfileDropdownContent">
                              @if (Context.Session.GetString("Username") == null) {
                                 <a href="@Url.Action("CreateAccount", "User")" class="DropdownItem">Create Account</a>
-                                <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal()">Log In</a>
+                                <a href="javascript:void(0);" class="DropdownItem" onclick="openLoginModal(false)">Log In</a>
                             } else {
                                 <div class="DropdownHeader">Hi, @Context.Session.GetString("Username")</div>
                                 <a class="DropdownItem drop1">My Profile</a>
