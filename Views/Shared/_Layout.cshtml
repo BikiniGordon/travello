@@ -63,10 +63,14 @@
     <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
     @if (TempData["OpenLoginModal"] is string openLoginModal && openLoginModal == "true")
     {
+        var postLoginRedirect = TempData["PostLoginRedirect"] as string;
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 if (typeof openLoginModal === 'function') {
                     openLoginModal();
+                }
+                if (@(postLoginRedirect != null ? "'" + postLoginRedirect + "'" : "null" ) !== null) {
+                    window.pendingRedirectAfterLogin = @(postLoginRedirect != null ? "'" + postLoginRedirect + "'" : "null");
                 }
             });
         </script>
