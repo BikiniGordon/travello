@@ -14,7 +14,7 @@ namespace Travello.Controllers
         }
         private readonly IMongoCollection<EventModel> _eventsCollection;
         private readonly IMongoDatabase _database;
-        
+                
 
         public HomeController(IMongoDatabase database)
         {
@@ -37,12 +37,13 @@ namespace Travello.Controllers
 
             if (searchDate.HasValue)
             {
-                DateTime dateOnly = DateTime.SpecifyKind(searchDate.Value.Date, DateTimeKind.Unspecified);
-                DateTime searchDayStart = searchDate.Value.Date;
-                DateTime searchDayEnd = searchDate.Value.Date.AddDays(1).AddTicks(-1);
+                var pureDate = searchDate.Value.Date; 
+    
+                DateTime searchDayStart = DateTime.SpecifyKind(pureDate, DateTimeKind.Utc);
+                DateTime searchDayEnd = searchDayStart.AddDays(1);
 
-                filter &= filterBuilder.Lte(x => x.start_date, searchDayEnd);
-                filter &= filterBuilder.Gte(x => x.end_date, searchDayStart);
+                filter &= filterBuilder.Lt(x => x.start_date, searchDayEnd);
+                filter &= filterBuilder.Gt(x => x.end_date, searchDayStart);
             }
 
             if (selectedTags != null && selectedTags.Length > 0)
@@ -80,6 +81,7 @@ namespace Travello.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
+                Response.Headers["Vary"] = "X-Requested-With";
                 return PartialView("_DataWrapper", events);
             }
 
