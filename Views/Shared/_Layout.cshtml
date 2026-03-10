@@ -9,6 +9,7 @@
     @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Travello.styles.css" asp-append-version="true" />
 
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true" />
@@ -20,7 +21,9 @@
     <script>
         window.addEventListener("pageshow", function (event) {
             if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-                window.location.reload();
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
             }
         });
     </script>

@@ -584,7 +584,8 @@ function openCreatePoll(){
     createPollPage.style.display = 'flex';
     const createPollBody = document.getElementById('create-poll-body');
     animatePollSurface(createPollBody);
-    setupPollTimeDropdowns(); 
+    setupPollTimeDropdowns();
+    initializeAddOptionButton();
 
 }
 

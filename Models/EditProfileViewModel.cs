@@ -36,7 +36,41 @@ namespace Travello.Models
         [BsonElement("date_of_birth")]
         public DateTime? date_of_birth { get; set; }
         public string? about_me { get; set; }
-        public List<string>? event_id { get; set; } = new List<string>();
+
+        [BsonElement("event_id")]
+        public List<ObjectId>? db_event_id { get; set; }
+
+        [BsonIgnore]
+        public List<string>? event_id 
+        { 
+            get 
+            { 
+                List<string> stringList = new List<string>();
+                if (db_event_id != null) 
+                {
+                    foreach (var id in db_event_id) 
+                    {
+                        stringList.Add(id.ToString());
+                    }
+                }
+                return stringList;
+            }
+            set 
+            { 
+                List<ObjectId> objectIdList = new List<ObjectId>();
+                if (value != null) 
+                {
+                    foreach (var str in value) 
+                    {
+                        if (ObjectId.TryParse(str, out ObjectId parsedId)) 
+                        {
+                            objectIdList.Add(parsedId);
+                        }
+                    }
+                }
+                db_event_id = objectIdList;
+            }
+        }
         public string? profile_img_path { get; set; }
         public List<string> user_tag { get; set; } = new List<string>();
 

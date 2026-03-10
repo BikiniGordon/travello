@@ -12,12 +12,14 @@ namespace Travello.Controllers
         {
             return View();
         }
-        
         private readonly IMongoCollection<EventModel> _eventsCollection;
+        private readonly IMongoDatabase _database;
+                
 
         public HomeController(IMongoDatabase database)
         {
             _eventsCollection = database.GetCollection<EventModel>("events");
+            _database = database;
         }
 
         public async Task<IActionResult> Index(int page = 1, string? searchLocation = null, DateTime? searchDate = null, string[]? selectedTags = null) 
@@ -71,7 +73,10 @@ namespace Travello.Controllers
                 .Project(new BsonDocument { { "tagLower", new BsonDocument("$toLower", "$event_tag") } })
                 .Group(new BsonDocument { { "_id", "$tagLower" }, { "count", new BsonDocument("$sum", 1) } })
                 .Match(new BsonDocument("_id", new BsonDocument("$nin", new BsonArray(categories.Select(c => c.ToLower())))))
-                .Sort(new BsonDocument("count", -1))
+                .Sort(new BsonDocument { 
+                    { "count", -1 }, 
+                    { "_id", 1 } 
+                })
                 .Limit(5)
                 .ToListAsync();
 
@@ -84,6 +89,124 @@ namespace Travello.Controllers
             }
 
             return View(events);
+        }
+
+        public async Task<IActionResult> Profile() 
+        {
+
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+        
+            var userCollection = _eventsCollection.Database.GetCollection<EditProfileViewModel>("User");
+            var userProfile = await userCollection.Find(u => u.user_id == userId)
+                .Project(u => new EditProfileViewModel 
+                {
+                    user_id = u.user_id,
+                    username = u.username,
+                    first_name = u.first_name,
+                    last_name = u.last_name,
+                    about_me = u.about_me,
+                    profile_img_path = u.profile_img_path,
+                    user_tag = u.user_tag 
+                })
+                .FirstOrDefaultAsync();
+
+            
+            ViewBag.UserProfile = userProfile;
+            ViewBag.IsOwner = true;
+
+    
+            var eventsDocCollection = _eventsCollection.Database.GetCollection<EventDocument>("events");
+            var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == userId).ToListAsync();
+
+            var viewModels = dbPosts.Select(db => new EventDetailViewModel
+            {
+                EventId = db.Id,
+                EventTitle = string.IsNullOrWhiteSpace(db.EventTitle) ? "ไม่มีชื่อกิจกรรม" : db.EventTitle,
+                Detail = string.IsNullOrWhiteSpace(db.Detail) ? "ไม่มีรายละเอียด" : db.Detail,
+                CoverImage = string.IsNullOrWhiteSpace(db.EventImgPath) 
+                    ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" 
+                    : db.EventImgPath
+            }).ToList();
+
+            return View(viewModels);
+        }
+        [HttpGet("/Home/UserProfile/{id}")]
+        public async Task<IActionResult> UserProfile(string id)
+        {
+            var currentUserId = HttpContext.Session.GetString("UserId");
+
+            
+            if (id == currentUserId)
+            {
+                return RedirectToAction("Profile", "Home");
+            }
+
+            
+            var userCollection = _database.GetCollection<EditProfileViewModel>("User");
+            var userProfile = await userCollection.Find(u => u.user_id == id)
+                .Project(u => new EditProfileViewModel 
+                {
+                    user_id = u.user_id,
+                    username = u.username,
+                    first_name = u.first_name,
+                    last_name = u.last_name,
+                    about_me = u.about_me,
+                    profile_img_path = u.profile_img_path,
+                    user_tag = u.user_tag
+                })
+                .FirstOrDefaultAsync();
+
+            if (userProfile == null) return NotFound("ไม่พบผู้ใช้งานนี้");
+
+     
+            ViewBag.UserProfile = userProfile;
+            ViewBag.IsOwner = false; 
+            
+            var me = await userCollection.Find(u => u.user_id == currentUserId).FirstOrDefaultAsync();
+            ViewBag.MyJoinedEvents = me?.event_id ?? new List<string>();
+
+            var eventsDocCollection = _database.GetCollection<EventDocument>("events");
+            var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == id).ToListAsync();
+
+            var viewModels = dbPosts.Select(db => new EventDetailViewModel
+            {
+                EventId = db.Id,
+                EventTitle = string.IsNullOrWhiteSpace(db.EventTitle) ? "ไม่มีชื่อกิจกรรม" : db.EventTitle,
+                Detail = string.IsNullOrWhiteSpace(db.Detail) ? "ไม่มีรายละเอียด" : db.Detail,
+                CoverImage = string.IsNullOrWhiteSpace(db.EventImgPath) 
+                    ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" 
+                    : db.EventImgPath
+            }).ToList();
+
+            return View("Profile", viewModels);
+        }
+        public class DeleteTagRequestProfile
+        {
+            public string tag { get; set; }
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteTag([FromBody] DeleteTagRequestProfile request)
+        {
+            var currentUserId = HttpContext.Session.GetString("UserId");
+            var usersCollection = _database.GetCollection<EditProfileViewModel>("User"); 
+
+            string cleanTag = request.tag.Trim().ToUpper();
+
+            var update = Builders<EditProfileViewModel>.Update.Pull(u => u.user_tag, cleanTag);
+            var result = await usersCollection.UpdateOneAsync(u => u.user_id == currentUserId, update);
+
+            if (result.ModifiedCount > 0) {
+                return Json(new { success = true }); 
+            } else if (result.MatchedCount > 0) {
+                return Json(new { success = false, message = $"Found ID but can't find '{cleanTag}' in the system" });
+            } else {
+                return Json(new { success = false, message = "User ID not found in the database" });
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
