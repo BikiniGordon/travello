@@ -279,6 +279,11 @@ namespace Travello.Controllers
                               {
                                   Name        = i.ActivityName,
                                   Description = i.Note ?? "",
+                                  GoogleMapUrl = !string.IsNullOrWhiteSpace(i.GoogleMapUrl)
+                                      ? i.GoogleMapUrl
+                                      : ((i.Latitude != 0 && i.Longitude != 0)
+                                          ? $"https://www.google.com/maps?q={i.Latitude},{i.Longitude}"
+                                          : null),
                                   Expenses    = i.ExpenseItems.Select(e => new ExpenseViewModel
                                   {
                                       Name   = e.Name,
@@ -334,7 +339,6 @@ namespace Travello.Controllers
                 Locations        = locations,
                 Attendees        = attendeeViewModels,
                 JoinQuestions    = joinQuestions,
-                HostId           = ev.CreatorId,
                 Additions = ev.VoteResult?.Select(v => new AdditionViewModel
                 {
                     Question = v.Question,
@@ -537,47 +541,6 @@ namespace Travello.Controllers
             await _eventService.UpdateParticipantStatusAsync(id, "rejected");
             return Ok();
         }
-        [HttpPost]
-        public async Task<IActionResult> DeleteEvent([FromBody] DeleteEventRequest request)
-        {
-            var currentUserId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(currentUserId)) 
-                return Json(new { success = false, message = "please login first" });
-
-            var ev = await _eventService.GetEventByIdAsync(request.eventId);
-            if (ev == null) 
-                return Json(new { success = false, message = "please login first" });
-
-            if (ev.CreatorId != currentUserId) 
-                return Json(new { success = false, message = "you are not the owner of this event" });
-
-            var allParticipants = await _eventService.GetParticipantsAsync(request.eventId);
-
-            if (allParticipants != null && allParticipants.Any())
-            {
-                foreach (var p in allParticipants)
-                {
-                    if (p.UserId != currentUserId)
-                    {
-                        await _notificationService.CreateNotificationAsync(new NotificationDocument
-                        {
-                            UserId    = p.UserId,
-                            Title     = "Event Cancelled",
-                            Message   = $"กิจกรรม '{ev.EventTitle}' ถูกยกเลิกโดยผู้จัด",
-                            Reason    = request.reason,
-                            Read      = false,
-                            Status    = "warning",
-                            ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
-                            Url       = "#", 
-                            CreatedAt = DateTime.UtcNow
-                        });
-                    }
-                }
-            }
-
-            await _eventsCollection.DeleteOneAsync(e => e.Id == request.eventId);
-            return Json(new { success = true });
-        }
 
         private static CreateEventInputModel MapEventToInputModel(EventDocument eventDocument)
         {
@@ -635,8 +598,8 @@ namespace Travello.Controllers
                     DayDate = item.DayDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                     Note = item.Note,
                     GoogleMapUrl = item.GoogleMapUrl,
-                    Latitude = item.Latitude ?? 0,
-                    Longitude = item.Longitude ?? 0,
+                    Latitude = item.Latitude,
+                    Longitude = item.Longitude,
                     Expenses = (item.ExpenseItems ?? new List<ExpenseItemDocument>())
                         .Select(expense => new ExpenseRowInputModel
                         {
@@ -844,10 +807,5 @@ namespace Travello.Controllers
     public class EndRegistrationDto
     {
         public string Reason { get; set; }
-    }
-    public class DeleteEventRequest
-    {
-        public string eventId { get; set; }
-        public string reason { get; set; }
     }
 }

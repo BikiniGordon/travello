@@ -92,6 +92,21 @@ public class EventDocument
     [BsonElement("closingReason")]
     public string? ClosingReason { get; set; }
 
+    [BsonElement("vote_result")]
+    public List<VoteResultDocument> VoteResult { get; set; } = new();
+
+}
+
+public class VoteResultDocument
+{
+    [BsonElement("poll_id")]
+    public string PollId { get; set; } = string.Empty;
+
+    [BsonElement("question")]
+    public string Question { get; set; } = string.Empty;
+
+    [BsonElement("answer")]
+    public string Answer { get; set; } = string.Empty;
 }
 
 public class LocationDocument
