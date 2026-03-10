@@ -14,6 +14,7 @@ namespace Travello.Controllers
         private readonly IMongoCollection<EventDocument> _eventDocumentsCollection;
         private readonly IMongoCollection<EventParticipant> _participantsCollection;
         private readonly IMongoCollection<ChatRoomModel> _chatRoomsCollection;
+        private readonly IMongoCollection<PollModel> _pollCollection;
 
         public ChatController(ChatService chatService, IMongoDatabase database)
         {
@@ -23,6 +24,7 @@ namespace Travello.Controllers
             _eventDocumentsCollection = database.GetCollection<EventDocument>("events");
             _participantsCollection = database.GetCollection<EventParticipant>("event_participants");
             _chatRoomsCollection = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _pollCollection = database.GetCollection<PollModel>("polls");
         }
 
         public async Task<IActionResult> Index()

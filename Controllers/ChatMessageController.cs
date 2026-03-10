@@ -18,11 +18,13 @@ namespace Travello.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IMongoCollection<ChatRoomModel> _chatRooms;
         private readonly IMongoCollection<User> _user;
+        private readonly IMongoCollection<PollModel> _poll;
 
         public ChatMessageController(ChatService chatService, IWebHostEnvironment env, IMongoDatabase database)
         {
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
             _user = database.GetCollection<User>("User");
+            _poll = database.GetCollection<PollModel>("polls");
             _chatService = chatService;
             _env = env;
         }

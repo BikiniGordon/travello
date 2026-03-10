@@ -66,7 +66,6 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
 //Chat--------------------------------------------------------
-builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatService>();
 
 //Poll---------------------------------------------------------

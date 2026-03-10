@@ -10,5 +10,7 @@ namespace Travello.DTOs
         public string sender_id { get; set; }
         public string sender_name { get; set; }
         public string sender_img { get; set; }
+        public string poll_id { get; set; }
+        public PollModel? poll_data { get; set; }
     }
 }
