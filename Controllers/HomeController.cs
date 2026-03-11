@@ -111,7 +111,10 @@ namespace Travello.Controllers
                     last_name = u.last_name,
                     about_me = u.about_me,
                     profile_img_path = u.profile_img_path,
-                    user_tag = u.user_tag 
+                    user_tag = u.user_tag,
+                    db_event_id = u.db_event_id, //ส่วนที่เพิ่มเข้ามาใหม่
+                    gender = u.gender,        
+                    date_of_birth = u.date_of_birth 
                 })
                 .FirstOrDefaultAsync();
 
@@ -119,10 +122,23 @@ namespace Travello.Controllers
             ViewBag.UserProfile = userProfile;
             ViewBag.IsOwner = true;
 
-    
+            //ส่วนที่เพิ่มเข้ามาใหม่
             var eventsDocCollection = _eventsCollection.Database.GetCollection<EventDocument>("events");
-            var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == userId).ToListAsync();
+            var builder = Builders<EventDocument>.Filter;
+            var filter = builder.Eq(e => e.CreatedBy, userId);
 
+            var participantsCollection = _database.GetCollection<EventParticipant>("event_participants");
+ 
+            var myJoinedDocs = await participantsCollection
+                .Find(p => p.UserId == userId && p.Status == "approved")
+                .ToListAsync();
+            var myJoinedEventIds = myJoinedDocs.Select(p => p.EventId).ToList();
+            if (myJoinedEventIds.Any())
+            {
+                var joinedFilter = builder.In(e => e.Id, myJoinedEventIds);
+                filter = builder.Or(filter, joinedFilter);
+            }
+            var dbPosts = await eventsDocCollection.Find(filter).ToListAsync();
             var viewModels = dbPosts.Select(db => new EventDetailViewModel
             {
                 EventId = db.Id,
@@ -130,7 +146,9 @@ namespace Travello.Controllers
                 Detail = string.IsNullOrWhiteSpace(db.Detail) ? "ไม่มีรายละเอียด" : db.Detail,
                 CoverImage = string.IsNullOrWhiteSpace(db.EventImgPath) 
                     ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" 
-                    : db.EventImgPath
+                    : db.EventImgPath,
+                //ส่วนที่เพิ่มเข้ามาใหม่ 
+                HostId = db.CreatedBy
             }).ToList();
 
             return View(viewModels);
@@ -157,7 +175,9 @@ namespace Travello.Controllers
                     last_name = u.last_name,
                     about_me = u.about_me,
                     profile_img_path = u.profile_img_path,
-                    user_tag = u.user_tag
+                    user_tag = u.user_tag,
+                    gender = u.gender,        
+                    date_of_birth = u.date_of_birth 
                 })
                 .FirstOrDefaultAsync();
 
@@ -167,9 +187,13 @@ namespace Travello.Controllers
             ViewBag.UserProfile = userProfile;
             ViewBag.IsOwner = false; 
             
-            var me = await userCollection.Find(u => u.user_id == currentUserId).FirstOrDefaultAsync();
-            ViewBag.MyJoinedEvents = me?.event_id ?? new List<string>();
-
+            // ได้รับอนุมัติทริปไหนบ้าง
+            var participantsCollection = _database.GetCollection<EventParticipant>("event_participants");
+            var myJoinedDocs = await participantsCollection
+                .Find(p => p.UserId == currentUserId && p.Status == "approved")
+                .ToListAsync();
+            
+            ViewBag.MyJoinedEvents = myJoinedDocs.Select(p => p.EventId).ToList();
             var eventsDocCollection = _database.GetCollection<EventDocument>("events");
             var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == id).ToListAsync();
 
@@ -180,7 +204,8 @@ namespace Travello.Controllers
                 Detail = string.IsNullOrWhiteSpace(db.Detail) ? "ไม่มีรายละเอียด" : db.Detail,
                 CoverImage = string.IsNullOrWhiteSpace(db.EventImgPath) 
                     ? "https://img.freepik.com/free-photo/beautiful-tropical-beach-sea-with-coconut-palm-tree_74190-6843.jpg?w=740" 
-                    : db.EventImgPath
+                    : db.EventImgPath,
+                HostId = db.CreatedBy
             }).ToList();
 
             return View("Profile", viewModels);
