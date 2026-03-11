@@ -13,6 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Noto+Sans+Thai:wght@100..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="~/css/styleDetail.css" />
+    <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
     <script>
@@ -213,7 +215,7 @@
                         <div class="photo" id="attendeePhotos">
                         </div>
                     </div>
-                    <div id="detailMap" class="detail-map-container"></div>
+                    <div id="eventMap" class="map-container detail-map-container"></div>
                 </div>
             </div>
         </main>
@@ -361,6 +363,22 @@
     <script src="~/js/actionBar.js"></script>
     <script src="~/js/detailMap.js"></script>
     <script src="~/js/NotificationPopup.js" asp-append-version="true"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="~/js/CreateEvent.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initializeMap();
+                // Provide itinerary data to the map system and render static preview by default
+                if (typeof itineraryData !== 'undefined' && Array.isArray(itineraryData) && itineraryData.length > 0) {
+                    window.externalMapPlaces = itineraryData.map((p) => ({ name: p.name, lat: p.lat, lng: p.lng }));
+                    try { syncMapMarkers(true); } catch (e) { /* ignore */ }
+                    // Do not auto-switch to interactive map; user can toggle manually.
+                }
+            } catch (e) { console.error('initializeMap error', e); }
+        });
+    </script>
 
     <script>
         const attendeesData = @Html.Raw(

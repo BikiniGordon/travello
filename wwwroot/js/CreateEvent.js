@@ -456,6 +456,8 @@ const defaultLocation = { lat: 13.7298889, lng: 100.7756574 }; // KMITL
 const STATIC_MAP_ZOOM = 13;
 const STATIC_MAP_FALLBACK_WIDTH = 900;
 const STATIC_MAP_FALLBACK_HEIGHT = 560;
+// External places array (used by pages without planner DOM)
+window.externalMapPlaces = window.externalMapPlaces || [];
 
 // Recalculates sequential place numbers across all planner rows.
 function recalculatePlaceNumbers() {
@@ -490,33 +492,45 @@ function syncMapMarkers(zoomToFirst = false) {
     if (!mapContainerElement) {
         return;
     }
-
     let latestMarker = null;
     let placeMarkerCount = 0;
 
-    const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
-    allRows.forEach((row) => {
-        if (!hasPlaceValue(row)) {
-            return;
+    if (plannerDaysContainer) {
+        const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+        allRows.forEach((row) => {
+            if (!hasPlaceValue(row)) {
+                return;
+            }
+
+            const lat = Number.parseFloat(row.dataset.markerLat);
+            const lng = Number.parseFloat(row.dataset.markerLng);
+            const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
+
+            if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(placeNumber) || placeNumber <= 0) {
+                return;
+            }
+
+            latestMarker = {
+                lat,
+                lng,
+                name: row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location',
+                placeNumber
+            };
+
+            placeMarkerCount++;
+        });
+    } else if (Array.isArray(window.externalMapPlaces) && window.externalMapPlaces.length > 0) {
+        placeMarkerCount = window.externalMapPlaces.length;
+        const last = window.externalMapPlaces[window.externalMapPlaces.length - 1];
+        if (last && Number.isFinite(Number(last.lat)) && Number.isFinite(Number(last.lng))) {
+            latestMarker = {
+                lat: Number(last.lat),
+                lng: Number(last.lng),
+                name: last.name || 'Location',
+                placeNumber: window.externalMapPlaces.length
+            };
         }
-
-        const lat = Number.parseFloat(row.dataset.markerLat);
-        const lng = Number.parseFloat(row.dataset.markerLng);
-        const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
-
-        if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(placeNumber) || placeNumber <= 0) {
-            return;
-        }
-
-        latestMarker = {
-            lat,
-            lng,
-            name: row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location',
-            placeNumber
-        };
-
-        placeMarkerCount++;
-    });
+    }
 
     if (latestMarker) {
         renderStaticMapPreview(latestMarker.lat, latestMarker.lng, latestMarker.name, placeMarkerCount, latestMarker.placeNumber);
@@ -645,6 +659,56 @@ async function renderMapTilesToCanvas(lat, lng, zoom = STATIC_MAP_ZOOM) {
         context.textAlign = 'center';
         context.fillText('Map preview unavailable', cssWidth / 2, cssHeight / 2);
     }
+
+    // After tiles are drawn, render numbered markers for all places (planner rows or externalMapPlaces)
+    const places = [];
+    if (plannerDaysContainer) {
+        const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+        allRows.forEach((row) => {
+            const lat = Number.parseFloat(row.dataset.markerLat);
+            const lng = Number.parseFloat(row.dataset.markerLng);
+            const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
+            const name = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
+            if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(placeNumber) && placeNumber > 0) {
+                places.push({ lat, lng, name, placeNumber });
+            }
+        });
+    } else if (Array.isArray(window.externalMapPlaces) && window.externalMapPlaces.length > 0) {
+        window.externalMapPlaces.forEach((p, idx) => {
+            const lat = Number(p.lat);
+            const lng = Number(p.lng);
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                places.push({ lat, lng, name: p.name || 'Location', placeNumber: idx + 1 });
+            }
+        });
+    }
+
+    if (places.length > 0) {
+        // Load marker SVG images as data URLs and draw them on the canvas at correct pixel positions
+        const markerWidth = 35;
+        const markerHeight = 41;
+        const markerLoadTasks = places.map((pl) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve({ img, place: pl });
+                img.onerror = () => resolve(null);
+                img.crossOrigin = 'anonymous';
+                img.src = getSVGDataURL(createMapMarkerSVG(pl.placeNumber));
+            });
+        });
+
+        const resolved = await Promise.all(markerLoadTasks);
+        resolved.forEach((entry) => {
+            if (!entry) return;
+            const { img, place } = entry;
+            const { worldX, worldY } = convertLatLngToWorldPixels(place.lat, place.lng, zoom);
+            const px = Math.round(worldX - viewportStartX);
+            const py = Math.round(worldY - viewportStartY);
+            const drawX = px - Math.round(markerWidth / 2);
+            const drawY = py - markerHeight;
+            context.drawImage(img, drawX, drawY, markerWidth, markerHeight);
+        });
+    }
 }
 
 function buildGoogleMapsLink(lat, lng) {
@@ -656,7 +720,61 @@ function renderStaticMapPreview(lat, lng, markerName, markerCount, markerNumber 
         return;
     }
 
-    void renderMapTilesToCanvas(lat, lng, STATIC_MAP_ZOOM);
+    // Determine places list (planner rows or externalMapPlaces)
+    const places = [];
+    if (plannerDaysContainer) {
+        const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+        allRows.forEach((row) => {
+            const plat = Number.parseFloat(row.dataset.markerLat);
+            const plong = Number.parseFloat(row.dataset.markerLng);
+            const pnum = Number.parseInt(row.dataset.placeNumber, 10);
+            const pname = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
+            if (Number.isFinite(plat) && Number.isFinite(plong) && Number.isFinite(pnum) && pnum > 0) {
+                places.push({ lat: plat, lng: plong, name: pname, placeNumber: pnum });
+            }
+        });
+    } else if (Array.isArray(window.externalMapPlaces) && window.externalMapPlaces.length > 0) {
+        window.externalMapPlaces.forEach((p, idx) => {
+            const plat = Number(p.lat);
+            const plong = Number(p.lng);
+            if (Number.isFinite(plat) && Number.isFinite(plong)) {
+                places.push({ lat: plat, lng: plong, name: p.name || 'Location', placeNumber: idx + 1 });
+            }
+        });
+    }
+
+    // If we have multiple places, compute center and zoom to fit all
+    if (places.length > 0) {
+        const latitudes = places.map(p => p.lat);
+        const longitudes = places.map(p => p.lng);
+        const minLat = Math.min(...latitudes);
+        const maxLat = Math.max(...latitudes);
+        const minLng = Math.min(...longitudes);
+        const maxLng = Math.max(...longitudes);
+
+        const canvasCssWidth = Math.max(1, Math.round(staticMapCanvasElement.clientWidth || STATIC_MAP_FALLBACK_WIDTH));
+        const canvasCssHeight = Math.max(1, Math.round(staticMapCanvasElement.clientHeight || STATIC_MAP_FALLBACK_HEIGHT));
+        const padding = 60; // pixels padding around markers
+
+        // Find highest zoom where all markers fit within canvas with padding
+        let chosenZoom = Math.min(STATIC_MAP_ZOOM, 16);
+        for (let z = 16; z >= 1; z--) {
+            const nw = convertLatLngToWorldPixels(maxLat, minLng, z);
+            const se = convertLatLngToWorldPixels(minLat, maxLng, z);
+            const spanX = Math.abs(se.worldX - nw.worldX);
+            const spanY = Math.abs(se.worldY - nw.worldY);
+            if (spanX <= (canvasCssWidth - padding * 2) && spanY <= (canvasCssHeight - padding * 2)) {
+                chosenZoom = z;
+                break;
+            }
+        }
+
+        const centerLat = (minLat + maxLat) / 2;
+        const centerLng = (minLng + maxLng) / 2;
+        void renderMapTilesToCanvas(centerLat, centerLng, chosenZoom);
+    } else {
+        void renderMapTilesToCanvas(lat, lng, STATIC_MAP_ZOOM);
+    }
 
     const safeMarkerName = markerName || 'Selected location';
     if (staticMapMarkerIconElement) {
@@ -666,10 +784,13 @@ function renderStaticMapPreview(lat, lng, markerName, markerCount, markerNumber 
     if (staticMapMarkerElement) {
         staticMapMarkerElement.title = safeMarkerName;
         staticMapMarkerElement.setAttribute('aria-label', safeMarkerName);
+        // If multiple markers are present, hide the DOM overlay marker (we render markers into canvas)
+        staticMapMarkerElement.style.display = markerCount > 1 ? 'none' : '';
     }
 
     if (staticMapMarkerLabelElement) {
         staticMapMarkerLabelElement.textContent = safeMarkerName;
+        staticMapMarkerLabelElement.style.display = markerCount > 1 ? 'none' : '';
     }
 
     if (staticMapCaptionElement) {
@@ -1515,7 +1636,8 @@ function ensureTrailingEmptyPackRow() {
     }
 }
 
-plannerDaysContainer.addEventListener('input', (event) => {
+if (plannerDaysContainer) {
+    plannerDaysContainer.addEventListener('input', (event) => {
     const target = event.target;
 
     if (target.classList.contains('planner-place-input')) {
@@ -1569,9 +1691,9 @@ plannerDaysContainer.addEventListener('input', (event) => {
     if (target.classList.contains('planner-expense-input')) {
         updateTotalExpenses();
     }
-});
+    });
 
-plannerDaysContainer.addEventListener('click', (event) => {
+    plannerDaysContainer.addEventListener('click', (event) => {
     const target = event.target;
     const rowElement = target.closest('.planner-item');
 
@@ -1642,7 +1764,8 @@ plannerDaysContainer.addEventListener('click', (event) => {
         recalculatePlaceNumbers(); // Recalculate all numbers after deletion
         updateTotalExpenses();
     }
-});
+    });
+}
 
 if (importantPackRows) {
     importantPackRows.addEventListener('input', (event) => {
@@ -1871,34 +1994,45 @@ function updateLeafletMarkers() {
         leafletDefaultMarker = null;
     }
 
-    // Gather all planner places with coordinates
-    const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+    // Gather all places from planner rows or externalMapPlaces
+    let places = [];
+    if (plannerDaysContainer) {
+        const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+        allRows.forEach((row) => {
+            const lat = Number.parseFloat(row.dataset.markerLat);
+            const lng = Number.parseFloat(row.dataset.markerLng);
+            const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
+            const name = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
+            if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(placeNumber) && placeNumber > 0) {
+                places.push({ lat, lng, name, placeNumber });
+            }
+        });
+    } else if (Array.isArray(window.externalMapPlaces) && window.externalMapPlaces.length > 0) {
+        window.externalMapPlaces.forEach((p, idx) => {
+            const lat = Number(p.lat);
+            const lng = Number(p.lng);
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                places.push({ lat, lng, name: p.name || 'Location', placeNumber: idx + 1 });
+            }
+        });
+    }
+
     let bounds = [];
-    let hasPlace = false;
-    allRows.forEach((row) => {
-        const lat = Number.parseFloat(row.dataset.markerLat);
-        const lng = Number.parseFloat(row.dataset.markerLng);
-        const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
-        const name = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
-        if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(placeNumber) && placeNumber > 0) {
-            const marker = L.marker([lat, lng], {
-                icon: createLeafletMarkerIcon(placeNumber)
-            });
-            marker.bindTooltip(name, {permanent: false, direction: 'top', className: 'leaflet-marker-tooltip', offset: L.point(0, -45)});
+    if (places.length > 0) {
+        places.forEach((pl) => {
+            const marker = L.marker([pl.lat, pl.lng], { icon: createLeafletMarkerIcon(pl.placeNumber) });
+            marker.bindTooltip(pl.name, { permanent: false, direction: 'top', className: 'leaflet-marker-tooltip', offset: L.point(0, -45) });
             marker.addTo(leafletMap);
             leafletMarkers.push(marker);
-            bounds.push([lat, lng]);
-            hasPlace = true;
-        }
-    });
-    if (hasPlace && bounds.length > 0) {
-        leafletMap.fitBounds(bounds, {padding: [30, 30]});
+            bounds.push([pl.lat, pl.lng]);
+        });
+        leafletMap.fitBounds(bounds, { padding: [30, 30] });
     } else {
         // Show default marker at default location using same marker SVG but without number
         leafletDefaultMarker = L.marker([defaultLocation.lat, defaultLocation.lng], {
             icon: createLeafletMarkerIcon(null)
         }).addTo(leafletMap);
-        leafletDefaultMarker.bindTooltip('KMITL, Bangkok, Thailand', {permanent: false, direction: 'top', className: 'leaflet-marker-tooltip', offset: L.point(0, -45)});
+        leafletDefaultMarker.bindTooltip('KMITL, Bangkok, Thailand', { permanent: false, direction: 'top', className: 'leaflet-marker-tooltip', offset: L.point(0, -45) });
         leafletMap.setView([defaultLocation.lat, defaultLocation.lng], STATIC_MAP_ZOOM);
     }
 }
