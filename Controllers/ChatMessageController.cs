@@ -87,11 +87,12 @@ namespace Travello.Controllers
             if (newMessage != null && (
                 !string.IsNullOrEmpty(newMessage.message_text) || 
                 !string.IsNullOrEmpty(newMessage.image_url) || 
-                !string.IsNullOrEmpty(newMessage.document_url)))
+                !string.IsNullOrEmpty(newMessage.document_url) ||
+                !string.IsNullOrEmpty(newMessage.poll_id)))
             { 
                 newMessage.sender_id = currentUserId;
                 newMessage.sender_img = current_user_obj.ProfileImgPath;
-                Console.WriteLine(newMessage.sender_img);
+                Console.WriteLine(newMessage.poll_id);
                 newMessage.timestamp = DateTime.UtcNow;
                 
                 await _chatService.SaveMessageAsync(newMessage);
@@ -107,6 +108,10 @@ namespace Travello.Controllers
                     else if (!string.IsNullOrEmpty(newMessage.document_url)) 
                     {
                         previewText = "Sent File";
+                    }
+                    else if (!string.IsNullOrEmpty(newMessage.poll_id))
+                    {
+                        previewText = "Poll Create";
                     }
                 }
 

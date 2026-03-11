@@ -215,14 +215,17 @@ namespace Travello.Controllers
                     {
                         chat_room_id = chatRoom.id,
                         sender_id = userId,
-                        message_text = poll.Question, 
+                        message_text = "Poll Create",
                         timestamp = DateTime.UtcNow,
                         poll_id = poll.Id
                     };
 
                     await _messagesCollection.InsertOneAsync(newChatMessage);
 
-                    var update = Builders<ChatRoomModel>.Update.Set(r => r.last_message_id, newChatMessage.Id);
+                    var update = Builders<ChatRoomModel>.Update
+                        .Set(r => r.last_message_id, newChatMessage.Id)
+                        .Set(r => r.last_message_text, newChatMessage.message_text)
+                        .Set(r => r.last_message_time, newChatMessage.timestamp); 
                     await _chatRoomsCollection.UpdateOneAsync(r => r.id == chatRoom.id, update);
 
                     await Travello.Services.WebSocketManage.BroadcastToRoom(chatRoom.id, "NEW_MSG");
@@ -250,12 +253,10 @@ namespace Travello.Controllers
 
             try 
             {
-                // 🌟 2. ดึงข้อมูลโพลนั้นออกมา เพื่อเอา EventId
                 var poll = await _pollService.GetPollByIdAsync(request.PollId);
                 
                 if (poll != null)
                 {
-                    // 🌟 3. เอา poll.EventId ไปค้นหาห้องแชทแทน
                     var chatRoom = await _chatRoomsCollection.Find(c => c.event_id == poll.EventId).FirstOrDefaultAsync();
                     
                     if (chatRoom != null)

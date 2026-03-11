@@ -913,7 +913,6 @@ async function loadChatMessages() {
                         timeLeftText = "Poll ends soon";
                     }
 
-                    // 🌟 2. คำนวณ % คนโหวต
                     let totalVotes = 0;
                     if (msg.poll_data.options) {
                         msg.poll_data.options.forEach(opt => {
@@ -967,6 +966,7 @@ async function loadChatMessages() {
                             </div>
                         </div>
                     `;
+                    chatBody.scrollTop = chatBody.scrollHeight;
                 }
                 else {
                     if (msg.message_text && msg.message_text !== "null" && msg.message_text.trim() !== "") {
