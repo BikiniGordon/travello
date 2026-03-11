@@ -137,11 +137,11 @@
                 userStatus = 'pending';
                 renderActionBar(userStatus);
             } else {
-                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                alert('Error. Please try again');
             }
         } catch (err) {
             console.error(err);
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            alert('Error. Please try again');
         }
     });
 
@@ -171,15 +171,14 @@
             }
 
             if (res.ok) {
-                document.getElementById('leaveModal').classList.remove('open');
-                userStatus = 'none';
-                renderActionBar(userStatus);
+                window.location.reload();
+                
             } else {
-                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                alert('Error. Please try again');
             }
         } catch (err) {
             console.error(err);
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            alert('Error. Please try again');
         }
     });
 
@@ -228,11 +227,11 @@
                 userStatus = 'owner_closed';
                 renderActionBar(userStatus);
             } else {
-                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                alert('Error. Please try again');
             }
         } catch (err) {
             console.error(err);
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            alert('Error. Please try again');
         }
     });
 

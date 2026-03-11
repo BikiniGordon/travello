@@ -116,9 +116,9 @@ namespace Travello.Controllers
                 ModelState.AddModelError(nameof(input.Detail), "Detail is required.");
             }
 
-            if (string.IsNullOrWhiteSpace(input.Category) && string.IsNullOrWhiteSpace(input.TagsCsv))
+            if (string.IsNullOrWhiteSpace(input.TripRules))
             {
-                ModelState.AddModelError(nameof(input.Category), "Please select a category or add tags.");
+                ModelState.AddModelError(nameof(input.TripRules), "Trip rules are required.");
             }
 
             var plannerRows = ParsePlannerRows(input.PlannerJson);
@@ -212,23 +212,25 @@ namespace Travello.Controllers
             if (ev == null) return NotFound();
 
             var currentUserId = HttpContext.Session.GetString("UserId") 
-            ?? "69a714e4cbab5148e804d87d";
+                ?? "69a714e4cbab5148e804d87d";
             
             string userStatus = "none";
 
-            if (ev.IsRegistrationClosed && currentUserId == ev.CreatorId)
+            var allParticipantsFull = await _eventService.GetParticipantsAsync(id);
+            var approvedCount = allParticipantsFull.Count(p => p.Status == "approved");
+            var pendingCount  = allParticipantsFull.Count(p => p.Status == "pending");
+            var remaining     = ev.AttendeesLimit - approvedCount;
+
+            if ((ev.IsRegistrationClosed || remaining <= 0) && currentUserId == ev.CreatorId)
             {
                 userStatus = "owner_closed";
             }
-            else if (ev.IsRegistrationClosed)
+            else if (ev.IsRegistrationClosed || remaining <= 0)
             {
                 userStatus = "closed";
             }
-
             else
             {
-                var allParticipants = await _eventService.GetParticipantsAsync(id);
-
                 if (!string.IsNullOrEmpty(currentUserId))
                 {
                     if (currentUserId == ev.CreatorId)
@@ -246,9 +248,7 @@ namespace Travello.Controllers
                 }
             }
 
-            var allParticipantsFull = await _eventService.GetParticipantsAsync(id);
-            var approvedCount = allParticipantsFull.Count(p => p.Status == "approved");
-            var pendingCount  = allParticipantsFull.Count(p => p.Status == "pending");
+
             var displayCount  = userStatus == "owner"
                 ? approvedCount + pendingCount
                 : approvedCount;
@@ -330,8 +330,9 @@ namespace Travello.Controllers
                 StartDate        = ev.StartDate,
                 EndDate          = ev.EndDate,
                 Location         = ev.Location ?? "",
-                RemainingSlots   = ev.AttendeesLimit - ev.Attendees,
-                AttendeeCount    = displayCount,
+                RemainingSlots   = ev.AttendeesLimit,
+                AttendeeCount    = approvedCount,
+                PendingCount     = pendingCount,
                 UserStatus       = userStatus,
                 TotalExpenses    = totalExpenses,
                 PackingList      = ev.PackingList ?? new(),
@@ -380,7 +381,7 @@ namespace Travello.Controllers
                 });
             }
 
-            return Json(new { isOwner, attendees = attendeesList });
+            return Json(new { isOwner, attendees = attendeesList ,attendees_limit = ev.AttendeesLimit});
         }
 
         // JOIN -> ans q
@@ -409,12 +410,12 @@ namespace Travello.Controllers
             
             var threshold = (int)Math.Ceiling(limit * 0.5);
 
-            if (limit > 0 && pendingCount == threshold)
-            {
+            // if (limit > 0 && pendingCount == threshold)
+            // {
                 await _notificationService.CreateNotificationAsync(new NotificationDocument
                 {
                     UserId    = ev.CreatorId,
-                    Title     = "Many requests are waiting!",
+                    Title     = "Requests are waiting!",
                     Message   = $"Event: {ev.EventTitle}",
                     Read      = false,
                     Status    = "pending_alert",
@@ -422,21 +423,21 @@ namespace Travello.Controllers
                     Url       = $"/Event/Detail/{id}",
                     CreatedAt = DateTime.UtcNow
                 });
-            }
-            else if (remaining > 0 && pendingCount == remaining)
-            {
-                await _notificationService.CreateNotificationAsync(new NotificationDocument
-                {
-                    UserId    = ev.CreatorId,
-                    Title     = "Slots are fully requested!",
-                    Message   = $"Event: {ev.EventTitle}",
-                    Read      = false,
-                    Status    = "pending_full",
-                    ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
-                    Url       = $"/Event/Detail/{id}",
-                    CreatedAt = DateTime.UtcNow
-                });
-            }
+            // }
+            // else if (remaining > 0 && pendingCount == remaining)
+            // {
+            //     await _notificationService.CreateNotificationAsync(new NotificationDocument
+            //     {
+            //         UserId    = ev.CreatorId,
+            //         Title     = "Slots are fully requested!",
+            //         Message   = $"Event: {ev.EventTitle}",
+            //         Read      = false,
+            //         Status    = "pending_full",
+            //         ImageUrl  = ev.EventImgPath ?? "/images/notification.png",
+            //         Url       = $"/Event/Detail/{id}",
+            //         CreatedAt = DateTime.UtcNow
+            //     });
+            // }
 
             return Ok();
         }
@@ -569,7 +570,7 @@ namespace Travello.Controllers
                         {
                             UserId    = p.UserId,
                             Title     = "Event Cancelled",
-                            Message   = $"กิจกรรม '{ev.EventTitle}' ถูกยกเลิกโดยผู้จัด",
+                            Message   = $"The event '{ev.EventTitle}' has been cancelled by the organize",
                             Reason    = request.reason,
                             Read      = false,
                             Status    = "warning",

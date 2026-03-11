@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Noto+Sans+Thai:wght@100..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="~/css/styleDetail.css" />
-    <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true">
+    <!-- <link rel="stylesheet" href="~/css/CreateEvent.css" asp-append-version="true"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
     <link rel="stylesheet" href="~/css/NavBar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/NotificationPopup.css" asp-append-version="true">
@@ -163,7 +163,7 @@
                                                             <div class="box">
                                                                 <img class="iconexpense" src="~/images/expense.svg" alt="expense">
                                                                 <h6 class="text-sm font-semibold">@exp.Name</h6>
-                                                                <h6 class="expensetext text-sm font-regular">$ @exp.Amount</h6>
+                                                                <h6 class="expensetext text-sm font-regular">$ @exp.Amount.ToString("N2")</h6>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -177,7 +177,7 @@
                                 <p class="text-md font-regular">EXPENSES SUMMARY</p>
                                 <div class="total">
                                     <p class="text-md font-regular">Total balance</p>
-                                    <p class="expensetext text-sm font-regular">$ @Model.TotalExpenses</p> 
+                                    <p class="expensetext text-sm font-regular">$ @Model.TotalExpenses.ToString("N2")</p> 
                                     <!-- <p class="expensetext text-sm font-regular">$ 4,280</p> -->
                                 </div>
                             </div>
@@ -210,6 +210,14 @@
                                 <!-- <p class="text-sm font-semilight">21</p> -->
                                 <img class="dot2" src="~/images/Dot 2.svg" alt="dot">
                             </div>
+                            @if (Model.UserStatus == "owner" || Model.UserStatus == "owner_closed"){
+                            <p class="text-md font-semilight">PENDING</p>
+                            <div class="number">
+                                <p class="text-sm font-semilight">@Model.PendingCount</p>
+                                <!-- <p class="text-sm font-semilight">21</p> -->
+                                <img class="dot2" src="~/images/Dot 2.svg" alt="dot">
+                            </div>
+                            }
                             <button id="seeAllBtn" class="see-all-btn text-sm font-semibold">See all</button>
                         </div>
                         <div class="photo" id="attendeePhotos">
@@ -348,7 +356,7 @@
     <div id="pleaseLoginModal" class="modal-overlay" aria-hidden="true">
         <div class="modal2 modal-confirm" role="dialog" aria-modal="true">
             <button class="modal-close" onclick="document.getElementById('pleaseLoginModal').classList.remove('open')">×</button>
-            <p class="confirm-title text-sm font-semibold">กรุณาเข้าสู่ระบบก่อน</p>
+            <p class="confirm-title text-sm font-semibold">Please log in first</p>
             <div class="confirm-buttons">
                 <button class="btn-action btn-confirm-leave text-md font-semibold" 
                     onclick="document.getElementById('pleaseLoginModal').classList.remove('open')">
@@ -402,7 +410,7 @@
         )
     );
 
-    (async function() {
+        (async function() {
         const eventId    = document.getElementById('eventId').value;
         const userStatus = document.getElementById('userStatus').value;
 
@@ -416,14 +424,16 @@
 
             const data = await res.json();
 
-            const displayList = data.isOwner
-                ? data.attendees
-                : data.attendees.filter(a => a.isApproved);
+            const approvedList = data.attendees.filter(a => a.isApproved);
+            const pendingList  = data.attendees.filter(a => !a.isApproved);
 
-            renderAttendeePhotos(displayList);
+            renderAttendeePhotos(approvedList);
 
-            const countEl = document.querySelector('.number p');
-            if (countEl) countEl.textContent = displayList.length;
+            const approvedCountEl = document.getElementById('approvedCountEl');
+            if (approvedCountEl) approvedCountEl.textContent = approvedList.length;
+
+            const pendingCountEl = document.getElementById('pendingCountEl');
+            if (pendingCountEl) pendingCountEl.textContent = pendingList.length;
 
         } catch(e) { console.error(e); }
     })();

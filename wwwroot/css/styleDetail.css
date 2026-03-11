@@ -604,7 +604,7 @@ body, .details {
 
     display: flex;
     flex-direction: row;
-    padding: 0 var(--space-xs);
+    padding: var(--space-xs);
 
 
     border-radius: 4px;

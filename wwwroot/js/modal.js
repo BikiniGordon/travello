@@ -58,6 +58,7 @@ async function rejectAttendee(participantId) {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
         seeAllBtn.focus();
+        window.location.reload();
     }
 
     loadAttendees = async function () {
@@ -66,36 +67,51 @@ async function rejectAttendee(participantId) {
 
         try {
             const response = await fetch('/Event/GetAttendees/' + eventId);
-            if (!response.ok) throw new Error('โหลดข้อมูลไม่สำเร็จ');
+            if (!response.ok) throw new Error('Failed to load data');
             const data = await response.json();
             renderAttendees(data);
 
 
         } catch (err) {
-            attendeeList.innerHTML = '<p>ไม่สามารถโหลดข้อมูลได้</p>';
+            attendeeList.innerHTML = '<p>Failed to load data</p>';
             console.error(err);
         }
     };
 
     function renderAttendees(data) {
         if (!data.attendees || data.attendees.length === 0) {
-            attendeeList.innerHTML = '<p>ยังไม่มีผู้เข้าร่วม</p>';
+            attendeeList.innerHTML = '<p>No attendee yet</p>';
             return;
         }
+        const approvedCount = data.attendees.filter(a => a.isApproved).length;
+        const isFull = data.attendees_limit > 0 && approvedCount >= data.attendees_limit;
+        
+        const sorted = [...data.attendees].sort((a, b) => {
+            if (!a.isApproved && b.isApproved) return -1;
+            if (a.isApproved && !b.isApproved) return 1;
+            return 0;
+        });
 
-        attendeeList.innerHTML = data.attendees.map(function (person) {
+        attendeeList.innerHTML = sorted.map(function (person) {
             let actions = '';
             if (data.isOwner) {
                 if (person.isApproved) {
                     actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
                             <button class="btn-delete" onclick="deleteAttendee('${person.id}')">DELETE</button>`;
                 } else {
+                    if (isFull) {
+                    actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
+                            <button class="btn-approve" disabled style="opacity:0.4; cursor:not-allowed;">APPROVE</button>
+                            <button class="btn-reject" onclick="rejectAttendee('${person.id}')">REJECT</button>`;
+                } else {
                     actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
                             <button class="btn-approve" onclick="approveAttendee('${person.id}')">APPROVE</button>
                             <button class="btn-reject" onclick="rejectAttendee('${person.id}')">REJECT</button>`;
                 }
+                }
             } else {
                 actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>`;
+                
             }
 
             const hasAnswer = person.recruitAnswer && person.recruitAnswer.trim() !== '';
