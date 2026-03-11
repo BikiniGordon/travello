@@ -100,7 +100,6 @@ namespace Travello.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-        
             var userCollection = _eventsCollection.Database.GetCollection<EditProfileViewModel>("User");
             var userProfile = await userCollection.Find(u => u.user_id == userId)
                 .Project(u => new EditProfileViewModel 
@@ -112,7 +111,8 @@ namespace Travello.Controllers
                     about_me = u.about_me,
                     profile_img_path = u.profile_img_path,
                     user_tag = u.user_tag,
-                    db_event_id = u.db_event_id, //ส่วนที่เพิ่มเข้ามาใหม่
+                    db_event_id = u.db_event_id, 
+                    //ส่วนที่เพิ่มเข้ามาใหม่
                     gender = u.gender,        
                     date_of_birth = u.date_of_birth 
                 })
@@ -121,23 +121,28 @@ namespace Travello.Controllers
             
             ViewBag.UserProfile = userProfile;
             ViewBag.IsOwner = true;
+            ViewBag.CurrentUserId = userId;
+           
 
             //ส่วนที่เพิ่มเข้ามาใหม่
             var eventsDocCollection = _eventsCollection.Database.GetCollection<EventDocument>("events");
+            var participantsCollection = _eventsCollection.Database.GetCollection<BsonDocument>("event_participants");
+
+
+            var filterJoined = Builders<BsonDocument>.Filter.Eq("user_id", userId) & Builders<BsonDocument>.Filter.Eq("status", "approved");
+            var myJoinedDocs = await participantsCollection.Find(filterJoined).ToListAsync();
+            
+          
+            var myJoinedEventIds = myJoinedDocs.Select(doc => doc["event_id"].ToString()).ToList();
+            ViewBag.MyJoinedEvents = myJoinedEventIds;
+
             var builder = Builders<EventDocument>.Filter;
             var filter = builder.Eq(e => e.CreatedBy, userId);
 
-            var participantsCollection = _database.GetCollection<EventParticipant>("event_participants");
- 
-            var myJoinedDocs = await participantsCollection
-                .Find(p => p.UserId == userId && p.Status == "approved")
-                .ToListAsync();
-            var myJoinedEventIds = myJoinedDocs.Select(p => p.EventId).ToList();
-            if (myJoinedEventIds.Any())
-            {
-                var joinedFilter = builder.In(e => e.Id, myJoinedEventIds);
-                filter = builder.Or(filter, joinedFilter);
+            if (myJoinedEventIds.Any()) {
+                filter = builder.Or(filter, builder.In(e => e.Id, myJoinedEventIds));
             }
+
             var dbPosts = await eventsDocCollection.Find(filter).ToListAsync();
             var viewModels = dbPosts.Select(db => new EventDetailViewModel
             {
@@ -163,7 +168,6 @@ namespace Travello.Controllers
             {
                 return RedirectToAction("Profile", "Home");
             }
-
             
             var userCollection = _database.GetCollection<EditProfileViewModel>("User");
             var userProfile = await userCollection.Find(u => u.user_id == id)
@@ -176,6 +180,7 @@ namespace Travello.Controllers
                     about_me = u.about_me,
                     profile_img_path = u.profile_img_path,
                     user_tag = u.user_tag,
+                    //ส่วนที่เพิ่มเข้ามาใหม่
                     gender = u.gender,        
                     date_of_birth = u.date_of_birth 
                 })
@@ -185,18 +190,32 @@ namespace Travello.Controllers
 
      
             ViewBag.UserProfile = userProfile;
-            ViewBag.IsOwner = false; 
+            ViewBag.IsOwner = false;
+            ViewBag.CurrentUserId = currentUserId;
+             
             
-            // ได้รับอนุมัติทริปไหนบ้าง
-            var participantsCollection = _database.GetCollection<EventParticipant>("event_participants");
-            var myJoinedDocs = await participantsCollection
-                .Find(p => p.UserId == currentUserId && p.Status == "approved")
-                .ToListAsync();
-            
-            ViewBag.MyJoinedEvents = myJoinedDocs.Select(p => p.EventId).ToList();
-            var eventsDocCollection = _database.GetCollection<EventDocument>("events");
-            var dbPosts = await eventsDocCollection.Find(e => e.CreatedBy == id).ToListAsync();
+           //ส่วนที่เพิ่มเข้ามาใหม่
+            var participantsCollection = _database.GetCollection<BsonDocument>("event_participants");
 
+           
+            var filterMyJoined = Builders<BsonDocument>.Filter.Eq("user_id", currentUserId) & Builders<BsonDocument>.Filter.Eq("status", "approved");
+            var myJoinedDocs = await participantsCollection.Find(filterMyJoined).ToListAsync();
+            ViewBag.MyJoinedEvents = myJoinedDocs.Select(doc => doc["event_id"].ToString()).ToList();
+
+            var eventsDocCollection = _database.GetCollection<EventDocument>("events");
+            var builder = Builders<EventDocument>.Filter;
+            var filter = builder.Eq(e => e.CreatedBy, id);
+
+            var filterHisJoined = Builders<BsonDocument>.Filter.Eq("user_id", id) & Builders<BsonDocument>.Filter.Eq("status", "approved");
+            var hisJoinedDocs = await participantsCollection.Find(filterHisJoined).ToListAsync();
+            var hisJoinedEventIds = hisJoinedDocs.Select(doc => doc["event_id"].ToString()).ToList();
+
+            if (hisJoinedEventIds.Any())
+            {
+                filter = builder.Or(filter, builder.In(e => e.Id, hisJoinedEventIds));
+            }
+
+            var dbPosts = await eventsDocCollection.Find(filter).ToListAsync();
             var viewModels = dbPosts.Select(db => new EventDetailViewModel
             {
                 EventId = db.Id,
