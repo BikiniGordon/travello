@@ -49,5 +49,7 @@ namespace Travello.Models
         [BsonElement("voters")]
         [BsonRepresentation(BsonType.ObjectId)]
         public List<string> Voters { get; set; } = new();
+        [BsonIgnore] 
+        public List<string> voter_profiles { get; set; } = new();
     }
 }

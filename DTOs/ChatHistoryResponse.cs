@@ -1,3 +1,8 @@
+using Travello.Models;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace Travello.DTOs 
 {
     public class ChatHistoryResponse
@@ -10,5 +15,8 @@ namespace Travello.DTOs
         public string sender_id { get; set; }
         public string sender_name { get; set; }
         public string sender_img { get; set; }
+        public string poll_id { get; set; }
+        [BsonIgnore]
+        public PollModel? poll_data { get; set; }
     }
 }

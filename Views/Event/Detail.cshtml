@@ -44,13 +44,13 @@
                             }
                         </div>
                     </div>
-                    <div class="owner">
-                        <img class="profile" src="@Model.HostProfileImage" alt="Host profile">
-                        <!-- <img class="profile" src="~/images/Ellipse 12.png" alt="Host profile"> -->
-                        <p class="text-md font-regular">Hosted by</p>
-                        <span class="text-md font-semibold">@Model.HostName</span>
-                        <!-- <span class="text-md font-semibold">Dearja</span> -->
-                    </div>
+                    <a href="/Home/UserProfile/@Model.HostId" style="text-decoration:none; color:inherit;">
+                        <div class="owner">
+                            <img class="profile" src="@Model.HostProfileImage" alt="Host profile">
+                            <p class="text-md font-regular">Hosted by</p>
+                            <span class="text-md font-semibold">@Model.HostName</span>
+                        </div>
+                    </a>
                 </div>
                 <img class="cover" src="@Model.CoverImage">
                 <!-- <img class="cover" src="~/images/cover.png" alt="Event cover"> -->
@@ -367,6 +367,7 @@
             System.Text.Json.JsonSerializer.Serialize(
                 Model.Attendees.Select(a => new {
                     id = a.Id,
+                    userId  = a.Id,
                     name = a.Name,
                     profileImage = a.ProfileImage
                 })

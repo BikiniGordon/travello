@@ -14,6 +14,7 @@ namespace Travello.Controllers
         private readonly IMongoCollection<EventDocument> _eventDocumentsCollection;
         private readonly IMongoCollection<EventParticipant> _participantsCollection;
         private readonly IMongoCollection<ChatRoomModel> _chatRoomsCollection;
+        private readonly IMongoCollection<PollModel> _pollCollection;
 
         public ChatController(ChatService chatService, IMongoDatabase database)
         {
@@ -23,15 +24,12 @@ namespace Travello.Controllers
             _eventDocumentsCollection = database.GetCollection<EventDocument>("events");
             _participantsCollection = database.GetCollection<EventParticipant>("event_participants");
             _chatRoomsCollection = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _pollCollection = database.GetCollection<PollModel>("polls");
         }
 
         public async Task<IActionResult> Index()
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(currentUserId))
-            {
-                return RedirectToAction("CreateAccount", "User");
-            }
 
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
@@ -139,7 +137,6 @@ namespace Travello.Controllers
                 }
             }
 
-            // Order by latest message time
             myChats = myChats.OrderByDescending(chat => chat.last_message_time).ToList();
 
             return Json(new { success = true, data = myChats });

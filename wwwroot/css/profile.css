@@ -1,4 +1,4 @@
-/* รูปโปรไฟล์ */
+
 @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
 
 :root {
@@ -129,18 +129,11 @@
     flex: 1;
     min-width: 0;
 }
-.frame_1349 {
-    width: 100%; 
-    display: flex;
-    flex-direction: row; 
-    flex-wrap: nowrap;   
-    justify-content: center; 
-    gap: var(--space-xl);
-}
+
 .profile-card {
     background-color: #e2e0d6;
     border-radius: 50px; 
-    width: 355px;
+    width: 100%;
     max-width: 355px;
     max-height: 355px; 
     height: auto; 
@@ -178,11 +171,14 @@
 }
 
 .frame_1349 {
-    padding: var(--space-xl);
     width: 100%; 
     max-width: 100%;
     display: flex;
-    justify-content: left;
+    flex-direction: row; 
+    flex-wrap: wrap;
+    justify-content: center; 
+    gap: var(--space-xl);
+    
 }
 .text_name {
     font-size: var(--text-xl);
@@ -299,13 +295,10 @@
 }
 .btn_edit_tag {
     position: absolute;
-    right: 0;
-    bottom: 0; 
+    right: 10px;
+    bottom: 10px; 
     width: 32px;
     height: 32px;
-    background: #efede4;
-    border: 1px solid #d9d9d9;
-    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -458,9 +451,9 @@
 /* 2. ตัวกล่อง Popup สีขาว */
 .frame_1575 {
     background-color: #ffffff;
-    width: 450px; 
+    width: 90%;
+    max-width: 450px;
     border-radius: 20px; 
-    /* ใช้ตัวแปร space-lg (32px) และ space-xl (48px) แทน padding เดิม */
     padding: var(--space-lg) var(--space-xl); 
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15); 
     box-sizing: border-box;
@@ -569,4 +562,133 @@
 
 .btn_submit:hover {
     background-color: #333333; 
+}
+
+@media (max-width: 768px) {
+    
+    .frame_1349 {
+        flex-direction: column;
+        align-items: center;
+        padding: var(--space-md);
+    }
+
+
+    .frame_1677 {
+        align-items: center;
+        text-align: center;
+    }
+
+    .head_post {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .box_post_action {
+        margin-left: 0;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .box_action {
+        padding: var(--space-xs) var(--space-sm);
+    }
+    .box_tag{
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        align-self: stretch;
+        width: 100%;
+    }
+    .frame_tag_editer {
+        flex-direction: row;
+        width: 100%;
+        padding-right: 0;
+        gap: var(--space-sm);
+    }
+    .box_element_tag {
+        width: auto;
+        justify-content: center;
+        gap: 10px;
+        justify-content: flex-start !important; 
+        width: 100%;
+    }
+    .btn_edit_tag {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        z-index: 5;
+        
+        margin-left: auto;    
+        align-self: flex-end; 
+    
+    }
+}
+@media (max-width: 1024px) {
+    
+
+    .frame_1349 {
+        flex-direction: column;
+        align-items: center;
+        padding: var(--space-md);
+    }
+
+
+    .frame_1677 {
+        align-items: center;
+        text-align: center;
+    }
+
+
+    .box_element_tag {
+        justify-content: center;
+    }
+
+
+    .head_post {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .box_post_action {
+        margin-left: 0;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .box_action {
+        padding: var(--space-xs) var(--space-sm);
+    }
+    .box_tag{
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        align-self: stretch;
+        width: 100%;
+    }
+    .frame_tag_editer {
+        flex-direction: row;
+        width: 100%;
+        padding-right: 0;
+        gap: var(--space-sm);
+    }
+    .box_element_tag {
+        width: auto;
+        justify-content: center;
+        gap: 10px;
+        justify-content: flex-start !important; 
+        width: 100%;
+    }
+    .btn_edit_tag {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        z-index: 5;
+        
+        margin-left: auto;    
+        align-self: flex-end; 
+    
+    }
 }

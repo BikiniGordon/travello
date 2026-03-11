@@ -18,11 +18,13 @@ namespace Travello.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly IMongoCollection<ChatRoomModel> _chatRooms;
         private readonly IMongoCollection<User> _user;
+        private readonly IMongoCollection<PollModel> _poll;
 
         public ChatMessageController(ChatService chatService, IWebHostEnvironment env, IMongoDatabase database)
         {
             _chatRooms = database.GetCollection<ChatRoomModel>("chat_rooms");
             _user = database.GetCollection<User>("User");
+            _poll = database.GetCollection<PollModel>("polls");
             _chatService = chatService;
             _env = env;
         }
@@ -31,13 +33,6 @@ namespace Travello.Controllers
         public async Task<IActionResult> GetMessages(string chat_room_id)
         {
             List<ChatHistoryResponse> chatHistory = await _chatService.GetChatHistoryAsync(chat_room_id); //ดึงประวัติมา เราต้องเอาไปออก last_message ตรง chat-card
-
-            // var current_chat_room = await _chatRooms
-            //     .Find(chat_room => chat_room.id == chat_room_id)
-            //     .FirstOrDefaultAsync();
-
-            // current_chat_room.last_message_id = chatHistory[chatHistory.Count - 1];
-
         
             return Json(new { success = true, data = chatHistory });
         }
@@ -53,8 +48,6 @@ namespace Travello.Controllers
             var current_chat_room_obj = await _chatRooms
                 .Find(chat_room => chat_room.id == current_chat_room_id)
                 .FirstOrDefaultAsync();
-            Console.WriteLine(current_chat_room_obj); 
-            // Console.WriteLine(currentUserId);
 
             if (imageFile != null && imageFile.Length > 0)
             {
@@ -75,7 +68,6 @@ namespace Travello.Controllers
 
             if (documentFile != null && documentFile.Length > 0)
             {
-                // แยกเก็บไว้ในโฟลเดอร์ documents เพื่อความเป็นระเบียบ
                 string docUploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "documents");
                 if (!Directory.Exists(docUploadsFolder)) Directory.CreateDirectory(docUploadsFolder);
 
@@ -95,11 +87,12 @@ namespace Travello.Controllers
             if (newMessage != null && (
                 !string.IsNullOrEmpty(newMessage.message_text) || 
                 !string.IsNullOrEmpty(newMessage.image_url) || 
-                !string.IsNullOrEmpty(newMessage.document_url)))
+                !string.IsNullOrEmpty(newMessage.document_url) ||
+                !string.IsNullOrEmpty(newMessage.poll_id)))
             { 
                 newMessage.sender_id = currentUserId;
                 newMessage.sender_img = current_user_obj.ProfileImgPath;
-                Console.WriteLine(newMessage.sender_img);
+                Console.WriteLine(newMessage.poll_id);
                 newMessage.timestamp = DateTime.UtcNow;
                 
                 await _chatService.SaveMessageAsync(newMessage);
@@ -115,6 +108,10 @@ namespace Travello.Controllers
                     else if (!string.IsNullOrEmpty(newMessage.document_url)) 
                     {
                         previewText = "Sent File";
+                    }
+                    else if (!string.IsNullOrEmpty(newMessage.poll_id))
+                    {
+                        previewText = "Poll Create";
                     }
                 }
 

@@ -66,7 +66,6 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
 //Chat--------------------------------------------------------
-builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatService>();
 
 //Poll---------------------------------------------------------
@@ -97,8 +96,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<ChatHub>("/chatHub");
-
 app.Map("/ws", async context =>
 {
     if (context.WebSockets.IsWebSocketRequest)
@@ -106,15 +103,12 @@ app.Map("/ws", async context =>
         var roomId = context.Request.Query["chat_room_id"].ToString();
         if (!string.IsNullOrEmpty(roomId))
         {
-            // รับสาย
             using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-            
-            // เอาสายนี้ไปเก็บไว้ในห้องแชทที่ระบุ
+
             Travello.Services.WebSocketManage.Rooms.AddOrUpdate(roomId, 
                 new List<WebSocket> { webSocket }, 
                 (key, existingList) => { existingList.Add(webSocket); return existingList; });
 
-            // ถือสายรอไว้เรื่อยๆ จนกว่าหน้าเว็บจะปิดหนี (ดักฟังข้อความขยะเพื่อดึงเวลาไว้)
             var buffer = new byte[1024];
             var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             while (!result.CloseStatus.HasValue)
