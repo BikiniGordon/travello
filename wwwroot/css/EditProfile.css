@@ -149,6 +149,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 
     border-radius: 38px;
     border: 1px solid #000;
@@ -360,6 +361,7 @@
     border-radius: 50px;
     border: 1px solid #000;
     background: none;
+    cursor: pointer;
 }
 
 body {

@@ -101,12 +101,6 @@ if (loginForm) {
         const result = await response.json();
 
         if (result.success) {
-            if (window.pendingRedirectAfterLogin) {
-                const destination = window.pendingRedirectAfterLogin;
-                window.pendingRedirectAfterLogin = null;
-                window.location.href = destination;
-                return;
-            }
             window.location.href = '/';
         } else {
             alert(result.message);
