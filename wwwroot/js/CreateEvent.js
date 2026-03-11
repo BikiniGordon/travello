@@ -523,6 +523,15 @@ function syncMapMarkers(zoomToFirst = false) {
     } else {
         renderStaticMapPreview(defaultLocation.lat, defaultLocation.lng, 'KMITL, Bangkok, Thailand', 0, 0);
     }
+
+    // If interactive Leaflet map is active, refresh its markers too
+    try {
+        if (typeof updateLeafletMarkers === 'function' && isInteractiveMap) {
+            updateLeafletMarkers();
+        }
+    } catch (e) {
+        // ignore
+    }
 }
 
 function convertLatLngToWorldPixels(lat, lng, zoom) {
@@ -778,6 +787,13 @@ function isValidFullGoogleMapsLink(url) {
 // Adds a marker to the map and centers the viewport on it.
 function addMapMarker(lat, lng, name, placeNumber = null) {
     renderStaticMapPreview(lat, lng, name, 1);
+    try {
+        if (typeof updateLeafletMarkers === 'function' && isInteractiveMap) {
+            updateLeafletMarkers();
+        }
+    } catch (e) {
+        // ignore
+    }
 }
 
 // Handles create-event form validation and payload serialization.
@@ -1205,8 +1221,11 @@ function initializeMap() {
     }
 
     mapContainerElement.innerHTML = `
-        <div class="static-map-preview" style="display:flex; flex-direction:column; gap:10px; width:100%; height:100%;">
-            <div style="position:relative; width:100%; height:100%; min-height:300px; border-radius:14px; border:1px solid #d6d6d6; overflow:hidden; background:#f3f3f3;">
+        <div class="map-top-controls" style="display:flex; justify-content:flex-end; padding:10px 12px;">
+            <button id="toggleMapModeBtn" type="button" class="btn-toggle-map text-sm font-regular">Switch to Interactive Map</button>
+        </div>
+        <div class="static-map-preview" style="display:flex; flex-direction:column; gap:10px; width:100%; flex:1;">
+            <div style="position:relative; width:100%; flex:1; min-height:300px; border-radius:14px; border:1px solid #d6d6d6; overflow:hidden; background:#f3f3f3;">
                 <canvas id="eventStaticMapCanvas" aria-label="Event map preview" style="display:block; width:100%; height:100%;"></canvas>
                 <button id="eventStaticMarker" type="button" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -100%); background:transparent; border:none; padding:0; margin:0; cursor:pointer;">
                     <span id="eventStaticMarkerLabel" style="display:none; position:absolute; left:50%; bottom:46px; transform:translateX(-50%); background:rgba(30,30,30,0.9); color:#fff; border-radius:999px; padding:6px 10px; font:500 13px 'Segoe UI',sans-serif; white-space:nowrap;"></span>
@@ -1224,6 +1243,19 @@ function initializeMap() {
     staticMapMarkerElement = document.getElementById('eventStaticMarker');
     staticMapMarkerIconElement = document.getElementById('eventStaticMarkerIcon');
     staticMapMarkerLabelElement = document.getElementById('eventStaticMarkerLabel');
+
+    // Attach toggle button handler created inside the map container
+    const toggleBtn = document.getElementById('toggleMapModeBtn');
+    if (toggleBtn) {
+        toggleBtn.textContent = isInteractiveMap ? 'Switch to Static Map' : 'Switch to Interactive Map';
+        toggleBtn.addEventListener('click', () => {
+            if (isInteractiveMap) {
+                showStaticMap();
+            } else {
+                showLeafletMap();
+            }
+        });
+    }
 
     if (staticMapMarkerElement && staticMapMarkerLabelElement) {
         const showMarkerLabel = () => {
@@ -1782,6 +1814,121 @@ if (importantPackRows) {
 }
 
 // Initializes create-event page behavior on DOM ready.
+
+let leafletMap = null;
+let leafletMarkers = [];
+let leafletDefaultMarker = null;
+let isInteractiveMap = false;
+
+function showStaticMap() {
+    const staticPreview = document.getElementById('eventMap').querySelector('.static-map-preview');
+    if (staticPreview) staticPreview.style.display = '';
+    const leafletDiv = document.getElementById('leafletMapContainer');
+    if (leafletDiv) leafletDiv.style.display = 'none';
+    const btn = document.getElementById('toggleMapModeBtn');
+    if (btn) btn.textContent = 'Switch to Interactive Map';
+    isInteractiveMap = false;
+}
+
+
+function createLeafletMarkerIcon(placeNumber = null) {
+    // Use the same SVG as createMapMarkerSVG
+    let svgString;
+    if (placeNumber !== null && placeNumber > 0) {
+        svgString = `
+            <svg width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
+                <circle cx="17.5" cy="16.5" r="9.5" fill="#E6E6E8"/>
+                <text x="17.5" y="21" text-anchor="middle" font-size="13" font-weight="bold" font-family="Segoe UI, sans-serif" fill="#232C22">${placeNumber}</text>
+            </svg>
+        `;
+    } else {
+        svgString = `
+            <svg width="35" height="41" viewBox="0 0 35 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M35 17.5C35 29.214 22.9806 37.5053 18.8639 40.0015C18.0155 40.516 16.9845 40.516 16.1361 40.0015C12.0194 37.5053 0 29.214 0 17.5C0 7.83502 7.83502 0 17.5 0C27.165 0 35 7.83502 35 17.5Z" fill="#232C22"/>
+                <circle cx="17.5" cy="16.5" r="9.5" fill="#E6E6E8"/>
+            </svg>
+        `;
+    }
+    return L.divIcon({
+        className: '',
+        html: svgString,
+        iconSize: [35, 41],
+        iconAnchor: [17, 41],
+        popupAnchor: [0, -41]
+    });
+}
+
+function updateLeafletMarkers() {
+    if (!leafletMap) return;
+    // Remove old markers
+    if (leafletMarkers && leafletMarkers.length) {
+        leafletMarkers.forEach(m => leafletMap.removeLayer(m));
+    }
+    leafletMarkers = [];
+    if (leafletDefaultMarker) {
+        leafletMap.removeLayer(leafletDefaultMarker);
+        leafletDefaultMarker = null;
+    }
+
+    // Gather all planner places with coordinates
+    const allRows = plannerDaysContainer.querySelectorAll('.planner-item');
+    let bounds = [];
+    let hasPlace = false;
+    allRows.forEach((row) => {
+        const lat = Number.parseFloat(row.dataset.markerLat);
+        const lng = Number.parseFloat(row.dataset.markerLng);
+        const placeNumber = Number.parseInt(row.dataset.placeNumber, 10);
+        const name = row.dataset.markerName || row.querySelector('.planner-place-input')?.value?.trim() || 'Location';
+        if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(placeNumber) && placeNumber > 0) {
+            const marker = L.marker([lat, lng], {
+                icon: createLeafletMarkerIcon(placeNumber)
+            });
+            marker.bindTooltip(name, {permanent: false, direction: 'top', className: 'leaflet-marker-tooltip', offset: L.point(0, -45)});
+            marker.addTo(leafletMap);
+            leafletMarkers.push(marker);
+            bounds.push([lat, lng]);
+            hasPlace = true;
+        }
+    });
+    if (hasPlace && bounds.length > 0) {
+        leafletMap.fitBounds(bounds, {padding: [30, 30]});
+    } else {
+        // Show default marker at default location using same marker SVG but without number
+        leafletDefaultMarker = L.marker([defaultLocation.lat, defaultLocation.lng], {
+            icon: createLeafletMarkerIcon(null)
+        }).addTo(leafletMap);
+        leafletDefaultMarker.bindTooltip('KMITL, Bangkok, Thailand', {permanent: false, direction: 'top', className: 'leaflet-marker-tooltip', offset: L.point(0, -45)});
+        leafletMap.setView([defaultLocation.lat, defaultLocation.lng], STATIC_MAP_ZOOM);
+    }
+}
+
+function showLeafletMap() {
+    let leafletDiv = document.getElementById('leafletMapContainer');
+    if (!leafletDiv) {
+        leafletDiv = document.createElement('div');
+        leafletDiv.id = 'leafletMapContainer';
+        leafletDiv.className = 'map-content';
+        document.getElementById('eventMap').appendChild(leafletDiv);
+    }
+    leafletDiv.style.display = '';
+    const staticPreview = document.getElementById('eventMap').querySelector('.static-map-preview');
+    if (staticPreview) staticPreview.style.display = 'none';
+    const btn = document.getElementById('toggleMapModeBtn');
+    if (btn) btn.textContent = 'Switch to Static Map';
+    isInteractiveMap = true;
+
+    // Initialize Leaflet map if not already
+    if (!leafletMap) {
+        leafletMap = L.map('leafletMapContainer').setView([defaultLocation.lat, defaultLocation.lng], STATIC_MAP_ZOOM);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(leafletMap);
+    }
+    leafletMap.invalidateSize();
+    updateLeafletMarkers();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initializePhotoUpload();
     initializeTagButtons();
@@ -1791,5 +1938,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (plannerDaysContainer) {
         applyInitialPlannerRows();
+        // Update markers when itinerary changes
+        const refreshMarkers = () => { if (isInteractiveMap) updateLeafletMarkers(); };
+        plannerDaysContainer.addEventListener('input', refreshMarkers);
+        plannerDaysContainer.addEventListener('click', refreshMarkers);
+        plannerDaysContainer.addEventListener('change', refreshMarkers);
+        plannerDaysContainer.addEventListener('DOMSubtreeModified', refreshMarkers);
+    }
+
+    // Map toggle button logic
+    const toggleBtn = document.getElementById('toggleMapModeBtn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            if (isInteractiveMap) {
+                showStaticMap();
+            } else {
+                showLeafletMap();
+            }
+        });
     }
 });
