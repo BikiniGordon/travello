@@ -940,20 +940,19 @@ function bindCreateEventFormSubmit() {
 
     const requiredFieldConfigs = (isLimitedEditMode
         ? [
-            { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
-            { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+            { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' }
         ]
         : [
             { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
             { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
+            // Category selection is validated separately because the hidden input is populated during submit
             { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
             { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
             { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
             { name: 'EndDate', selector: 'input[name="EndDate"]', message: 'End date is required.' },
             { name: 'EndTime', selector: 'input[name="EndTime"]', message: 'End time is required.' },
-            { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration open date is required.' },
-            { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' },
-            { name: 'TripRules', selector: 'textarea[name="TripRules"]', message: 'Trip rules are required.' }
+            { name: 'OpenDate', selector: 'input[name="OpenDate"]', message: 'Registration close date is required.' },
+            { name: 'LocationName', selector: 'input[name="LocationName"]', message: 'Location is required.' }
         ])
         .map((config) => ({
             ...config,
@@ -1085,7 +1084,7 @@ function bindCreateEventFormSubmit() {
             const startDate = parseDateValue(startDateInput.value);
 
             if (openDate && startDate && openDate >= startDate) {
-                setValidationMessage('OpenDate', 'Registration open date must be before the start date.');
+                setValidationMessage('OpenDate', 'Registration close date must be before the start date.');
                 isValid = false;
             } else {
                 setValidationMessage('OpenDate', '');
@@ -1156,6 +1155,49 @@ function bindCreateEventFormSubmit() {
         return true;
     }
 
+    function validateCategorySelected() {
+        // Check if a category button is selected (first tags-container)
+        const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
+        const selected = Array.from(categoryButtons).some((b) => b.classList.contains('is-selected'));
+        if (!selected) {
+            setValidationMessage('Category', 'Please select a category.');
+            // focus first category button to draw attention
+            const firstBtn = categoryButtons[0];
+            if (firstBtn && typeof firstBtn.focus === 'function') firstBtn.focus();
+            return false;
+        }
+        setValidationMessage('Category', '');
+        return true;
+    }
+
+    function validatePlannerExpenses() {
+        setValidationMessage('PlannerJson', '');
+
+        const dayElements = document.querySelectorAll('.event-plan-day');
+        for (const dayElement of dayElements) {
+            const rowElements = dayElement.querySelectorAll('.planner-item');
+
+            for (const rowElement of rowElements) {
+                const expenseRows = rowElement.querySelectorAll('.planner-expense-row');
+                for (const expenseRow of expenseRows) {
+                    const expenseName = expenseRow.querySelector('.planner-expense-name-input')?.value?.trim() || '';
+                    const amountRaw = expenseRow.querySelector('.planner-expense-input')?.value;
+                    if (!expenseName) {
+                        continue;
+                    }
+
+                    const amount = Number.parseFloat(amountRaw || '0');
+                    if (!Number.isFinite(amount) || amount <= 0) {
+                        setValidationMessage('PlannerJson', 'Each expense amount must be greater than 0.');
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     requiredFieldConfigs.forEach((config) => {
         const eventName = config.input.type === 'date' || config.input.type === 'time' || config.input.type === 'file' ? 'change' : 'input';
         config.input.addEventListener('blur', () => {
@@ -1192,7 +1234,9 @@ function bindCreateEventFormSubmit() {
         const dateOrderingValid = validateDateOrdering();
         const photoLinkValid = validatePhotoLinkFormat();
         const plannerLinksValid = validatePlannerGoogleMapLinks();
-        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid && plannerLinksValid;
+        const plannerExpensesValid = validatePlannerExpenses();
+        const categoryValid = isLimitedEditMode ? true : validateCategorySelected();
+        const isValid = requiredValid && attendeesValid && dateOrderingValid && photoLinkValid && plannerLinksValid && plannerExpensesValid && categoryValid;
 
         if (!isValid) {
             event.preventDefault();
