@@ -784,7 +784,6 @@ function renderStaticMapPreview(lat, lng, markerName, markerCount, markerNumber 
     if (staticMapMarkerElement) {
         staticMapMarkerElement.title = safeMarkerName;
         staticMapMarkerElement.setAttribute('aria-label', safeMarkerName);
-        // If multiple markers are present, hide the DOM overlay marker (we render markers into canvas)
         staticMapMarkerElement.style.display = markerCount > 1 ? 'none' : '';
     }
 
@@ -802,7 +801,7 @@ function renderStaticMapPreview(lat, lng, markerName, markerCount, markerNumber 
     }
 }
 
-// Builds marker SVG markup, optionally including a place number.
+// Builds marker SVG markup
 function createMapMarkerSVG(placeNumber = null) {
     if (placeNumber !== null && placeNumber > 0) {
         return `
@@ -1155,12 +1154,11 @@ function bindCreateEventFormSubmit() {
     }
 
     function validateCategorySelected() {
-        // Check if a category button is selected (first tags-container)
+        // Check if a category button
         const categoryButtons = document.querySelectorAll('.catagory-section .tags-container:first-of-type .tag-btn');
         const selected = Array.from(categoryButtons).some((b) => b.classList.contains('is-selected'));
         if (!selected) {
             setValidationMessage('Category', 'Please select a category.');
-            // focus first category button to draw attention
             const firstBtn = categoryButtons[0];
             if (firstBtn && typeof firstBtn.focus === 'function') firstBtn.focus();
             return false;
@@ -1408,7 +1406,7 @@ function initializeMap() {
     staticMapMarkerIconElement = document.getElementById('eventStaticMarkerIcon');
     staticMapMarkerLabelElement = document.getElementById('eventStaticMarkerLabel');
 
-    // Attach toggle button handler created inside the map container
+    // Attach toggle button handler
     const toggleBtn = document.getElementById('toggleMapModeBtn');
     if (toggleBtn) {
         toggleBtn.textContent = isInteractiveMap ? 'Switch to Static Map' : 'Switch to Interactive Map';
