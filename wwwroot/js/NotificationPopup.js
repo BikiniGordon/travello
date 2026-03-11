@@ -121,6 +121,24 @@ document.addEventListener('DOMContentLoaded', () => {
             .map((notification, index) => renderNotification(notification, index === notifications.length - 1, index))
             .join('');
 
+        const container = document.getElementById('notificationList');
+        let hasUnread = false;
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].read === false) {
+                hasUnread = true;
+                break;
+            }
+        }
+
+        const dotWrappers = document.querySelectorAll('.NotiIconWrapper');
+        dotWrappers.forEach(wrapper => {
+            if (hasUnread) {
+                wrapper.classList.add('unread-dot');
+            } else {
+                wrapper.classList.remove('unread-dot');
+            }
+        });
+
         if (notificationEmpty) {
             notificationEmpty.style.display = notifications.length === 0 ? 'block' : 'none';
         }

@@ -74,6 +74,7 @@ namespace Travello.Models
         public string Location { get; set; }
         public int RemainingSlots { get; set; }
         public int AttendeeCount { get; set; }
+        public int PendingCount { get; set; }
         public string UserStatus { get; set; } // none | pending | approved | rejected | owner
         public decimal TotalExpenses { get; set; }
 

@@ -1581,7 +1581,7 @@ function hasPlaceValue(rowElement) {
     return Boolean(placeInput && placeInput.value.trim() !== '');
 }
 
-// Ensures a day ends with one empty planner row.
+// A day ends with one empty planner row.
 function ensureTrailingEmptyRow(dayElement) {
     const rows = getRows(dayElement);
     const lastRow = rows[rows.length - 1];
@@ -1592,7 +1592,7 @@ function ensureTrailingEmptyRow(dayElement) {
     }
 }
 
-// Creates the next day when the current day has content.
+// Automatically creates the next day.
 function ensureNextDay(currentDayElement) {
     const dayNumber = Number(currentDayElement.dataset.day);
     if (!Number.isFinite(dayNumber)) {

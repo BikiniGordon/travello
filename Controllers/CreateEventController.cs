@@ -171,6 +171,37 @@ namespace Travello.Controllers
                 ModelState.AddModelError(nameof(input.OpenDate), "Registration open date must be before the start date.");
             }
 
+            // Ensure dates are not in the past (relative to server UTC date)
+            var todayUtc = DateTime.UtcNow.Date;
+            if (startDate.HasValue && startDate.Value.Date < todayUtc)
+            {
+                ModelState.AddModelError(nameof(input.StartDate), "Start date must not be earlier than today.");
+            }
+
+            if (explicitEndDate.HasValue && explicitEndDate.Value.Date < todayUtc)
+            {
+                ModelState.AddModelError(nameof(input.EndDate), "End date must not be earlier than today.");
+            }
+
+            if (openDate.HasValue && openDate.Value.Date < todayUtc)
+            {
+                ModelState.AddModelError(nameof(input.OpenDate), "Registration open date must not be earlier than today.");
+            }
+
+            DateTime? itineraryEndDate = plannerRows
+                .Select(row => ParseDateToUtc(row.DayDate))
+                .Where(date => date.HasValue)
+                .Select(date => date!.Value)
+                .OrderByDescending(date => date)
+                .FirstOrDefault();
+
+            DateTime? endDate = explicitEndDate ?? itineraryEndDate ?? startDate;
+
+            if (endDate.HasValue && endDate.Value.Date < todayUtc)
+            {
+                ModelState.AddModelError(nameof(input.EndDate), "Event end date must not be earlier than today.");
+            }
+
             if (!ModelState.IsValid)
             {
                 var firstError = GetFirstModelStateError(ModelState);
@@ -214,15 +245,6 @@ namespace Travello.Controllers
                 .ToList();
 
             var packingList = ParsePackingList(input.PackingListJson);
-
-            DateTime? itineraryEndDate = plannerRows
-                .Select(row => ParseDateToUtc(row.DayDate))
-                .Where(date => date.HasValue)
-                .Select(date => date!.Value)
-                .OrderByDescending(date => date)
-                .FirstOrDefault();
-
-            DateTime? endDate = explicitEndDate ?? itineraryEndDate ?? startDate;
 
             var itinerary = plannerRows
                 .Where(row => !string.IsNullOrWhiteSpace(row.PlaceName))
