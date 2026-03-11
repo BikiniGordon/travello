@@ -310,33 +310,45 @@ function startPollDetailAutoRefresh() {
 }
 
 
-async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location = '', chat_room_event_image = '') {
+async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
+    // 1. อัปเดตตัวแปร Global ให้ครบ 7 ตัว
     current_event_id = event_id;
     current_chat_room_id = chat_room_id;
     current_chat_room_location = chat_room_location;
+    current_chat_room_start_date = chat_room_start_date;
+    current_chat_room_end_date = chat_room_end_date;
     current_chat_room_event_image = chat_room_event_image;
+
+    // 2. เคลียร์สถานะของโพล (เอามาจากฟังก์ชันแรก ป้องกันบั๊กโพลค้าง)
     currentPollId = "";
     lastPollListEventId = '';
     lastPollListSignature = '';
     lastPollDetailId = '';
     lastPollDetailSignature = '';
-    stopPollRoomAutoRefresh();
-    stopPollDetailAutoRefresh();
+    if (typeof stopPollRoomAutoRefresh === 'function') stopPollRoomAutoRefresh();
+    if (typeof stopPollDetailAutoRefresh === 'function') stopPollDetailAutoRefresh();
 
-    document.getElementById('empty-room').style.display = 'none';
-    document.getElementById('setting-room').style.display = 'none';
-    document.getElementById('all-poll-room').style.display = 'none';
-    document.getElementById('files-and-links-room') && (document.getElementById('files-and-links-room').style.display = 'none');
-    document.getElementById('chat-room').style.display = 'flex';
+    // 3. จัดการแสดง/ซ่อนหน้าต่างต่างๆ (เพิ่มการเช็ค if กันพังเผื่อหา element ไม่เจอ)
+    if (document.getElementById('empty-room')) document.getElementById('empty-room').style.display = 'none';
+    if (document.getElementById('setting-room')) document.getElementById('setting-room').style.display = 'none';
+    if (document.getElementById('all-poll-room')) document.getElementById('all-poll-room').style.display = 'none';
+    if (document.getElementById('files-and-links-room')) document.getElementById('files-and-links-room').style.display = 'none';
+    if (document.getElementById('create-poll-page')) document.getElementById('create-poll-page').style.display = 'none';
+    if (document.getElementById('poll-select-card')) document.getElementById('poll-select-card').style.display = 'none';
+    if (document.getElementById('chat-room')) document.getElementById('chat-room').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
-    document.getElementById('chat-room-title').innerText = chat_name;
-    document.getElementById('setting-event-title').innerText = chat_name;
-    document.getElementById('setting-event-status').innerText = chat_room_location ? ('Location : ' + chat_room_location) : event_id;
-    if (document.getElementById('event-image-setting') && chat_room_event_image) {
-        document.getElementById('event-image-setting').src = chat_room_event_image;
+    // 4. อัปเดตข้อมูลบนหน้าจอแชทและหน้าตั้งค่า
+    if (document.getElementById('chat-room-title')) document.getElementById('chat-room-title').innerText = chat_name;
+    if (document.getElementById('setting-event-title')) document.getElementById('setting-event-title').innerText = chat_name;
+    if (document.getElementById('setting-event-location')) document.getElementById('setting-event-location').innerText = 'Location : ' + current_chat_room_location;
+    if (document.getElementById('setting-event-date')) document.getElementById('setting-event-date').innerText = current_chat_room_start_date + ' - ' + current_chat_room_end_date;
+    
+    if (document.getElementById('event-image-setting') && current_chat_room_event_image) {
+        document.getElementById('event-image-setting').src = current_chat_room_event_image;
     }
 
+    // 5. จัดการระบบ WebSocket
     if (chat_socket) {
         chat_socket.close();
     }
@@ -345,18 +357,24 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
 
     chat_socket.onmessage = function (event) {
         if (event.data === "NEW_MSG") {
-            loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที!
+            loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที
             loadChatRooms();
+            
+            if (typeof loadSettingImages === 'function') {
+                loadSettingImages();
+            }
         }
     };
 
     chat_socket.onopen = function () { console.log("WebSocket Connected"); };
     chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
 
+    // 6. ดึงข้อมูลประวัติแชทและโหลดหน้าตั้งค่า
     await loadChatMessages();
     await loadChatRooms();
     if (typeof loadSettingImages === 'function') await loadSettingImages();
 
+    // 7. เลื่อนจอลงมาล่างสุด
     setTimeout(() => {
         const chatBody = document.getElementById('chat-body');
         if (chatBody) {
@@ -364,6 +382,63 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
         }
     }, 100);
 }
+
+// async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
+//     current_event_id = event_id;
+//     current_chat_room_id = chat_room_id;
+//     current_chat_room_location = chat_room_location;
+//     current_chat_room_event_image = chat_room_event_image;
+//     current_chat_room_start_date = chat_room_start_date;
+//     current_chat_room_end_date = chat_room_end_date;
+//     currentPollId = "";
+//     lastPollListEventId = '';
+//     lastPollListSignature = '';
+//     lastPollDetailId = '';
+//     lastPollDetailSignature = '';
+//     stopPollRoomAutoRefresh();
+//     stopPollDetailAutoRefresh();
+
+//     document.getElementById('empty-room').style.display = 'none';
+//     document.getElementById('setting-room').style.display = 'none';
+//     document.getElementById('all-poll-room').style.display = 'none';
+//     document.getElementById('files-and-links-room') && (document.getElementById('files-and-links-room').style.display = 'none');
+//     document.getElementById('chat-room').style.display = 'flex';
+//     document.body.style.overflow = 'hidden';
+
+//     document.getElementById('chat-room-title').innerText = chat_name;
+//     document.getElementById('setting-event-title').innerText = chat_name;
+//     document.getElementById('setting-event-status').innerText = chat_room_location ? ('Location : ' + chat_room_location) : event_id;
+//     if (document.getElementById('event-image-setting') && chat_room_event_image) {
+//         document.getElementById('event-image-setting').src = chat_room_event_image;
+//     }
+
+//     if (chat_socket) {
+//         chat_socket.close();
+//     }
+
+//     chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
+
+//     chat_socket.onmessage = function (event) {
+//         if (event.data === "NEW_MSG") {
+//             loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที!
+//             loadChatRooms();
+//         }
+//     };
+
+//     chat_socket.onopen = function () { console.log("WebSocket Connected"); };
+//     chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
+
+//     await loadChatMessages();
+//     await loadChatRooms();
+//     if (typeof loadSettingImages === 'function') await loadSettingImages();
+
+//     setTimeout(() => {
+//         const chatBody = document.getElementById('chat-body');
+//         if (chatBody) {
+//             chatBody.scrollTop = chatBody.scrollHeight;
+//         }
+//     }, 100);
+// }
 function openDetailPage() {
     if (current_event_id) {
         window.location.href = `/Event/Detail/${current_event_id}`;
@@ -378,56 +453,56 @@ async function openChatPage() {
     await loadChatRooms();
 }
 
-async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
-    //เอา event_id ไปหา chat เพื่อดึง
-    // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
-    current_event_id = event_id;
-    current_chat_room_id = chat_room_id;
-    current_chat_room_location = chat_room_location;
-    current_chat_room_event_image = chat_room_event_image;
-    current_chat_room_start_date = chat_room_start_date;
-    current_chat_room_end_date = chat_room_end_date;
+// async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
+//     //เอา event_id ไปหา chat เพื่อดึง
+//     // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
+//     current_event_id = event_id;
+//     current_chat_room_id = chat_room_id;
+//     current_chat_room_location = chat_room_location;
+//     current_chat_room_event_image = chat_room_event_image;
+//     current_chat_room_start_date = chat_room_start_date;
+//     current_chat_room_end_date = chat_room_end_date;
 
-    document.getElementById('empty-room').style.display = 'none';
-    document.getElementById('setting-room').style.display = 'none';
-    document.getElementById('all-poll-room').style.display = 'none';
-    document.getElementById('files-and-links-room').style.display = 'none';
-    document.getElementById('chat-room').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+//     document.getElementById('empty-room').style.display = 'none';
+//     document.getElementById('setting-room').style.display = 'none';
+//     document.getElementById('all-poll-room').style.display = 'none';
+//     document.getElementById('files-and-links-room').style.display = 'none';
+//     document.getElementById('chat-room').style.display = 'flex';
+//     document.body.style.overflow = 'hidden';
 
-    document.getElementById('chat-room-title').innerText = chat_name;
-    document.getElementById('setting-event-title').innerText = chat_name;
-    document.getElementById('setting-event-location').innerText = 'Location : ' + current_chat_room_location;
-    document.getElementById('setting-event-date').innerText = current_chat_room_start_date + ' - ' + current_chat_room_end_date
-    document.getElementById('event-image-setting').src = current_chat_room_event_image;
+//     document.getElementById('chat-room-title').innerText = chat_name;
+//     document.getElementById('setting-event-title').innerText = chat_name;
+//     document.getElementById('setting-event-location').innerText = 'Location : ' + current_chat_room_location;
+//     document.getElementById('setting-event-date').innerText = current_chat_room_start_date + ' - ' + current_chat_room_end_date
+//     document.getElementById('event-image-setting').src = current_chat_room_event_image;
 
-    if (chat_socket) {
-        chat_socket.close();
-    }
+//     if (chat_socket) {
+//         chat_socket.close();
+//     }
 
-    chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
+//     chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
 
-    chat_socket.onmessage = function (event) {
-        if (event.data === "NEW_MSG") {
-            loadChatMessages();
-            loadChatRooms();
-        }
-    };
+//     chat_socket.onmessage = function (event) {
+//         if (event.data === "NEW_MSG") {
+//             loadChatMessages();
+//             loadChatRooms();
+//         }
+//     };
 
-    chat_socket.onopen = function () { console.log("WebSocket Connected"); };
-    chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
+//     chat_socket.onopen = function () { console.log("WebSocket Connected"); };
+//     chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
 
-    await loadChatMessages();
-    await loadChatRooms();
-    await loadSettingImages();
+//     await loadChatMessages();
+//     await loadChatRooms();
+//     await loadSettingImages();
 
-    setTimeout(() => {
-        const chatBody = document.getElementById('chat-body');
-        if (chatBody) {
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-    }, 100);
-}
+//     setTimeout(() => {
+//         const chatBody = document.getElementById('chat-body');
+//         if (chatBody) {
+//             chatBody.scrollTop = chatBody.scrollHeight;
+//         }
+//     }, 100);
+// }
 
 function openDetailPage() {
     if (current_event_id) {
@@ -475,10 +550,10 @@ function closeChatRoomMobile() {
 function backSettingRoom() {
     document.getElementById('setting-room').style.display = 'flex';
     document.getElementById('all-poll-room').style.display = 'none';
+    document.getElementById('files-and-links-room').style.display = 'none';
     stopPollRoomAutoRefresh();
 }
 
-// 🌟 1. ฟังก์ชันเปิดหน้ารายละเอียดโพล
 function openPollCard(poll_id) {
     currentPollId = poll_id;
     if (lastPollDetailId !== poll_id) {
@@ -491,6 +566,13 @@ function openPollCard(poll_id) {
     pollSelectCard.style.display = 'flex';
     fetchAndRenderPollDetail(poll_id, true);
     startPollDetailAutoRefresh();
+}
+
+function openFileAndLinks(){
+    document.getElementById('files-and-links-room').style.display = 'flex';
+    document.getElementById('chat-room').style.display = 'none';
+    document.getElementById('setting-room').style.display = 'none';
+    loadFilesAndLinks()
 }
 
 // Vote on a poll option
@@ -817,7 +899,6 @@ function handleEnterPress(event) {
     if (event.key === "Enter") {
         event.preventDefault();
         sendMessage();
-        chatBody.scrollTop = chatBody.scrollHeight;
     }
 }
 
@@ -929,7 +1010,14 @@ async function loadChatMessages() {
                             let avatarsHtml = "";
                             let profiles = opt.voter_profiles || [];
                             
-                            if (profiles.length > 0) {
+                            // 🌟 แก้ตรงนี้! เช็คค่า bool ทั้งแบบตัวพิมพ์ใหญ่และพิมพ์เล็ก
+                            // (ถ้า Anonymous เป็น true หรือ 1 จะถือว่าเป็นโพลลับ ไม่โชว์รูป)
+                            let isAnonymous = msg.poll_data.Anonymous === true 
+                                           || msg.poll_data.anonymous === true
+                                           || msg.poll_data.Anonymous === 1 
+                                           || msg.poll_data.Anonymous === "true"; 
+
+                            if (profiles.length > 0 && !isAnonymous) {
                                 let displayVoters = profiles.slice(0, 3);
                                 displayVoters.forEach(profilePath => {
                                     avatarsHtml += `<img src="${profilePath}" class="voter-img" />`;
@@ -1231,75 +1319,141 @@ async function loadSettingImages() {
         console.error("Error loading images for settings:", error);
     }
 }
-
-async function loadChatRooms() {
+async function loadChatRooms(searchQuery = "") {
     try {
-        const response = await fetch('http://localhost:5123/Chat/GetMyChatRooms');
+        const url = `http://localhost:5123/Chat/GetMyChatRooms?search=${encodeURIComponent(searchQuery)}`;
+        // const response = await fetch('http://localhost:5123/Chat/GetMyChatRooms');
+        const response = await fetch(url);
         const result = await response.json();
 
         if (result.success) {
-            let cardsHtml = "";
             const chatListContainer = document.getElementById('chat-list');
             const chatBody = document.getElementById('chat-body');
 
-            result.data.forEach(room => {
-                let previewText = room.last_message_text ? room.last_message_text : "Start Chat!";
-                previewText = escapeHTML(previewText);
-
-                let time_string = "";
-                if (room.last_message_time) {
-                    const msgDate = new Date(room.last_message_time);
-                    const timePart = msgDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                    const datePart = `${msgDate.getDate()}/${msgDate.getMonth() + 1}/${msgDate.getFullYear()}`;
-                    time_string = `${datePart} ${timePart}`;
-                }
-                let roomImg = room.event_img_path ? room.event_img_path : '/images/default_chat_icon.png';
-                let locationName = room.event_location ? room.event_location : 'Unknown Location';
-                const formatDate = (dateStr) => {
-                    if (!dateStr) return "";
-                    const d = new Date(dateStr);
-                    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-                };
-                let startDateStr = formatDate(room.start_date);
-                let endDateStr = formatDate(room.end_date);
-                let dateDisplay = (startDateStr && endDateStr) ? `${startDateStr} - ${endDateStr}` : 'ไม่มีกำหนดการ';
-                cardsHtml += `
-                    <div class="chat-card" onclick="openChatRoom('${room.event_id}', '${room.chat_name}', '${room.id}', '${room.event_location}', '${startDateStr}', '${endDateStr}', '${roomImg}')">
-                        <img class="event-image" src="${roomImg}" />
-                        <div class="chat-info">
-                            <h4 class="chat-info-header text-sm font-semibold">${room.chat_name}</h4>
-                            <div class="info-row">
-                                <img class="locate-icon" src="/images/locate_icon.svg" />
-                                <p class="chat-info-description text-sm font-semibold">${locationName}</p>
-                            </div>
-                            <div class="info-row">
-                                <img class="date-icon" src="/images/date_icon.svg" />
-                                <p class="chat-info-description text-xs font-semibold">${dateDisplay}</p>
-                            </div>
-                            <div class="info-row">
-                                <img class="path-icon" src="/images/path_icon.svg" />
-                                <p class="chat-info-description text-xs font-semibold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;">
-                                    ${previewText}
-                                </p>
-                                <span class="text-xs font-semibold" style="flex-shrink: 0; margin: 0; padding: 8px;">-</span>
-                                <p class="chat-info-description text-xs font-semibold" style="padding: 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">
-                                    ${time_string}
-                                </p>
+            if (chatListContainer) {
+                chatListContainer.innerHTML = ""; 
+            }
+            let cardsHtml = "";
+            if (result.data.length === 0) {
+                cardsHtml = `<p style="text-align: center; color: #888; margin-top: 32px; width: 100%;">ไม่พบห้องแชทที่ค้นหา</p>`;
+            } 
+            else {
+                // 🌟 3. วาดการ์ดเฉพาะตัวที่ Database ส่งกลับมา (ตัวที่ไม่เกี่ยวจะหายไปโดยปริยาย)
+                result.data.forEach(room => {
+                    let previewText = room.last_message_text ? escapeHTML(room.last_message_text) : "Start Chat!";
+                    
+                    let time_string = "";
+                    if (room.last_message_time) {
+                        const msgDate = new Date(room.last_message_time);
+                        time_string = `${msgDate.getDate()}/${msgDate.getMonth() + 1}/${msgDate.getFullYear()} ${msgDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}`;
+                    }
+                    
+                    let roomImg = room.event_img_path || '/images/default_chat_icon.png';
+                    let locationName = room.event_location || 'Unknown Location';
+                    
+                    const formatDate = (dateStr) => {
+                        if (!dateStr) return "";
+                        const d = new Date(dateStr);
+                        return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+                    };
+                    let startDateStr = formatDate(room.start_date);
+                    let endDateStr = formatDate(room.end_date);
+                    let dateDisplay = (startDateStr && endDateStr) ? `${startDateStr} - ${endDateStr}` : 'ไม่มีกำหนดการ';
+                    
+                    cardsHtml += `
+                        <div class="chat-card" onclick="openChatRoom('${room.event_id}', '${room.chat_name}', '${room.id}', '${room.event_location}', '${startDateStr}', '${endDateStr}', '${roomImg}')">
+                            <img class="event-image" src="${roomImg}" />
+                            <div class="chat-info">
+                                <h4 class="chat-info-header text-sm font-semibold">${room.chat_name}</h4>
+                                <div class="info-row">
+                                    <img class="locate-icon" src="/images/locate_icon.svg" />
+                                    <p class="chat-info-description text-sm font-semibold">${locationName}</p>
+                                </div>
+                                <div class="info-row">
+                                    <img class="date-icon" src="/images/date_icon.svg" />
+                                    <p class="chat-info-description text-xs font-semibold">${dateDisplay}</p>
+                                </div>
+                                <div class="info-row">
+                                    <img class="path-icon" src="/images/path_icon.svg" />
+                                    <p class="chat-info-description text-xs font-semibold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;">
+                                        ${previewText}
+                                    </p>
+                                    <span class="text-xs font-semibold" style="flex-shrink: 0; margin: 0; padding: 8px;">-</span>
+                                    <p class="chat-info-description text-xs font-semibold" style="padding: 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">
+                                        ${time_string}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
+
+            // 🌟 4. ยัด HTML ใหม่ลงไป
             if (chatListContainer) {
                 chatListContainer.innerHTML = cardsHtml;
             }
-
-            chatBody.scrollTop = chatBody.scrollHeight;
         }
     } catch (error) {
         console.error("Error loading chat rooms:", error);
     }
 }
+
+// 🌟 ผูก Event ให้ช่อง Search (ยิง AJAX ไปหลังบ้าน)
+document.addEventListener('DOMContentLoaded', () => {
+    // โหลดแชททั้งหมด "แค่ครั้งเดียว" ตอนเปิดหน้า
+    loadChatRooms(""); 
+
+    const searchInput = document.getElementById('search-chat-card');    
+
+    if (searchInput) {
+        // เมื่อมีการพิมพ์ปุ๊บ ทำงานทันที ไม่ต้องหน่วงเวลา
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase(); // แปลงเป็นตัวพิมพ์เล็กให้หมด
+            
+            // หาการ์ดแชททั้งหมดในหน้าจอ
+            const chatCards = document.querySelectorAll('.chat-card');
+
+            chatCards.forEach(card => {
+                // ดึงชื่อแชทจากการ์ดนั้นๆ มาเช็ค
+                const chatNameElement = card.querySelector('.chat-info-header');
+                if (chatNameElement) {
+                    const chatName = chatNameElement.innerText.toLowerCase();
+                    
+                    // ถ้าชื่อแชท มีคำที่พิมพ์อยู่ ให้โชว์ (flex), ถ้าไม่มี ให้ซ่อน (none) วับไปเลย!
+                    if (chatName.includes(query)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        });
+    }
+    const imageInput = document.getElementById('image-input');
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            // (ถ้าคุณมีฟังก์ชันพรีวิวรูปหรือโชว์ชื่อไฟล์ เรียกใช้ตรงนี้ได้เลยครับ)
+            
+            // ดึงเคอร์เซอร์กลับมาที่ช่องพิมพ์ข้อความ
+            const messageInput = document.getElementById('message-input');
+            if (messageInput) messageInput.focus(); 
+        });
+    }
+
+    const documentInput = document.getElementById('document-input');
+    if (documentInput) {
+        documentInput.addEventListener('change', function() {
+            // (ถ้าคุณมีฟังก์ชันโชว์ชื่อไฟล์เอกสาร เรียกใช้ตรงนี้ได้เลยครับ)
+            
+            // ดึงเคอร์เซอร์กลับมาที่ช่องพิมพ์ข้อความ
+            const messageInput = document.getElementById('message-input');
+            if (messageInput) messageInput.focus();
+        });
+    }
+
+});
+
 
 function escapeHTML(text) {
     if (!text) return "";

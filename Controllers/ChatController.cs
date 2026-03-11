@@ -30,6 +30,10 @@ namespace Travello.Controllers
         public async Task<IActionResult> Index()
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                return RedirectToAction("User", "Login");
+            }
 
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
@@ -102,9 +106,23 @@ namespace Travello.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMyChatRooms()
+        public async Task<IActionResult> GetMyChatRooms(string? search = null)
         {
             string currentUserId = HttpContext.Session.GetString("UserId");
+
+            var filterBuilder = Builders<ChatRoomModel>.Filter; 
+            var filter = filterBuilder.Empty;
+
+            if (!string.IsNullOrEmpty(search))
+            {
+            
+                var safeSearch = System.Text.RegularExpressions.Regex.Escape(search);
+                
+                var regex = new MongoDB.Bson.BsonRegularExpression(safeSearch, "i");
+                filter &= filterBuilder.Regex(x => x.chat_name, regex);
+            }
+
+            var chatRooms = await _chatRoomsCollection.Find(filter).ToListAsync();
 
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
@@ -137,9 +155,17 @@ namespace Travello.Controllers
                 }
             }
 
+            if (!string.IsNullOrEmpty(search))
+            {
+                myChats = myChats
+                    .Where(c => c.chat_name != null && c.chat_name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
             myChats = myChats.OrderByDescending(chat => chat.last_message_time).ToList();
 
             return Json(new { success = true, data = myChats });
+
         }
     }
 }
