@@ -8,7 +8,7 @@
 
 @if (TempData["StatusMessage"] != null)
 {
-    <div id="statusNotification" class="notification @TempData["StatusType"] font-bold">
+    <div id="statusNotification" class="notijumpscare @TempData["StatusType"] font-bold">
         @TempData["StatusMessage"]
     </div>
 }
@@ -70,13 +70,13 @@
                             @{
                                 var maxDate = DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                             }
-                            <input type="date" asp-for="date_of_birth" class="InputSelection" max="@maxDate"/>
+                            <input type="date" asp-for="date_of_birth" class="InputSelection" max="@maxDate" required/>
                         </div>
                     </div>
                     <div class="ChoosingContainer text-sm font-semilight">
                         GENDER
                         <div class="ChoosingInputContainer">
-                            <select class="InputSelection" asp-for="gender">
+                            <select class="InputSelection" asp-for="gender" required>
                                 <option value="" disabled selected hidden>CHOOSE GENDER</option>
                                 <option value="Male">MALE</option>
                                 <option value="Female">FEMALE</option>
