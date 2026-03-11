@@ -71,17 +71,12 @@ namespace Travello.Services
             {
                 EventId = eventId,
                 UserId  = userId,
-                Status  = status,   
+                Status  = status,
                 RecruitAnswer = recruitAnswer,
                 JoinedAt = DateTime.UtcNow
             };
 
             await _participants.InsertOneAsync(participant);
-
-            // Keep user's event_id in sync so chat/poll rooms are visible after join.
-            var userFilter = Builders<User>.Filter.Eq(user => user.Id, userId);
-            var addEventUpdate = Builders<User>.Update.AddToSet(user => user.EventId, eventId);
-            await _users.UpdateOneAsync(userFilter, addEventUpdate);
         }
         
         // PARTICIPANT — REMOVE (LEAVE)
@@ -106,9 +101,30 @@ namespace Travello.Services
         public async Task UpdateParticipantStatusAsync(string participantId, string newStatus)
         {
             var filter = Builders<EventParticipant>.Filter.Eq(p => p.Id, participantId);
-
             var updateDef = Builders<EventParticipant>.Update.Set(p => p.Status, newStatus);
             await _participants.UpdateOneAsync(filter, updateDef);
+
+            if (newStatus == "approved")
+            {
+                var participant = await GetParticipantByIdAsync(participantId);
+                if (participant != null)
+                {
+                    var userFilter = Builders<User>.Filter.Eq(u => u.Id, participant.UserId);
+                    var addEvent = Builders<User>.Update.AddToSet(u => u.EventId, participant.EventId);
+                    await _users.UpdateOneAsync(userFilter, addEvent);
+                }
+            }
+
+            if (newStatus == "rejected")
+            {
+                var participant = await GetParticipantByIdAsync(participantId);
+                if (participant != null)
+                {
+                    var userFilter = Builders<User>.Filter.Eq(u => u.Id, participant.UserId);
+                    var removeEvent = Builders<User>.Update.Pull(u => u.EventId, participant.EventId);
+                    await _users.UpdateOneAsync(userFilter, removeEvent);
+                }
+            }
         }
 
         
