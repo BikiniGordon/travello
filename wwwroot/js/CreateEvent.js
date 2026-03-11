@@ -945,7 +945,6 @@ function bindCreateEventFormSubmit() {
         : [
             { name: 'EventTitle', selector: 'input[name="EventTitle"]', message: 'Event title is required.' },
             { name: 'Detail', selector: 'textarea[name="Detail"]', message: 'Detail is required.' },
-            // Category selection is validated separately because the hidden input is populated during submit
             { name: 'AttendeesLimit', selector: 'input[name="AttendeesLimit"]', message: 'Maximum number of attendees is required.' },
             { name: 'StartDate', selector: 'input[name="StartDate"]', message: 'Start date is required.' },
             { name: 'StartTime', selector: 'input[name="StartTime"]', message: 'Start time is required.' },
