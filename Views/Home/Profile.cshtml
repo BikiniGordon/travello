@@ -18,17 +18,11 @@
         ageText = $" , Age {age}";
     }
 }
-@* <style>
+<style>
     .NavBar {
-        background: rgba(255, 255, 255, 0.9) !important;
-        backdrop-filter: none !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+        background: #F5F6EE;
     }
-    
-    .Logo, .TLogo {
-        color: #333 !important;
-    }
-</style> *@
+</style>
 <script src="~/js/profile.js"></script>
 <div class="My_profile">
     <div class="frame_1678">
@@ -67,7 +61,7 @@
                                     foreach (var tag in user.user_tag)
                                     {
                                         <div class="tag_item">
-                                            <span class="tag_icon">#</span>
+                                            @* <span class="tag_icon">#</span> *@
                                             <span class="tag_text ">@tag</span>
                                             @if (ViewBag.IsOwner == true)
                                                 {
@@ -95,7 +89,7 @@
         </div>
         @if (Model != null && Model.Any())
         {
-            foreach (var post in Model)
+            foreach (EventDetailViewModel post in Model)
             {
                 <div class="frame_1388">
                     <div class="event_post">
@@ -111,30 +105,33 @@
                                 </span>
                                 @if (ViewBag.IsOwner == true)
                                     {
+                             
                                         <span>
-                                                <button type="button" class="box_action text_action box_chat"
-                                                        onclick="location.href='@Url.Action("Index", "Chat")'">
-                                                    CHAT
-                                                </button>
+                                            <button type="button" class="box_action text_action box_chat" 
+                                                    onclick="location.href='@Url.Action("Index", "Chat")'">CHAT</button>
                                         </span>
-                                        <span>
-                                            <button type="button" class="box_action text_action box_delete" onclick="openDeleteModal('@post.EventId')">
-                                                DELETE
-                                            </button>
-                                        </span>
+                                        @if (post.HostId == user?.user_id)
+                                            {
+                                                <span>
+                                                    <button type="button" class="box_action text_action box_delete" 
+                                                            onclick="openDeleteModal('@post.EventId')">
+                                                        DELETE
+                                                    </button>
+                                                </span>
+                                            }
                                     }
-                                else
+                                    else
                                     {
+        
                                         var myJoinedEvents = ViewBag.MyJoinedEvents as List<string> ?? new List<string>();
                                         if (myJoinedEvents.Contains(post.EventId))
                                         {
                                             <span>
-                                                <a href="@Url.Action("Index", "Chat")" class="box_action text_action box_chat" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
-                                                    CHAT
-                                                </a>
+                                                <button type="button" class="box_action text_action box_chat" 
+                                                        onclick="location.href='@Url.Action("Index", "Chat")'">CHAT</button>
                                             </span>
                                         }
-                                    }   
+                                    }
                             </div>
                         </div>
 

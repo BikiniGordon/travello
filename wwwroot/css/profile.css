@@ -95,8 +95,15 @@
     h1, h2, h3, h4, h5, h6, p {
     margin: 0;
     } 
+html, body, footer {
+    margin: 0;
+    padding: 0;
+}
 
-.My_profile { 
+html {
+    scroll-behavior: smooth;
+}
+.My_profile {
     display: flex;
     flex-wrap: wrap; 
     flex-direction: column;
@@ -377,6 +384,7 @@
     background-color: #807775;
     border: 1px solid #807775;
     border-radius: 15px;
+    cursor: pointer;
 
 }
 .box_action:hover {
