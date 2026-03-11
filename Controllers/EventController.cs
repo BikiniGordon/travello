@@ -15,12 +15,18 @@ namespace Travello.Controllers
     {
         private readonly EventService _eventService;
         private readonly IMongoCollection<EventDocument> _eventsCollection;
+        private readonly IMongoCollection<ChatRoomModel> _chatRoomsCollection;
+        private readonly IMongoCollection<ChatMessageModel> _messagesCollection;
+        private readonly IMongoCollection<PollModel> _pollCollection;
         private readonly INotificationService _notificationService;
 
         public EventController(EventService eventService, IMongoDatabase database,INotificationService notificationService)
         {
             _eventService = eventService;
             _eventsCollection = database.GetCollection<EventDocument>("events");
+            _chatRoomsCollection = database.GetCollection<ChatRoomModel>("chat_rooms");
+            _messagesCollection = database.GetCollection<ChatMessageModel>("messages");
+            _pollCollection = database.GetCollection<PollModel>("polls");
             _notificationService = notificationService;
         }
 
@@ -582,6 +588,15 @@ namespace Travello.Controllers
                 }
             }
 
+            var chatRoom = await _chatRoomsCollection.Find(c => c.event_id == request.eventId).FirstOrDefaultAsync();
+
+            if (chatRoom != null)
+            {
+                await _messagesCollection.DeleteManyAsync(m => m.chat_room_id == chatRoom.id);
+                await _pollCollection.DeleteManyAsync(p => p.EventId == request.eventId);
+                await _chatRoomsCollection.DeleteOneAsync(c => c.id == chatRoom.id);
+            }
+            
             await _eventsCollection.DeleteOneAsync(e => e.Id == request.eventId);
             return Json(new { success = true });
         }

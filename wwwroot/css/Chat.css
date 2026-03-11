@@ -122,11 +122,19 @@ body {
     background-color: #CCD6D5;
     margin: 0;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
     min-height: 100vh;
     height: auto;
     padding: 0;
     /* zoom: 80%; */
+}
+
+html, body {
+    background-color: #CCD6D5;
+    margin: 0;
+    padding: 0;
+    width: 100vw; /* กว้างแค่ 100% ของหน้าจอเป๊ะๆ */
+    height: 100vh; /* สูงแค่ 100% ของหน้าจอเป๊ะๆ */
 }
 
 body::-webkit-scrollbar{
@@ -157,6 +165,7 @@ body::-webkit-scrollbar{
     max-width: 1440px;
     margin: 0 auto;
     width: 100%;
+    overflow-y: auto;
 }
 
 #chat-container {
@@ -166,8 +175,8 @@ body::-webkit-scrollbar{
     /* max-width: calc(1418px / 0.8);      
     width: 100%; */
     margin: 0 auto;      
-
     height: calc((100vh - 80px) / 0.8); 
+    /* max-height: calc((100vh - 80px) / 0.8);  */
     min-height: calc(600px / 0.8);
     overflow-y: hidden;
     overflow-x: hidden;
@@ -198,12 +207,15 @@ body::-webkit-scrollbar{
 }
 
 #chat-background-image{
+    position: absolute;
     justify-self: center;
+    align-items: center;
     width: 97%;
     height: 100vh;
     display: block;
     object-fit: cover;
     z-index: 1;
+    pointer-events: none;
 }
 
 #white-overlay {
@@ -216,6 +228,7 @@ body::-webkit-scrollbar{
     background-color: #FFFFFF; 
     opacity: 50%;
     z-index: 2;         
+    pointer-events: none;
 }
 
 #search-icon{
@@ -266,7 +279,7 @@ body::-webkit-scrollbar{
     position: absolute;
     top: 145px;          
     left: 64px;   
-    height: 830px;
+    height: calc(100% - 145px);
     width: 100%;
     overflow: hidden; 
     transition: all 0.3s ease;
@@ -277,9 +290,10 @@ body::-webkit-scrollbar{
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;              
+    gap: 16px;        
+    width: 600px;      
     z-index: 3;          
-    padding-bottom: 350px;
+    padding-bottom: 320px;
     transition: all 0.3s ease;
 }
 
@@ -291,17 +305,20 @@ body::-webkit-scrollbar{
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 521px;
+    width: 521px; /* หรือ 100% ถ้าใช้ตามที่เราแก้ไปก่อนหน้านี้ครับ */
     
-    height: 350px; 
+    /* 🌟 1. ปรับความสูงให้พอดีกับ 2 การ์ด (150+16+150 = 316px) */
+    height: 316px; 
+    
     pointer-events: none; 
     z-index: 10; 
     
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     
-    -webkit-mask-image: linear-gradient(to top, black 10%, transparent 100%);
-    mask-image: linear-gradient(to top, black 10%, transparent 100%);
+    /* 🌟 2. ปรับ Gradient ให้ไล่จากล่างสุด(ทึบ) ไปบนสุด(ใส) แบบเนียนๆ 100% */
+    -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+    mask-image: linear-gradient(to top, black 0%, transparent 100%);
 }
 
 .chat-card{
@@ -543,6 +560,7 @@ body::-webkit-scrollbar{
     border-radius: 20px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     overflow: hidden; 
+    padding-bottom: 100px;
 }
 
 #poll-header-container {
@@ -726,7 +744,7 @@ body::-webkit-scrollbar{
     z-index: 5; 
     background-color: #FFFFFF;
     border-radius: 20px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    /* box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; */
     overflow: hidden; 
 }
 
@@ -942,7 +960,8 @@ body::-webkit-scrollbar{
     background-color: #FFFFFF;
     border-radius: 20px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    overflow: hidden; 
+    overflow-y: auto; 
+    padding-bottom: 100px;
 }
 
 #create-poll-body {
@@ -1149,12 +1168,14 @@ body::-webkit-scrollbar{
     width: calc(100% - 712px); 
     max-width: 706px; 
     height: 778px; 
+    max-height: 100%;
     top: 48px;
     right: 64px;
     z-index: 3;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     transition: all 0.3s ease;
 }
+
 
 #chat-room-header {
     display: flex;
@@ -1413,65 +1434,96 @@ body::-webkit-scrollbar{
 
 /* Responsive */
 
+/* 📱 สำหรับหน้าจอแนวตั้งทั้งหมด (ตั้งแต่แท็บเล็ตลงไปจนถึงมือถือ) */
 @media (max-width: 1025px) {
+    
+    #chat-header {
+        display: none;
+    }
+
     #search-block { 
-        width: 412px; 
+        display: flex ; 
+        width: calc(100% - 48px); 
         left: 24px; 
+        padding: 0 16px; 
+        box-sizing: border-box;
         transition: all 0.3s ease;
+    }
+
+    #search-chat-card{
+        text-overflow: ellipsis;
     }
 
     .chat-list-container {
         position: absolute;
         top: 145px;          
         left: 24px;   
-        height: 680px;
-        width: 412px; 
+        width: calc(100% - 48px); /* กางเต็มจอ หักขอบซ้ายขวา */
+        height: calc(100% - 145px); /* ยืดหยุ่นตามความสูงจอ */
         overflow: hidden; 
+    }
+    
+    #chat-container {
+        zoom: 1 !important; /* คืนค่าสเกลเป็น 100% ไม่ให้จอเพี้ยน */
+        height: 100vh !important; 
+        max-height: 100vh !important;
+    }
+
+    .chat-list, #chat-list { 
+        display: flex ; 
+        width: 100%;
+        gap: 16px;
+        box-sizing: border-box;
+        padding-bottom: 320px; /* ให้มีพื้นที่เลื่อนด้านล่าง */
+    }
+
+    .scroll-blur-overlay {
+        width: calc(100% - 48px);
     }
 
     .chat-card { 
+        width: 100%; /* การ์ดกางเต็ม 100% สวยๆ */
         transition: all 0.3s ease;
-        width: 412px; 
     }
 
-    /* .scroll-blur-overlay {
-        width: 320px;
-        height: 300px;
-    } */
-
-    /* .event-image {
-        width: 120px;  
-        height: 120px; 
-    } */
-
-    /* .chat-info {
-        padding: 0 12px; 
-        gap: 4px;       
-        width: calc(100% - 120px); 
-        box-sizing: border-box;
-    } */
-
-    .chat-info-header {
-        white-space: nowrap; 
-        overflow: hidden;
-        text-overflow: ellipsis; 
+    #empty-room {
+        display: none ;
     }
 
-    #empty-room,
+    /* กล่องแชทฝั่งขวา ให้เด้งมาทับเต็มจอเวลาถูกคลิก */
+    #chat-room,
     #setting-room,
     #all-poll-room,
-    #poll-select-card,
     #create-poll-page,
-    #chat-room {
-        width: calc(100% - 480px);
-        right: 24px;
+    #poll-select-card,
+    #files-and-links-room {
+        position: fixed;
+        width: 100% !important;
+        max-width: 100% !important;
+        top: 56px !important;
+        left: 0;
+        right: 0 !important;
+        bottom: 0 !important;
+        height: calc(100dvh - 56px) !important;
+        border-radius: 0 !important; 
+        z-index: 50 !important;
     }
 
-    .poll-container {
-        width: 100%;
-        max-width: 320px;
-        box-sizing: border-box;
+    #create-poll-page, #all-poll-room {
+        padding-bottom: 100px;
     }
+
+    #chat-room-header { width: 100%; border-radius: 0; }
+    #chat-room-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #mobile-back-btn { display: block; }
+    .message-bubble { max-width: 85%; }
+    .message-box { padding: 12px 16px; gap: 8px; }
+    .input-actions { gap: 8px; }
+    .poll-container { width: 100%; padding: 24px 16px; box-sizing: border-box; }
+    #poll-body, #create-poll-body, #poll-detail-body { padding-left: 16px !important; padding-right: 16px !important; }
+    .poll-card { width: 100% !important; }
+    #create-new-poll-btn, #submit-new-poll-btn, #update-event-btn { width: calc(100% - 32px) !important; }
+    .datetime-row { flex-direction: column; }
 }
 
 
@@ -1533,7 +1585,8 @@ body::-webkit-scrollbar{
     #setting-room,
     #all-poll-room,
     #create-poll-page,
-    #poll-select-card {
+    #poll-select-card,
+    #files-and-links-room {
         position: fixed;
         width: 100% !important;
         max-width: 100% !important;
@@ -1544,6 +1597,14 @@ body::-webkit-scrollbar{
         height: calc(100dvh - 56px) !important;
         border-radius: 0 !important; 
         z-index: 50 !important;
+    }
+
+    #create-poll-page{
+        padding-bottom: 100px;
+    }
+
+    #all-poll-room{
+        padding-bottom: 100px;
     }
 
     #chat-room-header {
