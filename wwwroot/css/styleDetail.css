@@ -299,6 +299,15 @@ body, .details {
     align-items: start;
 }
 
+.detail p {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.choice p {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
 
 .line {
     /* width: 100%;  */
