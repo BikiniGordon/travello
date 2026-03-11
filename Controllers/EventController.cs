@@ -371,7 +371,8 @@ namespace Travello.Controllers
                 var user = await _eventService.GetUserByIdAsync(p.UserId);
                 attendeesList.Add(new
                 {
-                    id           = p.Id,          
+                    id           = p.Id,
+                    userId       = p.UserId,          
                     name         = user?.Username ?? p.UserId,
                     profileImage = user?.ProfileImgPath ?? "/images/pic.png",
                     isApproved   = p.Status == "approved",

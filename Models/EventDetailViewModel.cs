@@ -64,6 +64,7 @@ namespace Travello.Models
         public List<string> Category { get; set; }
         public string HostName { get; set; }
         public string HostProfileImage { get; set; }
+        public string HostId { get; set; }
         public string CoverImage { get; set; }
         public string Detail { get; set; }
         public string TripRules { get; set; }
@@ -75,7 +76,6 @@ namespace Travello.Models
         public int AttendeeCount { get; set; }
         public string UserStatus { get; set; } // none | pending | approved | rejected | owner
         public decimal TotalExpenses { get; set; }
-        public string HostId { get; set; }
 
         public List<string> PackingList { get; set; } = new();
         public List<DayViewModel> Days { get; set; } = new();
