@@ -88,11 +88,11 @@ async function rejectAttendee(participantId) {
             if (data.isOwner) {
                 if (person.isApproved) {
                     actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
-                            <button class="btn-delete" onclick="deleteAttendee('${person.userId}')">DELETE</button>`;
+                            <button class="btn-delete" onclick="deleteAttendee('${person.id}')">DELETE</button>`;
                 } else {
                     actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
-                            <button class="btn-approve" onclick="approveAttendee('${person.userId}')">APPROVE</button>
-                            <button class="btn-reject" onclick="rejectAttendee('${person.userId}')">REJECT</button>`;
+                            <button class="btn-approve" onclick="approveAttendee('${person.id}')">APPROVE</button>
+                            <button class="btn-reject" onclick="rejectAttendee('${person.id}')">REJECT</button>`;
                 }
             } else {
                 actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>`;
