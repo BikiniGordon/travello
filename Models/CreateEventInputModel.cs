@@ -1,6 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace Travello.Models;
@@ -10,6 +11,7 @@ public class CreateEventInputModel
     public string? EventId { get; set; }
     public IFormFile? UploadPhoto { get; set; }
     public string? PhotoLink { get; set; }
+    [StringLength(32, ErrorMessage = "Event title must be 32 characters or fewer.")]
     public string EventTitle { get; set; } = string.Empty;
     public string? Detail { get; set; }
     public int? AttendeesLimit { get; set; }
@@ -21,6 +23,7 @@ public class CreateEventInputModel
     public string? EndDate { get; set; }
     public string? EndTime { get; set; }
     public string? OpenDate { get; set; }
+    [StringLength(32, ErrorMessage = "Location must be 32 characters or fewer.")]
     public string? LocationName { get; set; }
     public string? TripRules { get; set; }
     public string? PlannerJson { get; set; }
