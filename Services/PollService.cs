@@ -17,7 +17,9 @@ namespace Travello.Services
 
         public async Task<List<PollModel>> GetPollsByEventIdAsync(string eventId)
         {
-            return await _polls.Find(p => p.EventId == eventId).ToListAsync();
+            var filter = Builders<PollModel>.Filter.Eq(p => p.EventId, eventId);
+            var sort = Builders<PollModel>.Sort.Descending(p => p.CreatedAt);
+            return await _polls.Find(filter).Sort(sort).ToListAsync();
         }
 
         public async Task<PollModel?> GetPollByIdAsync(string pollId)

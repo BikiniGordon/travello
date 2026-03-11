@@ -87,15 +87,15 @@ async function rejectAttendee(participantId) {
             let actions = '';
             if (data.isOwner) {
                 if (person.isApproved) {
-                    actions = `<a class="btn-view" href="/Profile/${person.id}">VIEW</a>
-                            <button class="btn-delete" onclick="deleteAttendee('${person.id}')">DELETE</button>`;
+                    actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
+                            <button class="btn-delete" onclick="deleteAttendee('${person.userId}')">DELETE</button>`;
                 } else {
-                    actions = `<a class="btn-view" href="/Profile/${person.id}">VIEW</a>
-                            <button class="btn-approve" onclick="approveAttendee('${person.id}')">APPROVE</button>
-                            <button class="btn-reject" onclick="rejectAttendee('${person.id}')">REJECT</button>`;
+                    actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>
+                            <button class="btn-approve" onclick="approveAttendee('${person.userId}')">APPROVE</button>
+                            <button class="btn-reject" onclick="rejectAttendee('${person.userId}')">REJECT</button>`;
                 }
             } else {
-                actions = `<a class="btn-view" href="/Profile/${person.id}">VIEW</a>`;
+                actions = `<a class="btn-view" href="/Home/UserProfile/${person.userId}">VIEW</a>`;
             }
 
             const hasAnswer = person.recruitAnswer && person.recruitAnswer.trim() !== '';
@@ -141,12 +141,14 @@ function renderAttendeePhotos(attendees) {
     attendees.slice(0, 2).forEach(person => {
         html += `
         <div class="layout">
+        <a href="/Home/UserProfile/${person.userId}" style="text-decoration:none; color:inherit; width:100%; height:100%;">
             <div class="mix">
                 <div class="photoo">
                     <img class="pic" src="${person.profileImage}" alt="${person.name}">
                     <p class="text-xs font-semibold">${person.name}</p>
                 </div>
             </div>
+            </a>
         </div>`;
     });
 

@@ -130,9 +130,9 @@ namespace Travello.Controllers
                 ModelState.AddModelError(nameof(input.LocationName), "Location is required.");
             }
 
-            if (string.IsNullOrWhiteSpace(input.TripRules))
+            if (string.IsNullOrWhiteSpace(input.Category) && string.IsNullOrWhiteSpace(input.TagsCsv))
             {
-                ModelState.AddModelError(nameof(input.TripRules), "Trip rules are required.");
+                ModelState.AddModelError(nameof(input.Category), "Please select a category or add tags.");
             }
 
             var plannerRows = ParsePlannerRows(input.PlannerJson);
@@ -418,6 +418,20 @@ namespace Travello.Controllers
 
                 modelState.AddModelError(nameof(CreateEventInputModel.PlannerJson), "Each itinerary place must use a full Google Maps link (with coordinates).");
                 return;
+            }
+            // Validate expense amounts
+            foreach (var row in plannerRows ?? Enumerable.Empty<PlannerRowInputModel>())
+            {
+                if (row?.Expenses == null) continue;
+                foreach (var expense in row.Expenses)
+                {
+                    if (expense == null) continue;
+                    if (expense.Amount.HasValue && expense.Amount.Value <= 0)
+                    {
+                        modelState.AddModelError(nameof(CreateEventInputModel.PlannerJson), "Each expense amount must be greater than 0.");
+                        return;
+                    }
+                }
             }
         }
 
