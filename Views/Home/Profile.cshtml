@@ -95,6 +95,7 @@
                     <div class="event_post">
                         <div class="head_post">
                             <p style="font-size: 40px;">@post.EventTitle</p>
+                            
                             <div class="box_post_action">
                                 <span>
                                     <button type="button" 
@@ -103,35 +104,36 @@
                                     DETAIL
                                 </button>
                                 </span>
-                                @if (ViewBag.IsOwner == true)
-                                    {
-                             
-                                        <span>
-                                            <button type="button" class="box_action text_action box_chat" 
-                                                    onclick="location.href='@Url.Action("Index", "Chat")'">CHAT</button>
-                                        </span>
-                                        @if (post.HostId == user?.user_id)
-                                            {
-                                                <span>
-                                                    <button type="button" class="box_action text_action box_delete" 
-                                                            onclick="openDeleteModal('@post.EventId')">
-                                                        DELETE
-                                                    </button>
-                                                </span>
-                                            }
-                                    }
-                                    else
-                                    {
-        
-                                        var myJoinedEvents = ViewBag.MyJoinedEvents as List<string> ?? new List<string>();
-                                        if (myJoinedEvents.Contains(post.EventId))
-                                        {
-                                            <span>
-                                                <button type="button" class="box_action text_action box_chat" 
-                                                        onclick="location.href='@Url.Action("Index", "Chat")'">CHAT</button>
-                                            </span>
-                                        }
-                                    }
+                                @{
+                                    // ดึงข้อมูลตัวเราเอง และทริปที่เราจอย ออกมาจากกระเป๋า
+                                    var currentUserId = ViewBag.CurrentUserId as string;
+                                    var myJoinedEvents = ViewBag.MyJoinedEvents as List<string> ?? new List<string>();
+                                }
+
+                                @if (post.HostId == currentUserId)
+                                {
+                                    <span>
+                                        <button type="button" class="box_action text_action box_chat" 
+                                                onclick="location.href='@Url.Action(action: "Index", controller: "Chat")'">
+                                            CHAT
+                                        </button>
+                                    </span>
+                                    <span>
+                                        <button type="button" class="box_action text_action box_delete" 
+                                                onclick="openDeleteModal('@post.EventId')">
+                                            DELETE
+                                        </button>
+                                    </span>
+                                }
+                                else if (myJoinedEvents.Contains(post.EventId))
+                                {
+                                    <span>
+                                        <button type="button" class="box_action text_action box_chat" 
+                                                onclick="location.href='@Url.Action(action: "Index", controller: "Chat")'">
+                                            CHAT
+                                        </button>
+                                    </span>
+                                }
                             </div>
                         </div>
 
