@@ -174,6 +174,7 @@ namespace Travello.Controllers
                 await _userCollection.ReplaceOneAsync(filter, updatedUser);
                 
                 HttpContext.Session.SetString("UserProfilePic", updatedUser.profile_img_path ?? "");
+                HttpContext.Session.SetString("Username", updatedUser.username ?? "");
                 TempData["StatusMessage"] = "Profile updated successfully!";
                 TempData["StatusType"] = "success";
             }

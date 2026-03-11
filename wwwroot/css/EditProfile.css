@@ -32,7 +32,7 @@
 .font-semibold   { font-weight: 600; }
 .font-bold       { font-weight: 700; }
 
-.notification {
+.notijumpscare {
     position: fixed;
     top: -100px;
     left: 50%;
@@ -48,10 +48,10 @@
     pointer-events: none;
 }
 
-.notification.success { background-color: #00b64cd7; }
-.notification.error { background-color: rgb(200, 0, 0); }
+.notijumpscare.success { background-color: #00b64cd7; }
+.notijumpscare.error { background-color: rgb(200, 0, 0); }
 
-.notification.show {
+.notijumpscare.show {
     top: 20px; 
 }
 

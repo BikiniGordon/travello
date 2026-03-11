@@ -26,7 +26,7 @@ function showTagInput() {
     input.type = 'text';
     input.className = 'TagInput';
     input.placeholder = 'TAG...';
-    input.maxLength = 15;
+    input.maxLength = 16;
 
     input.oninput = function() {
         this.style.width = '20px'; 
