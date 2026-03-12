@@ -319,8 +319,7 @@ namespace Travello.Controllers
                 };
                 await _chatRoomsCollection.InsertOneAsync(newChatRoom);
 
-
-                return RedirectToAction(nameof(Index), "CreateEvent");
+                return RedirectToAction("Detail", "Event", new { id = eventDocument.Id });
             }
             catch
             {
