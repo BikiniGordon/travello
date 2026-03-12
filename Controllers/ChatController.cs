@@ -32,7 +32,7 @@ namespace Travello.Controllers
             var currentUserId = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(currentUserId))
             {
-                return RedirectToAction("User", "CreateAccount");
+                return RedirectToAction("Index", "Home");
             }
 
             var currentUser = await _usersCollection
