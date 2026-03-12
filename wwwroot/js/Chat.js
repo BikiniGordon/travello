@@ -958,7 +958,6 @@ async function loadChatMessages() {
 
                 if (msg.poll_id != null && msg.poll_data != null) {
 
-                    // 🌟 1. ลอจิกคำนวณเวลาด้วย JS (ชัวร์ 100% ว่าขึ้นแน่นอน)
                     let timeLeftText = "";
                     let timeStyle = "color: #ef4444;"; // สีแดง
                     let deadlineStr = msg.poll_data.deadline || msg.poll_data.Deadline;
