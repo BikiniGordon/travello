@@ -5,8 +5,8 @@ let current_chat_room_start_date = null;
 let current_chat_room_end_date = null;
 let current_chat_room_event_image = null;
 let chat_socket = null;
-let currentPollId = ""; // Track which poll detail is open
-let pollDetailRequestSeq = 0; // Guards against out-of-order poll detail responses
+let currentPollId = ""; 
+let pollDetailRequestSeq = 0;
 let canCurrentUserUpdateEventResult = false;
 let pollRoomRefreshTimer = null;
 let pollDetailRefreshTimer = null;
@@ -319,7 +319,6 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
     current_chat_room_end_date = chat_room_end_date;
     current_chat_room_event_image = chat_room_event_image;
 
-    // 2. เคลียร์สถานะของโพล (เอามาจากฟังก์ชันแรก ป้องกันบั๊กโพลค้าง)
     currentPollId = "";
     lastPollListEventId = '';
     lastPollListSignature = '';
@@ -357,7 +356,7 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
 
     chat_socket.onmessage = function (event) {
         if (event.data === "NEW_MSG") {
-            loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที
+            loadChatMessages(); 
             loadChatRooms();
             
             if (typeof loadSettingImages === 'function') {
@@ -383,62 +382,6 @@ async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_locatio
     }, 100);
 }
 
-// async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
-//     current_event_id = event_id;
-//     current_chat_room_id = chat_room_id;
-//     current_chat_room_location = chat_room_location;
-//     current_chat_room_event_image = chat_room_event_image;
-//     current_chat_room_start_date = chat_room_start_date;
-//     current_chat_room_end_date = chat_room_end_date;
-//     currentPollId = "";
-//     lastPollListEventId = '';
-//     lastPollListSignature = '';
-//     lastPollDetailId = '';
-//     lastPollDetailSignature = '';
-//     stopPollRoomAutoRefresh();
-//     stopPollDetailAutoRefresh();
-
-//     document.getElementById('empty-room').style.display = 'none';
-//     document.getElementById('setting-room').style.display = 'none';
-//     document.getElementById('all-poll-room').style.display = 'none';
-//     document.getElementById('files-and-links-room') && (document.getElementById('files-and-links-room').style.display = 'none');
-//     document.getElementById('chat-room').style.display = 'flex';
-//     document.body.style.overflow = 'hidden';
-
-//     document.getElementById('chat-room-title').innerText = chat_name;
-//     document.getElementById('setting-event-title').innerText = chat_name;
-//     document.getElementById('setting-event-status').innerText = chat_room_location ? ('Location : ' + chat_room_location) : event_id;
-//     if (document.getElementById('event-image-setting') && chat_room_event_image) {
-//         document.getElementById('event-image-setting').src = chat_room_event_image;
-//     }
-
-//     if (chat_socket) {
-//         chat_socket.close();
-//     }
-
-//     chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
-
-//     chat_socket.onmessage = function (event) {
-//         if (event.data === "NEW_MSG") {
-//             loadChatMessages(); // สั่งให้ดึงแชทมาวาดใหม่ทันที!
-//             loadChatRooms();
-//         }
-//     };
-
-//     chat_socket.onopen = function () { console.log("WebSocket Connected"); };
-//     chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
-
-//     await loadChatMessages();
-//     await loadChatRooms();
-//     if (typeof loadSettingImages === 'function') await loadSettingImages();
-
-//     setTimeout(() => {
-//         const chatBody = document.getElementById('chat-body');
-//         if (chatBody) {
-//             chatBody.scrollTop = chatBody.scrollHeight;
-//         }
-//     }, 100);
-// }
 function openDetailPage() {
     if (current_event_id) {
         window.location.href = `/Event/Detail/${current_event_id}`;
@@ -447,62 +390,10 @@ function openDetailPage() {
     }
 }
 
-// await loadChatRooms();
 
 async function openChatPage() {
     await loadChatRooms();
 }
-
-// async function openChatRoom(event_id, chat_name, chat_room_id, chat_room_location, chat_room_start_date, chat_room_end_date, chat_room_event_image) {
-//     //เอา event_id ไปหา chat เพื่อดึง
-//     // เดี๋ยวเอา chat_name ออก แล้วไป map ใน database ดึงแทน
-//     current_event_id = event_id;
-//     current_chat_room_id = chat_room_id;
-//     current_chat_room_location = chat_room_location;
-//     current_chat_room_event_image = chat_room_event_image;
-//     current_chat_room_start_date = chat_room_start_date;
-//     current_chat_room_end_date = chat_room_end_date;
-
-//     document.getElementById('empty-room').style.display = 'none';
-//     document.getElementById('setting-room').style.display = 'none';
-//     document.getElementById('all-poll-room').style.display = 'none';
-//     document.getElementById('files-and-links-room').style.display = 'none';
-//     document.getElementById('chat-room').style.display = 'flex';
-//     document.body.style.overflow = 'hidden';
-
-//     document.getElementById('chat-room-title').innerText = chat_name;
-//     document.getElementById('setting-event-title').innerText = chat_name;
-//     document.getElementById('setting-event-location').innerText = 'Location : ' + current_chat_room_location;
-//     document.getElementById('setting-event-date').innerText = current_chat_room_start_date + ' - ' + current_chat_room_end_date
-//     document.getElementById('event-image-setting').src = current_chat_room_event_image;
-
-//     if (chat_socket) {
-//         chat_socket.close();
-//     }
-
-//     chat_socket = new WebSocket(`ws://localhost:5123/ws?chat_room_id=${current_chat_room_id}`);
-
-//     chat_socket.onmessage = function (event) {
-//         if (event.data === "NEW_MSG") {
-//             loadChatMessages();
-//             loadChatRooms();
-//         }
-//     };
-
-//     chat_socket.onopen = function () { console.log("WebSocket Connected"); };
-//     chat_socket.onerror = function (error) { console.error("WebSocket Error:", error); };
-
-//     await loadChatMessages();
-//     await loadChatRooms();
-//     await loadSettingImages();
-
-//     setTimeout(() => {
-//         const chatBody = document.getElementById('chat-body');
-//         if (chatBody) {
-//             chatBody.scrollTop = chatBody.scrollHeight;
-//         }
-//     }, 100);
-// }
 
 function openDetailPage() {
     if (current_event_id) {
@@ -575,7 +466,6 @@ function openFileAndLinks(){
     loadFilesAndLinks()
 }
 
-// Vote on a poll option
 function votePoll(pollId, optionIndex) {
     fetch('/Poll/Vote', {
         method: 'POST',
@@ -585,7 +475,7 @@ function votePoll(pollId, optionIndex) {
         .then(res => res.json())
         .then(result => {
             if (result.success) {
-                fetchAndRenderPollDetail(pollId, false, false); // Refresh immediately after local vote
+                fetchAndRenderPollDetail(pollId, false, false); 
             }
         })
         .catch(err => console.error("Vote error:", err));
@@ -1341,13 +1231,15 @@ async function loadChatRooms(searchQuery = "") {
                 // 🌟 3. วาดการ์ดเฉพาะตัวที่ Database ส่งกลับมา (ตัวที่ไม่เกี่ยวจะหายไปโดยปริยาย)
                 result.data.forEach(room => {
                     let previewText = room.last_message_text ? escapeHTML(room.last_message_text) : "Start Chat!";
-                    
+                    let dash = "";
                     let time_string = "";
                     if (room.last_message_time) {
                         const msgDate = new Date(room.last_message_time);
                         time_string = `${msgDate.getDate()}/${msgDate.getMonth() + 1}/${msgDate.getFullYear()} ${msgDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}`;
                     }
-                    
+                    if(time_string !== ""){
+                        dash = "-";
+                    }
                     let roomImg = room.event_img_path || '/images/default_chat_icon.png';
                     let locationName = room.event_location || 'Unknown Location';
                     
@@ -1378,7 +1270,7 @@ async function loadChatRooms(searchQuery = "") {
                                     <p class="chat-info-description text-xs font-semibold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;">
                                         ${previewText}
                                     </p>
-                                    <span class="text-xs font-semibold" style="flex-shrink: 0; margin: 0; padding: 8px;">-</span>
+                                    <span class="text-xs font-semibold" style="flex-shrink: 0; margin: 0; padding: 8px;">${dash}</span>
                                     <p class="chat-info-description text-xs font-semibold" style="padding: 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;">
                                         ${time_string}
                                     </p>
@@ -1389,7 +1281,6 @@ async function loadChatRooms(searchQuery = "") {
                 });
             }
 
-            // 🌟 4. ยัด HTML ใหม่ลงไป
             if (chatListContainer) {
                 chatListContainer.innerHTML = cardsHtml;
             }
@@ -1399,28 +1290,23 @@ async function loadChatRooms(searchQuery = "") {
     }
 }
 
-// 🌟 ผูก Event ให้ช่อง Search (ยิง AJAX ไปหลังบ้าน)
 document.addEventListener('DOMContentLoaded', () => {
-    // โหลดแชททั้งหมด "แค่ครั้งเดียว" ตอนเปิดหน้า
     loadChatRooms(""); 
 
     const searchInput = document.getElementById('search-chat-card');    
 
     if (searchInput) {
-        // เมื่อมีการพิมพ์ปุ๊บ ทำงานทันที ไม่ต้องหน่วงเวลา
         searchInput.addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase(); // แปลงเป็นตัวพิมพ์เล็กให้หมด
+            const query = e.target.value.toLowerCase(); 
             
-            // หาการ์ดแชททั้งหมดในหน้าจอ
             const chatCards = document.querySelectorAll('.chat-card');
 
             chatCards.forEach(card => {
-                // ดึงชื่อแชทจากการ์ดนั้นๆ มาเช็ค
+
                 const chatNameElement = card.querySelector('.chat-info-header');
                 if (chatNameElement) {
                     const chatName = chatNameElement.innerText.toLowerCase();
                     
-                    // ถ้าชื่อแชท มีคำที่พิมพ์อยู่ ให้โชว์ (flex), ถ้าไม่มี ให้ซ่อน (none) วับไปเลย!
                     if (chatName.includes(query)) {
                         card.style.display = 'flex';
                     } else {
@@ -1433,9 +1319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('image-input');
     if (imageInput) {
         imageInput.addEventListener('change', function() {
-            // (ถ้าคุณมีฟังก์ชันพรีวิวรูปหรือโชว์ชื่อไฟล์ เรียกใช้ตรงนี้ได้เลยครับ)
-            
-            // ดึงเคอร์เซอร์กลับมาที่ช่องพิมพ์ข้อความ
+
             const messageInput = document.getElementById('message-input');
             if (messageInput) messageInput.focus(); 
         });
@@ -1444,9 +1328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const documentInput = document.getElementById('document-input');
     if (documentInput) {
         documentInput.addEventListener('change', function() {
-            // (ถ้าคุณมีฟังก์ชันโชว์ชื่อไฟล์เอกสาร เรียกใช้ตรงนี้ได้เลยครับ)
-            
-            // ดึงเคอร์เซอร์กลับมาที่ช่องพิมพ์ข้อความ
+
             const messageInput = document.getElementById('message-input');
             if (messageInput) messageInput.focus();
         });
@@ -1465,9 +1347,8 @@ function escapeHTML(text) {
         .replace(/'/g, "&#039;");
 }
 
-// 🌟 ฟังก์ชันนับเวลาถอยหลังแบบ Real-time ทำงานทุก 1 นาที
+
 setInterval(() => {
-    // หาโพลทุกอันในแชทที่มีคลาส live-poll-timer
     const timers = document.querySelectorAll('.live-poll-timer');
 
     timers.forEach(timer => {
@@ -1478,14 +1359,13 @@ setInterval(() => {
         const now = new Date();
         const diffMs = deadlineDate - now;
 
-        // ถ้าหมดเวลาแล้ว
+
         if (diffMs <= 0) {
             timer.textContent = "Poll ended";
-            timer.style.color = "#888"; // เปลี่ยนเป็นสีเทา
+            timer.style.color = "#888"; 
             return;
         }
 
-        // คำนวณเวลาที่เหลือใหม่
         let mins = Math.floor(diffMs / 60000);
         let hours = Math.floor(mins / 60);
         let days = Math.floor(hours / 24);
@@ -1498,5 +1378,5 @@ setInterval(() => {
             timer.textContent = `Poll end up in ${mins} minute${mins > 1 ? 's' : ''}`;
         }
     });
-}, 60000); // 60000 มิลลิวินาที = 1 นาที (ถ้าอยากให้วิ่งทุกวินาทีเปลี่ยนเป็น 1000 ครับ)
+}, 60000); 
 

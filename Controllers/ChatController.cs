@@ -30,10 +30,6 @@ namespace Travello.Controllers
         public async Task<IActionResult> Index()
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(currentUserId))
-            {
-                return RedirectToAction("Index", "Home");
-            }
 
             var currentUser = await _usersCollection
                 .Find(user => user.Id == currentUserId)
