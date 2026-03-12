@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('menuBtn');
     const mobileDropdown = document.getElementById('dropdown');
     const createEventButtons = document.querySelectorAll('.CreateEvent[data-create-event-url]');
+    const chatButton = document.querySelectorAll('.ChatButton');
 
     createEventButtons.forEach((button) => {
         button.addEventListener('click', (event) => {
@@ -19,6 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (createEventUrl) {
                 window.location.href = createEventUrl;
+            }
+        });
+    });
+
+    chatButton.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const isAuthenticated = button.dataset.isAuthenticated === 'true';
+            if (!isAuthenticated) {
+                event.preventDefault();
+                openLoginModal();
+            }
+            else {
+                window.location.href = '/Chat';
             }
         });
     });
