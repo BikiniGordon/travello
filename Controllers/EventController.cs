@@ -226,6 +226,22 @@ namespace Travello.Controllers
             var approvedCount = allParticipantsFull.Count(p => p.Status == "approved");
             var pendingCount  = allParticipantsFull.Count(p => p.Status == "pending");
             var remaining     = ev.AttendeesLimit - approvedCount;
+            bool isExpired = ev.OpenDate.HasValue && ev.OpenDate.Value < DateTime.UtcNow;
+            bool isFull    = approvedCount >= ev.AttendeesLimit && ev.AttendeesLimit > 0;
+
+            if (!ev.IsRegistrationClosed && (isExpired || isFull))
+            {
+                string reason = isExpired ? "Registration date has passed" : "Attendees limit reached";
+                await _eventService.CloseRegistrationAsync(id, reason);
+            }
+
+            if (ev.IsRegistrationClosed || isExpired || isFull)
+            {
+                if (currentUserId == ev.CreatorId)
+                    userStatus = "owner_closed";
+                else
+                    userStatus = "closed";
+            }
 
             if ((ev.IsRegistrationClosed || remaining <= 0) && currentUserId == ev.CreatorId)
             {
@@ -415,7 +431,14 @@ namespace Travello.Controllers
             var remaining = limit - ev.Attendees;
             
             var threshold = (int)Math.Ceiling(limit * 0.5);
+            
+            var updatedParticipants = await _eventService.GetParticipantsAsync(id);
+            var approvedCount = updatedParticipants.Count(p => p.Status == "approved");
 
+            if (ev.AttendeesLimit > 0 && approvedCount >= ev.AttendeesLimit)
+            {
+                await _eventService.CloseRegistrationAsync(id, "Attendees limit reached");
+            }
             // if (limit > 0 && pendingCount == threshold)
             // {
                 await _notificationService.CreateNotificationAsync(new NotificationDocument
